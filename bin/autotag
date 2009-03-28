@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "lib", "auto_tagger"))
+
+def usage
+  puts
+  puts "USAGE: #{File.basename($0)} [-h] [<stage> <repository>]"
+  puts
+  puts '   where: -h displays this help message'
+  puts '          stage sets the tag prefix'
+  puts '          repository sets the repository to act on'
+  puts
+  exit 1
+end
+
+if ARGV[0] && ARGV[0] == "-h"
+  usage
+elsif ARGV[0]
+  AutoTagger.new(ARGV[0], ARGV[1]).create_tag
+  exit 1
+end

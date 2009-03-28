@@ -1,0 +1,4 @@
+pkg/*
+rdoc/*
+*.gem
+.DS_Store
