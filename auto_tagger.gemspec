@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{auto_tagger}
-  s.version = "0.0.2"
+  s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jeff Dean"]
@@ -10,9 +10,27 @@ Gem::Specification.new do |s|
   s.default_executable = %q{autotag}
   s.executables = ["autotag"]
 
-  s.files = ["lib/auto_tagger","lib/auto_tagger/auto_tagger.rb","lib/auto_tagger/capistrano_helper.rb","lib/auto_tagger/commander.rb","lib/auto_tagger/repository.rb","lib/auto_tagger/tag.rb","lib/auto_tagger.rb","recipes/release_tagger.rb","bin/autotag","spec/auto_tagger","spec/auto_tagger/auto_tagger_spec.rb","spec/auto_tagger/capistrano_helper_spec.rb","spec/auto_tagger/commander_spec.rb","spec/auto_tagger/repository_spec.rb","spec/auto_tagger/tag_spec.rb","spec/spec_helper.rb","MIT-LICENSE","README.md"]
+  s.files = [
+    "lib/auto_tagger",
+    "lib/auto_tagger/auto_tagger.rb",
+    "lib/auto_tagger/capistrano_helper.rb",
+    "lib/auto_tagger/commander.rb",
+    "lib/auto_tagger/repository.rb",
+    "lib/auto_tagger/tag.rb",
+    "lib/auto_tagger.rb",
+    "recipes/release_tagger.rb",
+    "bin/autotag",
+    "spec/auto_tagger",
+    "spec/auto_tagger/auto_tagger_spec.rb",
+    "spec/auto_tagger/capistrano_helper_spec.rb",
+    "spec/auto_tagger/commander_spec.rb",
+    "spec/auto_tagger/repository_spec.rb",
+    "spec/auto_tagger/tag_spec.rb",
+    "spec/spec_helper.rb",
+    "MIT-LICENSE",
+    "README.md"
+  ]
 
-  s.email = "jeff at zilkey dot com"
   s.homepage = %q{http://github.com/zilkey/git_tagger/tree/master}
   s.require_paths = ["lib", "recipes"]
   s.rubygems_version = %q{1.3.1}
