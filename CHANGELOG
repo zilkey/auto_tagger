@@ -1,0 +1,3 @@
+2009-03-29
+
+- Capistrano tasks :set_branch no longer sets the branch to nil.  If the CapistranoHelper returns nil, it leaves the branch alone.
