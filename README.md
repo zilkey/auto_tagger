@@ -35,7 +35,7 @@ Example deploy file:
 
     # You need to add the before/ater callbacks yourself
     before "deploy:update_code", "release_tagger:set_branch"
-    after  "deploy:update_code", "release_tagger:create_tag"
+    after  "deploy", "release_tagger:create_tag"
 
 Assume you have the following tags in your git repository:
 
