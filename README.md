@@ -15,6 +15,11 @@ You can use the `autotag` command to tag releases on your CI box, then use the c
     gem sources -a http://gems.github.com
     sudo gem install zilkey-auto_tagger
 
+## Contribute
+
+    [Tracker Project](http://www.pivotaltracker.com/projects/11988)
+    [GitHub Repository](http://github.com/zilkey/auto_tagger/tree/master)
+
 ## The autotag executable
 
 Installing the gem creates an executable file named autotag, which takes two arguments: the stage, and optionally the path to the git repo:
@@ -76,20 +81,6 @@ You can override with with the -Shead and -Stag options
 
     cap staging deploy -Shead=true      # => sets branch to master
     cap staging deploy -Stag=staging/01 # => sets branch to staging/01
-
-## Known Issues
-
-  * DOES NOT work with capistrano ext multi-stage
-  * It will accept invalid tag names (if you specify a tag name with a space, it will blow up when you try to create the tag)
-
-## Things that might be useful
-
-  * Make it assume current\_stage is the first stage, if only one stage is given in cap task (so auto-tagging still works with single-stage deployments)
-  * Default to "production" if no stages are given??  That would make it easier
-  * Make it possible to define a different remote other than "origin"
-  * Make it possible to define a different default branch other than "master"
-  * Make it work with either cap-ext multistage or single-file deploy.rb files
-  * Make it possible to provide your own tag naming convention (like the PaperClip string interpolation), instead of relying on <prefix>/<timestamp>
 
 ## Links
 
