@@ -1,6 +1,6 @@
 # AutoTagger
 
-AutoTagger allows you to create a date-stamped tag for each stage of your deployment, and deploy from the last tag from the previous environment.
+AutoTagger is a gem that helps you automatically create a date-stamped tag for each stage of your deployment, and deploy from the last tag from the previous environment.
 
 Let's say you have the following workflow:
 
@@ -10,9 +10,33 @@ Let's say you have the following workflow:
 
 You can use the `autotag` command to tag releases on your CI box, then use the capistrano tasks to auto-tag each release.
 
+## Installation
+
+    gem sources -a http://gems.github.com
+    sudo gem install zilkey-auto_tagger
+
+## The autotag executable
+
+Installing the gem creates an executable file named autotag, which takes two arguments: the stage, and optionally the path to the git repo:
+
+    $ autotag demo  # => creates a tag like demo/200804041234 in the current directory
+    $ autotag demo . # => same as above
+    $ autotag demo /Users/me/foo # => cd's to /Users/me/foo before creating the tag
+
+Running autotag does the following:
+
+    $ git fetch origin --tags
+    $ git tag <stage>/<timestamp>
+    $ git push origin --tags
+
 ## Capistrano Integration
 
-Example deploy file:
+AutoTagger comes with 2 capistrano tasks: 
+
+  * `release_tagger:set_branch` tries to set the branch to the last tag from the previous environment.
+  * `release_tagger:create_tag` runs autotag for the current stage
+
+Example `config/deploy.rb` file:
 
     require 'release_tagger'
 
@@ -45,20 +69,13 @@ Assume you have the following tags in your git repository:
 
 The deployments would look like this:
 
-    cap staging deploy    # => ci/01
-    cap production deploy # => staging/01
+    cap staging deploy    # => sets branch to ci/01
+    cap production deploy # => sets branch to staging/01
 
 You can override with with the -Shead and -Stag options
 
-    cap staging deploy -Shead=true      # => master
-    cap staging deploy -Stag=staging/01 # => staging/01
-
-## The autotag executable
-
-    autotag -h
-    autotag demo
-    autotag demo .
-    autotag demo /Users/me/foo
+    cap staging deploy -Shead=true      # => sets branch to master
+    cap staging deploy -Stag=staging/01 # => sets branch to staging/01
 
 ## Known Issues
 
@@ -67,6 +84,8 @@ You can override with with the -Shead and -Stag options
 
 ## Things that might be useful
 
+  * Make it assume current\_stage is the first stage, if only one stage is given in cap task (so auto-tagging still works with single-stage deployments)
+  * Default to "production" if no stages are given??  That would make it easier
   * Make it possible to define a different remote other than "origin"
   * Make it possible to define a different default branch other than "master"
   * Make it work with either cap-ext multistage or single-file deploy.rb files
