@@ -17,8 +17,8 @@ You can use the `autotag` command to tag releases on your CI box, then use the c
 
 ## Contribute
 
-    [Tracker Project](http://www.pivotaltracker.com/projects/11988)
-    [GitHub Repository](http://github.com/zilkey/auto_tagger/tree/master)
+  * [Tracker Project](http://www.pivotaltracker.com/projects/11988)
+  * [GitHub Repository](http://github.com/zilkey/auto_tagger/tree/master)
 
 ## The autotag executable
 
