@@ -65,22 +65,69 @@ Example `config/deploy.rb` file:
     # You need to add the before/ater callbacks yourself
     before "deploy:update_code", "release_tagger:set_branch"
     after  "deploy", "release_tagger:create_tag"
+    after  "deploy", "release_tagger:write_tag_to_shared"
+    after  "deploy", "release_tagger:print_latest_tags"
 
-Assume you have the following tags in your git repository:
+### `release_tagger:set_branch`
+
+This task sets the git branch to the latest tag from the previous stage.  Assume you have the following tags in your git repository:
 
   * ci/01
   * staging/01
   * production/01
 
+And the following stages in your capistrano file:
+
+    set :stages, [:ci, :staging, :production]
+
 The deployments would look like this:
 
-    cap staging deploy    # => sets branch to ci/01
-    cap production deploy # => sets branch to staging/01
+    cap staging release_tagger:set_branch    # => sets branch to ci/01
+    cap production release_tagger:set_branch # => sets branch to staging/01
 
 You can override with with the -Shead and -Stag options
 
-    cap staging deploy -Shead=true      # => sets branch to master
-    cap staging deploy -Stag=staging/01 # => sets branch to staging/01
+    cap staging release_tagger:set_branch -Shead=true      # => sets branch to master
+    cap staging release_tagger:set_branch -Stag=staging/01 # => sets branch to staging/01
+
+If you add `before "deploy:update_code", "release_tagger:set_branch"`, you can just deploy with:
+
+    cap staging deploy
+    
+and the branch will be set for you automatically.
+
+### `release_tagger:create_tag`
+
+This cap task creates a new tag, based on the latest tag from the previous environment.  
+
+If there is no tag from the previous stage, it creates a new tag from the latest commit in your _working directory_.
+
+### `release_tagger:print_latest_tags`
+
+This task reads the git version from the text file in shared:
+
+    cap staging release_tagger:read_tag_from_shared
+
+### `release_tagger:print_latest_tags`
+
+This task takes the latest tag from each environment and prints it to the screen.  You can add it to your deploy.rb like so:
+
+    after  "deploy", "release_tagger:print_latest_tags"
+
+Or call it directly, like:
+
+    cap production release_tagger:print_latest_tags
+    
+This will produce output like:
+
+    ** AUTO TAGGER: release tag history is:
+     ** ci         ci/20090331045345              8031807feb5f4f99dd83257cdc07081fa6080cba some commit message
+     ** staging    staging/20090331050908         8031807feb5f4f99dd83257cdc07081fa6080cba some commit message
+     ** production production/20090331050917      8031807feb5f4f99dd83257cdc07081fa6080cba some commit message
+
+## Acknowledgments
+
+Special thanks to Brian Takita for the original recipes, and to Mike Dalessio for his git fu.
 
 ## Links
 
