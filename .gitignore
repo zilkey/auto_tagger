@@ -2,4 +2,4 @@ pkg/*
 rdoc/*
 *.gem
 .DS_Store
-feature/test_files/*
+test_files/*

@@ -1,0 +1,27 @@
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "recipes", "release_tagger"))
+
+set :stages, [:ci, :staging, :production]
+
+set :application, "deployed"
+set :repository,  "file://<%= repository %>"
+set :deploy_to, "<%= deploy_to %>"
+set :scm, :git
+set :scm_command, "<%= git_location %>"
+role :app, "localhost" # => this must be mapped
+
+namespace :deploy do
+  task :restart do
+    puts "restarting..."
+  end
+end
+
+<% environments.each do |environment| %>
+task :<%= environment %> do
+  set :current_stage, :<%= environment %>
+end
+<% end %>
+
+before "deploy:update_code", "release_tagger:set_branch"
+after  "deploy", "release_tagger:create_tag"
+after  "deploy", "release_tagger:write_tag_to_shared"
+after  "deploy", "release_tagger:print_latest_tags"
