@@ -11,24 +11,29 @@ Capistrano::Configuration.instance(:must_exist).load do
         set :branch, branch_name
         logger.info "setting branch to #{branch_name}"
       else
-        logger.info "AUTO TAGGER WARNING: skipping auto-assignment of branch.  Branch will remain the default.}"
+        logger.info "AUTO TAGGER: skipping auto-assignment of branch.  Branch will remain the default.}"
       end
     end
 
+    desc %Q{Prints the most current tags from all stages}
     task :print_latest_tags, :roles => :app do
-      logger.info "AUTOTAG release tag history is:"
+      logger.info "AUTO TAGGER: release tag history is:"
       entries = CapistranoHelper.new(variables).release_tag_entries
       entries.each do |entry|
         logger.info entry
       end
     end
 
-    task :write_tag_to_shared, :roles => :app do
-      run "echo '#{branch}' > #{shared_path}/released_git_tag.txt"
+    desc %Q{Reads the text file with the latest tag from the shared directory}
+    task :read_tag_from_shared, :roles => :app do
+      logger.info "AUTO TAGGER: latest tag deployed to this environment was:"
+      run "cat #{shared_path}/released_git_tag.txt"
     end
 
-    task :read_tag_from_shared, :roles => :app do
-      run "cat #{shared_path}/released_git_tag.txt"
+    desc %Q{Writes the tag name to a file in the shared directory}
+    task :write_tag_to_shared, :roles => :app do
+      logger.info "AUTO TAGGER: writing tag to shared text file on remote server"
+      run "echo '#{branch}' > #{shared_path}/released_git_tag.txt"
     end
 
     desc %Q{Creates a tag using the current_stage variable}
