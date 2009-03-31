@@ -16,3 +16,9 @@ require 'spec'
 
 # require 'cucumber/rails/rspec'
 # require 'webrat/core/matchers'
+
+Before do
+  @root_dir = File.join(Dir.pwd, "features", "test_files")
+  FileUtils.rm_r(@root_dir) if File.exists?(@root_dir)
+  FileUtils.mkdir_p(@root_dir)
+end

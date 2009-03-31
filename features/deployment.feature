@@ -26,3 +26,6 @@ Feature: Deployment
       |foo  |
     And the "foo" tag should point to the same commit as the "bar" tag
   
+  Scenario: Another user deploys
+    Given an app
+  
