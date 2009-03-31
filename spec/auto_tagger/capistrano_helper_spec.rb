@@ -6,19 +6,13 @@ describe CapistranoHelper do
     it "blows up if there are no stages" do
       proc do
         CapistranoHelper.new({})
-      end.should raise_error(CapistranoHelper::NoStagesSpecifiedError)
+      end.should raise_error(StageManager::NoStagesSpecifiedError)
     end
   end
 
   describe "#variables" do
     it "returns all variables" do
       CapistranoHelper.new({:stages => [:bar]}).variables.should == {:stages => [:bar]}
-    end
-  end
-
-  describe "#stages" do
-    it "returns the hashes' stages value" do
-      CapistranoHelper.new({:stages => [:bar]}).stages.should == [:bar]
     end
   end
 
@@ -37,20 +31,6 @@ describe CapistranoHelper do
     it "returns the hashes' current stage value" do
       CapistranoHelper.new({:stages => [:bar], :current_stage => :bar}).current_stage.should == :bar
       CapistranoHelper.new({:stages => [:bar]}).current_stage.should be_nil
-    end
-  end
-
-  describe "#previous_stage" do
-    it "returns the previous stage if there is more than one stage, and there is a current stage" do
-      CapistranoHelper.new({:stages => [:foo, :bar], :current_stage => :bar}).previous_stage.should == :foo
-    end
-
-    it "returns nil if there is no previous stage" do
-      CapistranoHelper.new({:stages => [:bar], :current_stage => :bar}).previous_stage.should be_nil
-    end
-
-    it "returns nil if there is no current stage" do
-      CapistranoHelper.new({:stages => [:bar]}).previous_stage.should be_nil
     end
   end
 

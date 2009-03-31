@@ -1,26 +1,16 @@
 class CapistranoHelper
 
-  class NoStagesSpecifiedError < StandardError
-    def message
-      "You must set the :stages variable to an array, like set :stages, [:ci, :demo]"
-    end
-  end
-  
-  attr_reader :variables, :stages, :current_stage, :working_directory
+  attr_reader :variables, :current_stage, :working_directory
 
   def initialize(variables)
-    raise NoStagesSpecifiedError unless variables[:stages]
+    @stage_manager = StageManager.new(variables[:stages])
     @variables = variables
-    @stages = variables[:stages]
     @current_stage = variables[:current_stage]
     @working_directory = variables[:working_directory] || Dir.pwd
   end
 
   def previous_stage
-    if current_stage
-      index = stages.index(current_stage) - 1
-      stages[index] if index > -1 
-    end
+    @stage_manager.previous_stage(current_stage)
   end
 
   def branch
