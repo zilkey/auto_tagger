@@ -27,6 +27,10 @@ class Repository
     @tags ||= Tag.new(self)
   end
   
+  def commit_for(tag)
+    Commander.execute(path, "git --no-pager log #{tag} --pretty=oneline -1")
+  end
+  
   def run(cmd)
     Commander.execute(path, cmd)
   end

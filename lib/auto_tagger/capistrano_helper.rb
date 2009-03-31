@@ -25,4 +25,15 @@ class CapistranoHelper
     end
   end
 
+  def release_tag_entries
+    entries = []
+    @stage_manager.stages.each do |stage|
+      tagger = AutoTagger.new(stage, working_directory)
+      tag = tagger.latest_tag
+      commit = tagger.repository.commit_for(tag)
+      entries << "#{stage.to_s.ljust(10, " ")} #{tag.to_s.ljust(30, " ")} #{commit.to_s}"
+    end
+    entries
+  end
+
 end

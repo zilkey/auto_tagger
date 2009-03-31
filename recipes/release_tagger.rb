@@ -15,6 +15,14 @@ Capistrano::Configuration.instance(:must_exist).load do
       end
     end
 
+    task :latest_tags do
+      logger.info "AUTOTAG release tag history is:"
+      entries = CapistranoHelper.new(variables).release_tag_entries
+      entries.each do |entry|
+        logger.info entry
+      end
+    end
+
     desc %Q{Creates a tag using the current_stage variable}
     task :create_tag do
       if variables[:current_stage]
