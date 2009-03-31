@@ -131,6 +131,11 @@ This will produce output like:
      ** staging    staging/20090331050908         8031807feb5f4f99dd83257cdc07081fa6080cba some commit message
      ** production production/20090331050917      8031807feb5f4f99dd83257cdc07081fa6080cba some commit message
 
+## Running tests:
+
+You must be able to ssh into your box via localhost (remote login)
+It will create all kinds of files, and run cap deploys locally
+
 ## Acknowledgments
 
 Special thanks to Brian Takita for the original recipes, and to Mike Dalessio for his git fu.
