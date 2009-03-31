@@ -1,3 +1,9 @@
+# IMPORTANT NOTE
+
+This gem is still in it's infancy, and lots of things might change.  Since this deals with your git repository, please use with caution.
+
+I don't have a good way of testing the capistrano tasks yet, so I can't guarantee that there are no nefarious bugs in them.
+
 # AutoTagger
 
 AutoTagger is a gem that helps you automatically create a date-stamped tag for each stage of your deployment, and deploy from the last tag from the previous environment.
@@ -68,7 +74,7 @@ Example `config/deploy.rb` file:
     after  "deploy", "release_tagger:write_tag_to_shared"
     after  "deploy", "release_tagger:print_latest_tags"
 
-### `release_tagger:set_branch`
+### release_tagger:set_branch
 
 This task sets the git branch to the latest tag from the previous stage.  Assume you have the following tags in your git repository:
 
@@ -96,19 +102,19 @@ If you add `before "deploy:update_code", "release_tagger:set_branch"`, you can j
     
 and the branch will be set for you automatically.
 
-### `release_tagger:create_tag`
+### release_tagger:create_tag
 
 This cap task creates a new tag, based on the latest tag from the previous environment.  
 
 If there is no tag from the previous stage, it creates a new tag from the latest commit in your _working directory_.
 
-### `release_tagger:print_latest_tags`
+### release_tagger:print_latest_tags
 
 This task reads the git version from the text file in shared:
 
     cap staging release_tagger:read_tag_from_shared
 
-### `release_tagger:print_latest_tags`
+### release_tagger:print_latest_tags
 
 This task takes the latest tag from each environment and prints it to the screen.  You can add it to your deploy.rb like so:
 
