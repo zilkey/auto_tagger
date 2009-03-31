@@ -11,9 +11,9 @@ class AutoTagger
     @stage = stage
   end
 
-  def create_tag
+  def create_tag(commit = nil)
     repository.tags.fetch
-    new_tag = repository.tags.create(stage)
+    new_tag = repository.tags.create(stage, commit)
     repository.tags.push
     new_tag
   end

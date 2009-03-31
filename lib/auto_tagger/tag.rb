@@ -1,3 +1,5 @@
+# git --no-pager log --pretty=oneline -1
+# git tag -a -m 'Successful continuous integration build on #{timestamp}' #{tag_name}"
 class Tag
   
   attr_reader :repository
@@ -22,10 +24,11 @@ class Tag
     repository.run! "git push origin --tags"
   end
     
-  def create(stage)
-    # git tag -a -m 'Successful continuous integration build on #{timestamp}' #{tag_name}"
+  def create(stage, commit = nil)
     tag_name = name_for(stage)
-    repository.run! "git tag #{tag_name}"
+    cmd = "git tag #{tag_name}"
+    cmd += " #{commit}" if commit
+    repository.run! cmd
     tag_name
   end
   

@@ -43,6 +43,19 @@ describe AutoTagger do
       
       AutoTagger.new("ci", "/foo").create_tag
     end
+
+    it "allows you to base it off an existing tag or commit" do
+      time = Time.local(2001,1,1)
+      mock(Time).now.once {time}
+      timestamp = time.utc.strftime('%Y%m%d%H%M%S')
+      mock(File).exists?(anything).twice { true }
+
+      mock(Commander).execute!("/foo", "git fetch origin --tags") {true}
+      mock(Commander).execute!("/foo", "git tag ci/#{timestamp} guid") {true}
+      mock(Commander).execute!("/foo", "git push origin --tags")  {true}
+      
+      AutoTagger.new("ci", "/foo").create_tag("guid")
+    end
     
     it "returns the tag that was created" do
       time = Time.local(2001,1,1)
