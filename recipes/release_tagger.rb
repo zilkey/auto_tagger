@@ -32,8 +32,12 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     desc %Q{Writes the tag name to a file in the shared directory}
     task :write_tag_to_shared, :roles => :app do
-      logger.info "AUTO TAGGER: writing tag to shared text file on remote server"
-      run "echo '#{branch}' > #{shared_path}/released_git_tag.txt"
+      if exists?(:branch)
+        logger.info "AUTO TAGGER: writing tag to shared text file on remote server"
+        run "echo '#{branch}' > #{shared_path}/released_git_tag.txt"
+      else
+        logger.info "AUTO TAGGER: no branch available.  Text file was not written to server"
+      end
     end
 
     desc %Q{Creates a tag using the current_stage variable}
