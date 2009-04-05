@@ -1,3 +1,8 @@
+2009-04-05
+
+- Added basic support for cap-ext-multistage
+- Changed "stages" variable to "autotagger_stages" so as not to conflict with the multistage "stages" variable in capistrano
+
 2009-03-31
 
 - Capistrano bases new tags off of old tags from the previous environment when tagging if there is a tag from the previous environment

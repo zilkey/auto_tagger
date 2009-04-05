@@ -49,8 +49,8 @@ Example `config/deploy.rb` file:
 
     require 'release_tagger'
 
-    # The :stages variable is required
-    set :stages, [:ci, :staging, :production]
+    # The :autotagger_stages variable is required
+    set :autotagger_stages, [:ci, :staging, :production]
 
     # The :working_directory variable is optional, and defaults to Dir.pwd
     # :working_directory can be an absolute or relative path
@@ -71,6 +71,21 @@ Example `config/deploy.rb` file:
     after  "deploy", "release_tagger:create_tag"
     after  "deploy", "release_tagger:write_tag_to_shared"
     after  "deploy", "release_tagger:print_latest_tags"
+
+### Cpistano-ext multistage support
+
+If you use capistanoext multistage, you can use autotagger.
+
+    set :autotagger_stages, [:ci, :staging, :production]
+    set :stages, [:staging, :production]
+    set :default_stage, :staging
+    require 'capistrano/ext/multistage'
+
+Then, in each of your stage files, you need to add:
+
+    set :current_stage, :production
+    
+Once I figure out how to auto-detect stages, I'll add support for that too.
 
 ### release_tagger:set_branch
 

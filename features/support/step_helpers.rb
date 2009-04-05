@@ -18,6 +18,39 @@ class StepHelpers
     `cd #{repo_dir} && git --bare init`
   end
 
+  def create_app_with_single_deploy_file
+    create_git_repo
+    create_app
+    create_single_deploy_file
+  end
+
+  def create_app_with_cap_ext_multistage
+    create_git_repo
+    create_app
+    create_cap_ext_multistage_deploy_files
+  end
+
+  def deploy(stage)
+    run_commands [
+      "cd #{app_dir}",
+      "cap deploy:setup",
+      "cap #{stage} deploy"
+    ]
+  end
+
+  def autotag(stage)
+    system "cd #{app_dir} && git tag #{stage}_#{Time.now.utc.strftime('%Y%m%d%H%M%S')} && git push origin --tags"
+  end
+
+  def tags
+    system "cd #{app_dir} && git fetch origin --tags"
+    tags = `cd #{app_dir} && git tag`
+    puts tags
+    tags
+  end
+
+  private
+
   def create_app
     FileUtils.mkdir_p app_dir
     run_commands [
@@ -33,26 +66,7 @@ class StepHelpers
     ]
   end
 
-  def deploy
-    run_commands [
-      "cd #{app_dir}",
-      "cap deploy:setup",
-      "cap staging deploy"
-    ]
-  end
-
-  def autotag(stage)
-    system "cd #{app_dir} && git tag #{stage}_#{Time.now.utc.strftime('%Y%m%d%H%M%S')} && git push origin --tags"
-  end
-
-  def tags
-    system "cd #{app_dir} && git fetch origin --tags"
-    tags = `cd #{app_dir} && git tag`
-    puts tags
-    tags
-  end
-
-  def create_three_stage_deployment_file
+  def create_single_deploy_file
     repository = repo_dir
     deploy_to = File.join(test_files_dir, "deployed")
     git_location = `which git`.strip
@@ -66,6 +80,35 @@ class StepHelpers
     template = ERB.new File.read(path)
     output = template.result(binding)
     File.open(File.join(app_dir, "config", "deploy.rb"), 'w') {|f| f.write(output) }
+  end
+
+  def create_cap_ext_multistage_deploy_files
+    repository = repo_dir
+    deploy_to = File.join(test_files_dir, "deployed")
+    git_location = `which git`.strip
+    user = Etc.getlogin
+    environments = [:ci, :staging, :production]
+
+    path = File.expand_path(File.join(__FILE__, "..", "..", "templates", "cap_ext_deploy.erb"))
+
+    template = ERB.new File.read(path)
+    output = template.result(binding)
+    File.open(File.join(app_dir, "config", "deploy.rb"), 'w') {|f| f.write(output) }    
+
+    %w(staging production).each do |stage|
+      create_cap_ext_multistage_deploy_stage_file(stage)
+    end
+  end
+
+  def create_cap_ext_multistage_deploy_stage_file(stage)
+    deploy_subdir = File.join(app_dir, "config", "deploy")
+    FileUtils.mkdir_p deploy_subdir
+
+    template_path = File.expand_path(File.join(__FILE__, "..", "..", "templates", "stage.erb"))
+    template = ERB.new File.read(template_path)
+    output = template.result(binding)
+
+    File.open(File.join(deploy_subdir, "#{stage}.rb"), 'w') {|f| f.write(output) }
   end
 
   def run_commands(commands)

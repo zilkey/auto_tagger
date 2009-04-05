@@ -1,9 +1,15 @@
-Given /^a three-stage app$/ do
+Given /^a three-stage app using single deploy file$/ do
   puts
   helpers = StepHelpers.new
-  helpers.create_git_repo
-  helpers.create_app
-  helpers.create_three_stage_deployment_file
+  helpers.create_app_with_single_deploy_file
+  puts
+  @tags = helpers.tags
+end
+
+Given /^a three-stage app using cap-multistage$/ do
+  puts
+  helpers = StepHelpers.new
+  helpers.create_app_with_cap_ext_multistage
   puts
   @tags = helpers.tags
 end
@@ -16,10 +22,10 @@ Given /^a ci tag$/ do
   puts
 end
 
-When /^I deploy$/ do
+When /^I deploy to staging$/ do
   puts
   helpers = StepHelpers.new
-  helpers.deploy
+  helpers.deploy("staging")
   puts
 end
 

@@ -12,25 +12,25 @@ describe CapistranoHelper do
 
   describe "#variables" do
     it "returns all variables" do
-      CapistranoHelper.new({:stages => [:bar]}).variables.should == {:stages => [:bar]}
+      CapistranoHelper.new({:autotagger_stages => [:bar]}).variables.should == {:autotagger_stages => [:bar]}
     end
   end
 
   describe "#working_directory" do
     it "returns the hashes' working directory value" do
-      CapistranoHelper.new({:stages => [:bar], :working_directory => "/foo"}).working_directory.should == "/foo"
+      CapistranoHelper.new({:autotagger_stages => [:bar], :working_directory => "/foo"}).working_directory.should == "/foo"
     end
 
     it "defaults to Dir.pwd if it's not set, or it's nil" do
       mock(Dir).pwd { "/bar" }
-      CapistranoHelper.new({:stages => [:bar]}).working_directory.should == "/bar"
+      CapistranoHelper.new({:autotagger_stages => [:bar]}).working_directory.should == "/bar"
     end
   end
 
   describe "#current_stage" do
     it "returns the hashes' current stage value" do
-      CapistranoHelper.new({:stages => [:bar], :current_stage => :bar}).current_stage.should == :bar
-      CapistranoHelper.new({:stages => [:bar]}).current_stage.should be_nil
+      CapistranoHelper.new({:autotagger_stages => [:bar], :current_stage => :bar}).current_stage.should == :bar
+      CapistranoHelper.new({:autotagger_stages => [:bar]}).current_stage.should be_nil
     end
   end
 
@@ -45,7 +45,7 @@ describe CapistranoHelper do
 
       variables = {
         :working_directory => "/foo",
-        :stages => [:ci, :staging, :production]
+        :autotagger_stages => [:ci, :staging, :production]
       }
       histories = CapistranoHelper.new(variables).release_tag_entries
       histories.length.should == 3
@@ -59,7 +59,7 @@ describe CapistranoHelper do
     describe "with :head and :branch specified" do
       it "returns master" do
         variables = {
-          :stages => [:bar],
+          :autotagger_stages => [:bar],
           :head => nil,
           :branch => "foo"
         }
@@ -70,7 +70,7 @@ describe CapistranoHelper do
     describe "with :head specified, but no branch specified" do
       it "returns master" do
         variables = {
-          :stages => [:bar],
+          :autotagger_stages => [:bar],
           :head => nil
         }
         CapistranoHelper.new(variables).branch.should == nil
@@ -80,7 +80,7 @@ describe CapistranoHelper do
     describe "with :branch specified" do
       it "returns the value of branch" do
         variables = {
-          :stages => [:bar],
+          :autotagger_stages => [:bar],
           :branch => "foo"
         }
         CapistranoHelper.new(variables).branch.should == "foo"
@@ -90,7 +90,7 @@ describe CapistranoHelper do
     describe "with a previous stage with a tag" do
       it "returns the latest tag for the previous stage" do
         variables = {
-          :stages => [:foo, :bar],
+          :autotagger_stages => [:foo, :bar],
           :current_stage => :bar,
           :branch => "master",
           :working_directory => "/foo"
@@ -105,7 +105,7 @@ describe CapistranoHelper do
     describe "with no branch and a previous stage with no tag" do
       it "returns nil" do
         variables = {
-          :stages => [:foo, :bar],
+          :autotagger_stages => [:foo, :bar],
           :current_stage => :bar,
           :working_directory => "/foo"
         }
@@ -119,7 +119,7 @@ describe CapistranoHelper do
     describe "with no branch and previous stage" do
       it "returns nil" do
         variables = {
-          :stages => [:bar],
+          :autotagger_stages => [:bar],
           :current_stage => :bar
         }
         CapistranoHelper.new(variables).previous_stage.should be_nil

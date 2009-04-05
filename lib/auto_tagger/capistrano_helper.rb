@@ -3,7 +3,7 @@ class CapistranoHelper
   attr_reader :variables, :current_stage, :working_directory
 
   def initialize(variables)
-    @stage_manager = StageManager.new(variables[:stages])
+    @stage_manager = StageManager.new(variables[:autotagger_stages])
     @variables = variables
     @current_stage = variables[:current_stage]
     @working_directory = variables[:working_directory] || Dir.pwd

@@ -1,0 +1,5 @@
+gems:
+- name: capistrano
+  version: '>= 2.5.3'
+- name: capistrano-ext
+  version: '>= 1.2.1'
