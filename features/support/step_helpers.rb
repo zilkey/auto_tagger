@@ -39,7 +39,7 @@ class StepHelpers
   end
 
   def autotag(stage)
-    system "cd #{app_dir} && git tag #{stage}_#{Time.now.utc.strftime('%Y%m%d%H%M%S')} && git push origin --tags"
+    system "cd #{app_dir} && git tag #{stage}/#{Time.now.utc.strftime('%Y%m%d%H%M%S')} && git push origin --tags"
   end
 
   def tags
