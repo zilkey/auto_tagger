@@ -1,6 +1,9 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe AutoTagger do
+  before(:each) do
+    stub(Dir).pwd { File.join(File.dirname(__FILE__), '..', '..') }
+  end
 
   describe ".new" do
     it "blows up if you don't pass an stage" do
