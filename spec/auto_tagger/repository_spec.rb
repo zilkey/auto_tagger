@@ -56,13 +56,13 @@ describe AutoTagger::Repository do
   describe "run!" do
     it "sends the correct command" do
       mock(File).exists?(anything).twice { true }
-      mock(AutoTagger::Commander).execute!("/foo", "bar") { true }
+      mock(AutoTagger::Commander).execute?("/foo", "bar") { true }
       AutoTagger::Repository.new("/foo").run!("bar")
     end
 
     it "raises an exception if it the command returns false" do
       mock(File).exists?(anything).twice { true }
-      mock(AutoTagger::Commander).execute!("/foo", "bar") { false }
+      mock(AutoTagger::Commander).execute?("/foo", "bar") { false }
       proc do
         AutoTagger::Repository.new("/foo").run!("bar")
       end.should raise_error(AutoTagger::GitCommandFailedError)

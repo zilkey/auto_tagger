@@ -40,9 +40,9 @@ describe AutoTagger::Runner do
       timestamp = time.utc.strftime('%Y%m%d%H%M%S')
       mock(File).exists?(anything).twice { true }
 
-      mock(AutoTagger::Commander).execute!("/foo", "git fetch origin --tags") {true}
-      mock(AutoTagger::Commander).execute!("/foo", "git tag ci/#{timestamp}") {true}
-      mock(AutoTagger::Commander).execute!("/foo", "git push origin --tags")  {true}
+      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags") {true}
+      mock(AutoTagger::Commander).execute?("/foo", "git tag ci/#{timestamp}") {true}
+      mock(AutoTagger::Commander).execute?("/foo", "git push origin --tags")  {true}
 
       AutoTagger::Runner.new("ci", "/foo").create_tag
     end
@@ -53,9 +53,9 @@ describe AutoTagger::Runner do
       timestamp = time.utc.strftime('%Y%m%d%H%M%S')
       mock(File).exists?(anything).twice { true }
 
-      mock(AutoTagger::Commander).execute!("/foo", "git fetch origin --tags") {true}
-      mock(AutoTagger::Commander).execute!("/foo", "git tag ci/#{timestamp} guid") {true}
-      mock(AutoTagger::Commander).execute!("/foo", "git push origin --tags")  {true}
+      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags") {true}
+      mock(AutoTagger::Commander).execute?("/foo", "git tag ci/#{timestamp} guid") {true}
+      mock(AutoTagger::Commander).execute?("/foo", "git push origin --tags")  {true}
 
       AutoTagger::Runner.new("ci", "/foo").create_tag("guid")
     end
@@ -65,7 +65,7 @@ describe AutoTagger::Runner do
       mock(Time).now.once {time}
       timestamp = time.utc.strftime('%Y%m%d%H%M%S')
       mock(File).exists?(anything).twice { true }
-      mock(AutoTagger::Commander).execute!(anything, anything).times(any_times) {true}
+      mock(AutoTagger::Commander).execute?(anything, anything).times(any_times) {true}
 
       AutoTagger::Runner.new("ci", "/foo").create_tag.should == "ci/#{timestamp}"
     end
@@ -75,7 +75,7 @@ describe AutoTagger::Runner do
     it "generates the correct commands" do
       mock(File).exists?(anything).twice { true }
 
-      mock(AutoTagger::Commander).execute!("/foo", "git fetch origin --tags") {true}
+      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags") {true}
       mock(AutoTagger::Commander).execute("/foo", "git tag") { "ci_01" }
 
       AutoTagger::Runner.new("ci", "/foo").latest_tag

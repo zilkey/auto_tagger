@@ -36,7 +36,7 @@ module AutoTagger
     end
 
     def run!(cmd)
-      Commander.execute!(path, cmd) || raise(GitCommandFailedError)
+      Commander.execute?(path, cmd) || raise(GitCommandFailedError)
     end
 
   end

@@ -40,7 +40,7 @@ describe AutoTagger::CapistranoHelper do
       mock(AutoTagger::Commander).execute("/foo", "git --no-pager log ci/01 --pretty=oneline -1") { "guid1" }
       mock(AutoTagger::Commander).execute("/foo", "git --no-pager log staging/01 --pretty=oneline -1") { "guid2" }
       mock(AutoTagger::Commander).execute("/foo", "git --no-pager log production/01 --pretty=oneline -1") { "guid3" }
-      mock(AutoTagger::Commander).execute!("/foo", "git fetch origin --tags").times(any_times) { true }
+      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags").times(any_times) { true }
       mock(File).exists?(anything).times(any_times) {true}
 
       variables = {
@@ -57,7 +57,7 @@ describe AutoTagger::CapistranoHelper do
     it "ignores tags delimited with '_'" do
       mock(AutoTagger::Commander).execute("/foo", "git tag").times(any_times) { "ci/01\nci_02" }
       mock(AutoTagger::Commander).execute("/foo", "git --no-pager log ci/01 --pretty=oneline -1") { "guid1" }
-      mock(AutoTagger::Commander).execute!("/foo", "git fetch origin --tags").times(any_times) { true }
+      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags").times(any_times) { true }
       mock(File).exists?(anything).times(any_times) {true}
 
       variables = {

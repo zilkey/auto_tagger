@@ -5,9 +5,11 @@ module AutoTagger
         `#{command_in_context(path, cmd)}`
       end
 
-      def execute!(path, cmd)
+      def execute?(path, cmd)
         system command_in_context(path, cmd)
       end
+
+      private
 
       def command_in_context(path, cmd)
         "cd #{path} && #{cmd}"

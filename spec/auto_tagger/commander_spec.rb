@@ -11,7 +11,7 @@ describe AutoTagger::Commander do
   describe "system" do
     it "executes and doesn't return anything" do
       mock(AutoTagger::Commander).system("cd /foo && ls")
-      AutoTagger::Commander.execute!("/foo", "ls")
+      AutoTagger::Commander.execute?("/foo", "ls")
     end
   end
 end
