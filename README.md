@@ -1,8 +1,6 @@
 # IMPORTANT NOTE
 
-This gem is still in it's infancy, and lots of things might change.  Since this deals with your git repository, please use with caution.
-
-I don't have a good way of testing the capistrano tasks yet, so I can't guarantee that there are no nefarious bugs in them.
+This gem is still in it's infancy, and lots of things might change.  Since this creates and pushes tags to your git repository, please use with caution.
 
 # AutoTagger
 
@@ -136,12 +134,29 @@ This will produce output like:
 You must be able to ssh into your box via localhost (remote login).  To make this easier, add your own key to your own account:
 
     cat ~/.ssh/id_rsa.pub >>~/.ssh/authorized_keys
+    
+To ensure that this has worked, try this:
 
-It will create all kinds of files, and run cap deploys locally
+    ssh localhost
+    
+If it asks you for a password, you've done something wrong.
+
+To run the specs, execute:
+
+    spec spec/
+    
+To run the cucumber features, execute:
+
+    cucumber features/
 
 ## Acknowledgments
 
-Special thanks to Brian Takita for the original recipes, and to Mike Dalessio for his git fu.
+Special thanks to 
+
+ * Brian Takita for the original recipes
+ * Mike Dalessio for his git fu
+ * Chad Wooley for his feature ideas
+ * Tim Holahan for his QA
 
 ## Links
 
