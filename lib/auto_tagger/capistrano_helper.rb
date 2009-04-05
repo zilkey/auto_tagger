@@ -1,16 +1,16 @@
 class CapistranoHelper
 
-  attr_reader :variables, :current_stage, :working_directory
+  attr_reader :variables, :stage, :working_directory
 
   def initialize(variables)
     @stage_manager = StageManager.new(variables[:autotagger_stages])
     @variables = variables
-    @current_stage = variables[:current_stage]
+    @stage = variables[:stage]
     @working_directory = variables[:working_directory] || Dir.pwd
   end
 
   def previous_stage
-    @stage_manager.previous_stage(current_stage)
+    @stage_manager.previous_stage(stage)
   end
 
   def branch

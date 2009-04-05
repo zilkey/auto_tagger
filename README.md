@@ -57,13 +57,13 @@ Example `config/deploy.rb` file:
     set :working_directory, "../../"
 
     task :production do
-      # In each of your environments that need auto-branch setting, you need to set :current_stage
-      set :current_stage, :production
+      # In each of your environments that need auto-branch setting, you need to set :stage
+      set :stage, :production
     end
 
     task :staging do
-      # If you do not set current_stage, it will not auto-set your branch
-      # set :current_stage, :staging
+      # If you do not set stage, it will not auto-set your branch
+      # set :stage, :staging
     end
 
     # You need to add the before/ater callbacks yourself
@@ -74,18 +74,14 @@ Example `config/deploy.rb` file:
 
 ### Cpistano-ext multistage support
 
-If you use capistanoext multistage, you can use autotagger.
+If you use capistano-ext multistage, you can use auto_tagger.
 
     set :autotagger_stages, [:ci, :staging, :production]
     set :stages, [:staging, :production]
     set :default_stage, :staging
     require 'capistrano/ext/multistage'
 
-Then, in each of your stage files, you need to add:
-
-    set :current_stage, :production
-    
-Once I figure out how to auto-detect stages, I'll add support for that too.
+When you deploy, autotagger will auto-detect your current stage.
 
 ### release_tagger:set_branch
 
@@ -97,7 +93,7 @@ This task sets the git branch to the latest tag from the previous stage.  Assume
 
 And the following stages in your capistrano file:
 
-    set :stages, [:ci, :staging, :production]
+    set :autotagger_stages, [:ci, :staging, :production]
 
 The deployments would look like this:
 

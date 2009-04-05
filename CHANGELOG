@@ -2,6 +2,7 @@
 
 - Added basic support for cap-ext-multistage
 - Changed "stages" variable to "autotagger_stages" so as not to conflict with the multistage "stages" variable in capistrano
+- Changed the :current_stage variable in the capistrano tasks to just :stage
 
 2009-03-31
 

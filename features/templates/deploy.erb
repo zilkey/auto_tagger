@@ -24,7 +24,7 @@ end
 
 <% environments.each do |environment| %>
 task :<%= environment %> do
-  set :current_stage, :<%= environment %>
+  set :stage, :<%= environment %>
 end
 <% end %>
 

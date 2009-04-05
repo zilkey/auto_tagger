@@ -27,10 +27,10 @@ describe CapistranoHelper do
     end
   end
 
-  describe "#current_stage" do
+  describe "#stage" do
     it "returns the hashes' current stage value" do
-      CapistranoHelper.new({:autotagger_stages => [:bar], :current_stage => :bar}).current_stage.should == :bar
-      CapistranoHelper.new({:autotagger_stages => [:bar]}).current_stage.should be_nil
+      CapistranoHelper.new({:autotagger_stages => [:bar], :stage => :bar}).stage.should == :bar
+      CapistranoHelper.new({:autotagger_stages => [:bar]}).stage.should be_nil
     end
   end
 
@@ -91,7 +91,7 @@ describe CapistranoHelper do
       it "returns the latest tag for the previous stage" do
         variables = {
           :autotagger_stages => [:foo, :bar],
-          :current_stage => :bar,
+          :stage => :bar,
           :branch => "master",
           :working_directory => "/foo"
         }
@@ -106,7 +106,7 @@ describe CapistranoHelper do
       it "returns nil" do
         variables = {
           :autotagger_stages => [:foo, :bar],
-          :current_stage => :bar,
+          :stage => :bar,
           :working_directory => "/foo"
         }
         tagger = Object.new
@@ -120,7 +120,7 @@ describe CapistranoHelper do
       it "returns nil" do
         variables = {
           :autotagger_stages => [:bar],
-          :current_stage => :bar
+          :stage => :bar
         }
         CapistranoHelper.new(variables).previous_stage.should be_nil
         CapistranoHelper.new(variables).branch.should == nil

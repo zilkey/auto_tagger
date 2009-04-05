@@ -13,9 +13,9 @@ class StageManager
     @stages = stages
   end
 
-  def previous_stage(current_stage)
-    if current_stage
-      index = stages.index(current_stage) - 1
+  def previous_stage(stage)
+    if stage
+      index = stages.index(stage) - 1
       stages[index] if index > -1
     end
   end

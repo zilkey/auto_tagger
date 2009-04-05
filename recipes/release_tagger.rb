@@ -40,14 +40,14 @@ Capistrano::Configuration.instance(:must_exist).load do
       end
     end
 
-    desc %Q{Creates a tag using the current_stage variable}
+    desc %Q{Creates a tag using the stage variable}
     task :create_tag, :roles => :app do
-      if variables[:current_stage]
-        previous_tag = AutoTagger.new(StageManager.new(autotagger_stages).previous_stage(current_stage), Dir.pwd).latest_tag
-        tag_name = AutoTagger.new(variables[:current_stage], variables[:working_directory]).create_tag(previous_tag)
+      if variables[:stage]
+        previous_tag = AutoTagger.new(StageManager.new(autotagger_stages).previous_stage(stage), Dir.pwd).latest_tag
+        tag_name = AutoTagger.new(variables[:stage], variables[:working_directory]).create_tag(previous_tag)
         logger.info "AUTO TAGGER created tag #{tag_name} from #{previous_tag.inspect}"
       else
-        logger.info "AUTO TAGGER WARNING: skipping auto-creation of tag.  Please specify :current_stage to enable auto-creation of tags (like set :current_stage, :ci)."
+        logger.info "AUTO TAGGER WARNING: skipping auto-creation of tag.  Please specify :stage to enable auto-creation of tags (like set :stage, :ci)."
       end
     end
   end
