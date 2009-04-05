@@ -133,7 +133,10 @@ This will produce output like:
 
 ## Running tests:
 
-You must be able to ssh into your box via localhost (remote login)
+You must be able to ssh into your box via localhost (remote login).  To make this easier, add your own key to your own account:
+
+    cat ~/.ssh/id_rsa.pub >>~/.ssh/authorized_keys
+
 It will create all kinds of files, and run cap deploys locally
 
 ## Acknowledgments

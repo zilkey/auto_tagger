@@ -1,51 +1,32 @@
-Given /^an app$/ do
-  FileUtils.mkdir_p @repo_dir
-  `cd #{@repo_dir} && git --bare init`
-  
-  FileUtils.mkdir_p @app_dir
-  
-  commands = [
-    "cd #{@app_dir}",
-    "touch README",
-    "mkdir config",
-    "capify .",
-    "git init",
-    "git add .",
-    %Q{git commit -m "first commit"},
-    "git add origin file://#{@repo_dir}",
-    "git push origin master"
-  ]
-
-  puts `#{commands.join(" && ")}`
-
-  repository = "repo"
-  deploy_to = "deployto"
-  git_location = `which git`.strip
-  environments = [:foo, :bar]
-
-  path = File.expand_path(File.join(__FILE__, "..", "..", "templates", "deploy.erb"))
-  puts path
-  puts File.exists?(path)
-
-  template = ERB.new File.read(path)
-  output = template.result(binding)
-  File.open(File.join(@app_dir, "config", "deploy.rb"), 'w') {|f| f.write(output) }
+Given /^a three-stage app$/ do
+  puts
+  helpers = StepHelpers.new
+  helpers.create_git_repo
+  helpers.create_app
+  helpers.create_three_stage_deployment_file
+  puts
+  @tags = helpers.tags
 end
 
-Given /^the app has the following tags:$/ do |hashes|
+Given /^a ci tag$/ do
+  puts
+  helpers = StepHelpers.new
+  helpers.autotag("ci")
+  @tags = helpers.tags
+  puts
 end
 
-Given /^the app has the following stages:$/ do |hashes|
+When /^I deploy$/ do
+  puts
+  helpers = StepHelpers.new
+  helpers.deploy
+  puts
 end
 
-Given /^the app has the following environments:$/ do |hashes|
-end
-
-When /^I run "([^\"]*)"$/ do |arg1|
-end
-
-Then /^the app should have the following tags:$/ do |hashes|
-end
-
-Then /^the "([^\"]*)" tag should point to the same commit as the "([^\"]*)" tag$/ do |arg1, arg2|
+Then /^a tag should be added to git$/ do
+  puts
+  helpers = StepHelpers.new
+  new_tags = helpers.tags
+  @tags.length.should < new_tags.length
+  puts
 end
