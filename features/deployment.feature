@@ -1,4 +1,3 @@
-# create keys between the users on this machine
 Feature: Deployment
   In order to get auto-tagging goodness
   As a ruby and git ninja

@@ -21,12 +21,20 @@ class StepHelpers
   def create_app_with_single_deploy_file
     create_git_repo
     create_app
+    capify_app
     create_single_deploy_file
+  end
+
+  def run_autotag(args = nil)
+    cmd = "cd #{app_dir} && ../../bin/autotag"
+    cmd += " #{args}" if args
+    `#{cmd}`
   end
 
   def create_app_with_cap_ext_multistage
     create_git_repo
     create_app
+    capify_app
     create_cap_ext_multistage_deploy_files
   end
 
@@ -49,20 +57,26 @@ class StepHelpers
     tags
   end
 
-  private
-
   def create_app
     FileUtils.mkdir_p app_dir
     run_commands [
       "cd #{app_dir}",
       "touch README",
-      "mkdir config",
-      "capify .",
       "git init",
       "git add .",
       %Q{git commit -m "first commit"},
       "git remote add origin file://#{repo_dir}",
       "git push origin master"
+    ]
+  end
+
+  private
+
+  def capify_app
+    run_commands [
+      "cd #{app_dir}",
+      "mkdir config",
+      "capify ."
     ]
   end
 

@@ -1,0 +1,36 @@
+Given /^a repo$/ do
+  puts
+  helpers = StepHelpers.new
+  helpers.create_git_repo
+  helpers.create_app
+  @tags = helpers.tags
+  puts
+end
+
+When /^I run autotag with no arguments$/ do
+  puts
+  helpers = StepHelpers.new
+  @output = helpers.run_autotag
+  @tags = helpers.tags
+  puts
+end
+
+When /^I run autotag with "([^\"]*)"$/ do |args|
+  puts
+  helpers = StepHelpers.new
+  @output = helpers.run_autotag(args)
+  @tags = helpers.tags
+  puts
+end
+
+Then /^I should see "([^\"]*)"$/ do |text|
+  @output.should =~ /#{Regexp.escape(text)}/
+end
+
+Then /^no tags should be created$/ do
+  @tags.strip.should == ""
+end
+
+Then /^a "([^\"]*)" tag should be created$/ do |prefix|
+  @tags.strip.split("\n").any?{|tag| tag.starts_with?("demo")}.should be_true
+end
