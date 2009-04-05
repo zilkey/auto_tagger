@@ -7,7 +7,7 @@ describe Commander do
       Commander.execute("/foo", "ls")
     end
   end
-  
+
   describe "system" do
     it "executes and doesn't return anything" do
       mock(Commander).system("cd /foo && ls")

@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "lib", "auto_ta
 Capistrano::Configuration.instance(:must_exist).load do
   namespace :release_tagger do
     desc %Q{
-      Sets the branch to the latest tag from the previous stage.  
+      Sets the branch to the latest tag from the previous stage.
       Use -Shead=true to set the branch to master, -Stag=<tag> to specify the tag explicitly.
     }
     task :set_branch do
@@ -52,4 +52,3 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
   end
 end
-

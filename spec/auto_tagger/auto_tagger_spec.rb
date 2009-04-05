@@ -11,7 +11,7 @@ describe AutoTagger do
         AutoTagger.new(nil)
       end.should raise_error(AutoTagger::EnvironmentCannotBeBlankError)
     end
-    
+
     it "sets the stage when it's passed" do
       AutoTagger.new("ci").stage.should == "ci"
     end
@@ -43,7 +43,7 @@ describe AutoTagger do
       mock(Commander).execute!("/foo", "git fetch origin --tags") {true}
       mock(Commander).execute!("/foo", "git tag ci/#{timestamp}") {true}
       mock(Commander).execute!("/foo", "git push origin --tags")  {true}
-      
+
       AutoTagger.new("ci", "/foo").create_tag
     end
 
@@ -56,17 +56,17 @@ describe AutoTagger do
       mock(Commander).execute!("/foo", "git fetch origin --tags") {true}
       mock(Commander).execute!("/foo", "git tag ci/#{timestamp} guid") {true}
       mock(Commander).execute!("/foo", "git push origin --tags")  {true}
-      
+
       AutoTagger.new("ci", "/foo").create_tag("guid")
     end
-    
+
     it "returns the tag that was created" do
       time = Time.local(2001,1,1)
       mock(Time).now.once {time}
       timestamp = time.utc.strftime('%Y%m%d%H%M%S')
       mock(File).exists?(anything).twice { true }
       mock(Commander).execute!(anything, anything).times(any_times) {true}
-      
+
       AutoTagger.new("ci", "/foo").create_tag.should == "ci/#{timestamp}"
     end
   end
@@ -77,9 +77,9 @@ describe AutoTagger do
 
       mock(Commander).execute!("/foo", "git fetch origin --tags") {true}
       mock(Commander).execute("/foo", "git tag") { "ci_01" }
-      
+
       AutoTagger.new("ci", "/foo").latest_tag
     end
   end
-  
+
 end

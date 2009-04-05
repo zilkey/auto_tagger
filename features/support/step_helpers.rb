@@ -12,12 +12,12 @@ class StepHelpers
     FileUtils.rm_r(test_files_dir) if File.exists?(test_files_dir)
     FileUtils.mkdir_p(test_files_dir)
   end
-  
+
   def create_git_repo
     FileUtils.mkdir_p repo_dir
     `cd #{repo_dir} && git --bare init`
   end
-  
+
   def create_app
     FileUtils.mkdir_p app_dir
     run_commands [
@@ -32,7 +32,7 @@ class StepHelpers
       "git push origin master"
     ]
   end
-  
+
   def deploy
     run_commands [
       "cd #{app_dir}",
@@ -40,11 +40,11 @@ class StepHelpers
       "cap staging deploy"
     ]
   end
-  
+
   def autotag(stage)
     system "cd #{app_dir} && git tag #{stage}_#{Time.now.utc.strftime('%Y%m%d%H%M%S')} && git push origin --tags"
   end
-  
+
   def tags
     system "cd #{app_dir} && git fetch origin --tags"
     tags = `cd #{app_dir} && git tag`
@@ -67,9 +67,9 @@ class StepHelpers
     output = template.result(binding)
     File.open(File.join(app_dir, "config", "deploy.rb"), 'w') {|f| f.write(output) }
   end
-  
+
   def run_commands(commands)
     puts `#{commands.join(" && ")}`
   end
-  
+
 end

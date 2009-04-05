@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe StageManager do
-  
+
   describe ".new" do
     [nil, ""].each do |value|
       it "blows up if there are stages == #{value.inspect}" do
@@ -26,5 +26,5 @@ describe StageManager do
     end
   end
 
-  
+
 end

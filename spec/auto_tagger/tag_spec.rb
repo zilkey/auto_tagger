@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Tag do
-  
+
   before(:each) do
     @repository = Object.new
   end
@@ -11,7 +11,7 @@ describe Tag do
       Tag.new(@repository).repository.should == @repository
     end
   end
-  
+
   describe "#find_all" do
     it "returns an array of tags" do
       mock(@repository).run("git tag") { "ci_01\nci_02" }
@@ -23,7 +23,7 @@ describe Tag do
       Tag.new(@repository).find_all.should be_empty
     end
   end
-  
+
   describe "#latest_from" do
     before do
       @tag = Tag.new(@repository)
@@ -61,6 +61,6 @@ describe Tag do
       mock(@repository).run!("git tag #{tag_name}")
       Tag.new(@repository).create("ci").should == tag_name
     end
-  end    
-  
+  end
+
 end

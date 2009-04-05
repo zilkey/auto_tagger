@@ -20,7 +20,7 @@ describe CapistranoHelper do
     it "returns the hashes' working directory value" do
       CapistranoHelper.new({:stages => [:bar], :working_directory => "/foo"}).working_directory.should == "/foo"
     end
-    
+
     it "defaults to Dir.pwd if it's not set, or it's nil" do
       mock(Dir).pwd { "/bar" }
       CapistranoHelper.new({:stages => [:bar]}).working_directory.should == "/bar"
