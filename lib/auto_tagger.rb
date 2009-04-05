@@ -2,7 +2,7 @@
   'commander',
   'repository',
   'tag',
-  'auto_tagger',
+  'base',
   'stage_manager',
   'capistrano_helper'
 ].each do |file|

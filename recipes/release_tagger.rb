@@ -7,7 +7,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       Use -Shead=true to set the branch to master, -Stag=<tag> to specify the tag explicitly.
     }
     task :set_branch do
-      if branch_name = CapistranoHelper.new(variables).branch
+      if branch_name = AutoTagger::CapistranoHelper.new(variables).branch
         set :branch, branch_name
         logger.info "setting branch to #{branch_name}"
       else
@@ -18,7 +18,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     desc %Q{Prints the most current tags from all stages}
     task :print_latest_tags, :roles => :app do
       logger.info "AUTO TAGGER: release tag history is:"
-      entries = CapistranoHelper.new(variables).release_tag_entries
+      entries = AutoTagger::CapistranoHelper.new(variables).release_tag_entries
       entries.each do |entry|
         logger.info entry
       end
@@ -43,10 +43,10 @@ Capistrano::Configuration.instance(:must_exist).load do
     desc %Q{Creates a tag using the stage variable}
     task :create_tag, :roles => :app do
       if variables[:stage]
-        tag_name = AutoTagger.new(variables[:stage], variables[:working_directory]).create_tag(real_revision)
+        tag_name = AutoTagger::Runner.new(variables[:stage], variables[:working_directory]).create_tag(real_revision)
         logger.info "AUTO TAGGER created tag #{tag_name} from #{real_revision}"
       else
-        tag_name = AutoTagger.new(:production, variables[:working_directory]).create_tag
+        tag_name = AutoTagger::Runner.new(:production, variables[:working_directory]).create_tag
         logger.info "AUTO TAGGER created tag #{tag_name}"
       end
     end

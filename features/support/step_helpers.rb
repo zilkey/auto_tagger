@@ -1,5 +1,4 @@
 class StepHelpers
-
   attr_reader :test_files_dir, :app_dir, :repo_dir
 
   def initialize
