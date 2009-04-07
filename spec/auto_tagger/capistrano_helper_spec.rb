@@ -87,8 +87,8 @@ describe CapistranoHelper do
       end
     end
 
-    describe "with a previous stage with a tag" do
-      it "returns the latest tag for the previous stage" do
+    describe "with a stage with a tag" do
+      it "returns the latest tag for this stage" do
         variables = {
           :autotagger_stages => [:foo, :bar],
           :stage => :bar,
@@ -96,9 +96,9 @@ describe CapistranoHelper do
           :working_directory => "/foo"
         }
         tagger = Object.new
-        mock(tagger).latest_tag { "foo_01" }
-        mock(AutoTagger).new(:foo, "/foo") { tagger }
-        CapistranoHelper.new(variables).branch.should == "foo_01"
+        mock(tagger).latest_tag { "bar_01" }
+        mock(AutoTagger).new(:bar, "/foo") { tagger }
+        CapistranoHelper.new(variables).branch.should == "bar_01"
       end
     end
 
@@ -111,7 +111,7 @@ describe CapistranoHelper do
         }
         tagger = Object.new
         mock(tagger).latest_tag { nil }
-        mock(AutoTagger).new(:foo, "/foo") { tagger }
+        mock(AutoTagger).new(:bar, "/foo") { tagger }
         CapistranoHelper.new(variables).branch.should == nil
       end
     end
@@ -120,8 +120,12 @@ describe CapistranoHelper do
       it "returns nil" do
         variables = {
           :autotagger_stages => [:bar],
-          :stage => :bar
+          :stage => :bar,
+          :working_directory => "/foo"
         }
+        tagger = Object.new
+        mock(tagger).latest_tag { nil }
+        mock(AutoTagger).new(:bar, "/foo") { tagger }
         CapistranoHelper.new(variables).previous_stage.should be_nil
         CapistranoHelper.new(variables).branch.should == nil
       end

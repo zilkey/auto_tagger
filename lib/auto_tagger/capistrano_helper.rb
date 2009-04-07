@@ -18,7 +18,7 @@ class CapistranoHelper
       variables[:branch]
     elsif variables.has_key?(:tag)
       variables[:tag]
-    elsif previous_stage && (latest = AutoTagger.new(previous_stage, working_directory).latest_tag)
+    elsif stage && (latest = AutoTagger.new(stage, working_directory).latest_tag)
       latest
     else
       variables[:branch]
