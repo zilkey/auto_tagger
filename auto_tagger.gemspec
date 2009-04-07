@@ -2,10 +2,10 @@
 
 Gem::Specification.new do |s|
   s.name = %q{auto_tagger}
-  s.version = "0.0.7"
+  s.version = "0.0.7.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Jeff Dean"]
+  s.authors = ["Jeff Dean", "Tom Lea"]
   s.date = %q{2009-03-28}
   s.default_executable = %q{autotag}
   s.executables = ["autotag"]
@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
     "README.md"
   ]
 
-  s.homepage = %q{http://github.com/zilkey/git_tagger/tree/master}
+  s.homepage = %q{http://github.com/cwninja/auto_tagger/}
   s.require_paths = ["lib", "recipes"]
   s.rubygems_version = %q{1.3.1}
   s.summary = %q{Helps you automatically create tags for each stage in a multi-stage deploment and deploy from the latest tag from the previous environment}
