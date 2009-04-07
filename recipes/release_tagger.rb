@@ -43,7 +43,8 @@ Capistrano::Configuration.instance(:must_exist).load do
     desc %Q{Creates a tag using the stage variable}
     task :create_tag, :roles => :app do
       if variables[:stage]
-        previous_tag = AutoTagger.new(StageManager.new(autotagger_stages).previous_stage(stage), Dir.pwd).latest_tag
+        previous_stage = StageManager.new(autotagger_stages).previous_stage(stage)
+        previous_tag = previous_stage && AutoTagger.new(previous_stage, Dir.pwd).latest_tag
         tag_name = AutoTagger.new(variables[:stage], variables[:working_directory]).create_tag(previous_tag)
         logger.info "AUTO TAGGER created tag #{tag_name} from #{previous_tag.inspect}"
       else
