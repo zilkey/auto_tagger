@@ -7,11 +7,13 @@ Capistrano::Configuration.instance(:must_exist).load do
       Use -Shead=true to set the branch to master, -Stag=<tag> to specify the tag explicitly.
     }
     task :set_branch do
-      if branch_name = CapistranoHelper.new(variables).branch
-        set :branch, branch_name
-        logger.info "setting branch to #{branch_name}"
-      else
-        logger.info "AUTO TAGGER: skipping auto-assignment of branch.  Branch will remain the default.}"
+      if variables[:stage] and autotagger_stages.include?(stage)
+        if branch_name = CapistranoHelper.new(variables).branch
+          set :branch, branch_name
+          logger.info "setting branch to #{branch_name}"
+        else
+          logger.info "AUTO TAGGER: skipping auto-assignment of branch.  Branch will remain the default."
+        end
       end
     end
 
