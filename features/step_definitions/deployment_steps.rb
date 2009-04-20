@@ -1,7 +1,15 @@
 Given /^a three-stage app using single deploy file$/ do
   puts
   helpers = StepHelpers.new
-  helpers.create_app_with_single_deploy_file
+  helpers.create_app_with_single_deploy_file([:ci, :staging, :production])
+  puts
+  @tags = helpers.tags
+end
+
+Given /^a one\-stage app using single deploy file$/ do
+  puts
+  helpers = StepHelpers.new
+  helpers.create_app_with_single_deploy_file([])
   puts
   @tags = helpers.tags
 end
@@ -26,6 +34,13 @@ When /^I deploy to staging$/ do
   puts
   helpers = StepHelpers.new
   helpers.deploy("staging")
+  puts
+end
+
+When /^I deploy$/ do
+  puts
+  helpers = StepHelpers.new
+  helpers.deploy
   puts
 end
 

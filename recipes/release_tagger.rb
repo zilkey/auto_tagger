@@ -47,7 +47,8 @@ Capistrano::Configuration.instance(:must_exist).load do
         tag_name = AutoTagger.new(variables[:stage], variables[:working_directory]).create_tag(previous_tag)
         logger.info "AUTO TAGGER created tag #{tag_name} from #{previous_tag.inspect}"
       else
-        logger.info "AUTO TAGGER WARNING: skipping auto-creation of tag.  Please specify :stage to enable auto-creation of tags (like set :stage, :ci)."
+        tag_name = AutoTagger.new(:production, variables[:working_directory]).create_tag
+        logger.info "AUTO TAGGER created tag #{tag_name}"
       end
     end
   end

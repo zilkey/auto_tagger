@@ -31,6 +31,11 @@ Then /^no tags should be created$/ do
   @tags.strip.should == ""
 end
 
+Then /^a "([^\"]*)" tag should be added to git$/ do |stage|
+  helpers = StepHelpers.new
+  helpers.tags.starts_with?(stage).should be_true
+end
+
 Then /^a "([^\"]*)" tag should be created$/ do |prefix|
   @tags.strip.split("\n").any?{|tag| tag.starts_with?("demo")}.should be_true
 end

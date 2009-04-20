@@ -18,11 +18,11 @@ class StepHelpers
     `cd #{repo_dir} && git --bare init`
   end
 
-  def create_app_with_single_deploy_file
+  def create_app_with_single_deploy_file(environments)
     create_git_repo
     create_app
     capify_app
-    create_single_deploy_file
+    create_single_deploy_file(environments)
   end
 
   def run_autotag(args = nil)
@@ -38,11 +38,15 @@ class StepHelpers
     create_cap_ext_multistage_deploy_files
   end
 
-  def deploy(stage)
+  def deploy(stage = nil)
+    deploy_command = "cap "
+    deploy_command += "#{stage} " if stage
+    deploy_command += "deploy"
+    
     run_commands [
       "cd #{app_dir}",
       "cap deploy:setup",
-      "cap #{stage} deploy"
+      deploy_command
     ]
   end
 
@@ -80,12 +84,11 @@ class StepHelpers
     ]
   end
 
-  def create_single_deploy_file
+  def create_single_deploy_file(environments)
     repository = repo_dir
     deploy_to = File.join(test_files_dir, "deployed")
     git_location = `which git`.strip
     user = Etc.getlogin
-    environments = [:ci, :staging, :production]
 
     path = File.expand_path(File.join(__FILE__, "..", "..", "templates", "deploy.erb"))
     puts path
