@@ -117,6 +117,8 @@ This cap task creates a new tag, based on the latest tag from the previous envir
 
 If there is no tag from the previous stage, it creates a new tag from the latest commit in your _working directory_.
 
+If you don't specify any `autotagger_stages`, autotagger will create a tag that starts with "production".
+
 ### release_tagger:print_latest_tags
 
 This task reads the git version from the text file in shared:
