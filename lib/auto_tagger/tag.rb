@@ -17,7 +17,7 @@ class Tag
   end
 
   def latest_from(stage)
-    find_all.select{|tag| tag =~ /^#{stage}/}.sort.last
+    find_all.select{|tag| tag =~ /^#{stage}\//}.sort.last
   end
 
   def push
