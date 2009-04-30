@@ -1,4 +1,6 @@
-2009-04-20
+2009-04-30
+
+- Fixed bug whereby auto-tagger would use the wrong tag because it found tags that had similar names to what it uses.
 
 2009-04-20
 
