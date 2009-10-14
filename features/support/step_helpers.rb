@@ -42,7 +42,7 @@ class StepHelpers
     deploy_command = "cap "
     deploy_command += "#{stage} " if stage
     deploy_command += "deploy"
-    
+
     run_commands [
       "cd #{app_dir}",
       "cap deploy:setup",
@@ -91,8 +91,9 @@ class StepHelpers
     user = Etc.getlogin
 
     path = File.expand_path(File.join(__FILE__, "..", "..", "templates", "deploy.erb"))
-    puts path
-    puts File.exists?(path)
+    #puts "TRACE %s:%s" % [__FILE__, __LINE__]
+    #puts path
+    #puts File.exists?(path)
 
     template = ERB.new File.read(path)
     output = template.result(binding)
@@ -110,7 +111,7 @@ class StepHelpers
 
     template = ERB.new File.read(path)
     output = template.result(binding)
-    File.open(File.join(app_dir, "config", "deploy.rb"), 'w') {|f| f.write(output) }    
+    File.open(File.join(app_dir, "config", "deploy.rb"), 'w') {|f| f.write(output) }
 
     %w(staging production).each do |stage|
       create_cap_ext_multistage_deploy_stage_file(stage)

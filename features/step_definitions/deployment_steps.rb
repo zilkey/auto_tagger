@@ -6,10 +6,10 @@ Given /^a three-stage app using single deploy file$/ do
   @tags = helpers.tags
 end
 
-Given /^a one\-stage app using single deploy file$/ do
+Given /^a one\-stage app using single deploy file with the following environments:$/ do |table|
   puts
   helpers = StepHelpers.new
-  helpers.create_app_with_single_deploy_file([])
+  helpers.create_app_with_single_deploy_file table.raw.map(&:first)
   puts
   @tags = helpers.tags
 end
@@ -30,10 +30,10 @@ Given /^a ci tag$/ do
   puts
 end
 
-When /^I deploy to staging$/ do
+When /^I deploy to (.*)$/ do |environment|
   puts
   helpers = StepHelpers.new
-  helpers.deploy("staging")
+  helpers.deploy(environment)
   puts
 end
 

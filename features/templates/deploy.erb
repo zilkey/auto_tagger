@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "recipes", "release_tagger"))
 
-set :autotagger_stages, [:ci, :staging, :production]
+set :autotagger_stages, ["<%= environments.join('", "') %>"]
 
 set :application, "deployed"
 set :user, "<%= user %>"
@@ -23,8 +23,8 @@ namespace :deploy do
 end
 
 <% environments.each do |environment| %>
-task :<%= environment %> do
-  set :stage, :<%= environment %>
+task "<%= environment %>" do
+  set :stage, "<%= environment %>"
 end
 <% end %>
 
