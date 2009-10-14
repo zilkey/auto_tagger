@@ -3,3 +3,4 @@ rdoc/*
 *.gem
 .DS_Store
 test_files/*
+.idea/*
