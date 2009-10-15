@@ -1,3 +1,7 @@
+2009-10-15
+
+- You can now define your stages as strings or symbols and auto-tagger will not fail
+
 2009-04-30
 
 - Fixed bug whereby auto-tagger would use the wrong tag because it found tags that had similar names to what it uses.
