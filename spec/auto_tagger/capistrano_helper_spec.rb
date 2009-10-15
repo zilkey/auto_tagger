@@ -112,7 +112,7 @@ describe CapistranoHelper do
         }
         tagger = Object.new
         mock(tagger).latest_tag { "foo_01" }
-        mock(AutoTagger).new(:foo, "/foo") { tagger }
+        mock(AutoTagger).new("foo", "/foo") { tagger }
         CapistranoHelper.new(variables).branch.should == "foo_01"
       end
     end
@@ -126,7 +126,7 @@ describe CapistranoHelper do
         }
         tagger = Object.new
         mock(tagger).latest_tag { nil }
-        mock(AutoTagger).new(:foo, "/foo") { tagger }
+        mock(AutoTagger).new("foo", "/foo") { tagger }
         CapistranoHelper.new(variables).branch.should == nil
       end
     end

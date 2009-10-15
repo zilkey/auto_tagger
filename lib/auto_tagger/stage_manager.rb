@@ -10,12 +10,12 @@ class StageManager
 
   def initialize(stages)
     raise NoStagesSpecifiedError unless stages && stages.is_a?(Array)
-    @stages = stages
+    @stages = stages.map{|stage| stage.to_s }
   end
 
   def previous_stage(stage)
     if stage
-      index = stages.index(stage) - 1
+      index = stages.index(stage.to_s) - 1
       stages[index] if index > -1
     end
   end
