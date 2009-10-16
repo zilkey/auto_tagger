@@ -1,0 +1,6 @@
+README.md
+CHANGELOG
+MIT-LICENSE
+bin/*
+lib/**/*
+recipes/**/*

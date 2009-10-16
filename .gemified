@@ -1,8 +1,0 @@
---- 
-:author: Jeff Dean
-:summary: Helps you automatically create tags for each stage in a multi-stage deploment and deploy from the latest tag from the previous environment
-:name: autotagger
-:dependencies: 
-- capistrano
-:homepage: http://github.com/zilkey/git_tagger/tree/master
-:version: 0.0.1
