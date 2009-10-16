@@ -1,6 +1,7 @@
 2009-10-15
 
-- You can now define your stages as strings or symbols and auto-tagger will not fail
+- You can now define your stages as strings or symbols and auto-tagger will not fail (thanks to Chad Wooley for the bug report)
+- When deploying from a branch auto_tagger uses real_revision, not the previous tag, to create the new tag (Brian Takita)
 
 2009-04-30
 
