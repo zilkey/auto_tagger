@@ -16,12 +16,10 @@ You can use the `autotag` command to tag releases on your CI box, then use the c
 
 ## Installation
 
-    gem sources -a http://gems.github.com
-    sudo gem install zilkey-auto_tagger
+    sudo gem install auto_tagger
 
 ## Contribute
 
-  * [Tracker Project](http://www.pivotaltracker.com/projects/11988)
   * [GitHub Repository](http://github.com/zilkey/auto_tagger/tree/master)
 
 ## The autotag executable
