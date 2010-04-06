@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{auto_tagger}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jeff Dean", "Brian Takita", "Mike Grafton"]
-  s.date = %q{2009-12-19}
+  s.date = %q{2010-04-06}
   s.default_executable = %q{autotag}
   s.email = %q{jeff@zilkey.com}
   s.executables = ["autotag"]
@@ -40,10 +40,10 @@ Gem::Specification.new do |s|
      "lib/auto_tagger/auto_tagger.rb",
      "lib/auto_tagger/capistrano_helper.rb",
      "lib/auto_tagger/commander.rb",
+     "lib/auto_tagger/recipes.rb",
      "lib/auto_tagger/repository.rb",
      "lib/auto_tagger/stage_manager.rb",
      "lib/auto_tagger/tag.rb",
-     "recipes/release_tagger.rb",
      "spec/auto_tagger/auto_tagger_spec.rb",
      "spec/auto_tagger/capistrano_helper_spec.rb",
      "spec/auto_tagger/commander_spec.rb",
@@ -54,8 +54,8 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/zilkey/auto_tagger}
   s.rdoc_options = ["--charset=UTF-8"]
-  s.require_paths = ["lib", "recipes"]
-  s.rubygems_version = %q{1.3.5}
+  s.require_paths = ["lib"]
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{Helps you automatically create tags for each stage in a multi-stage deploment and deploy from the latest tag from the previous environment}
   s.test_files = [
     "spec/auto_tagger/auto_tagger_spec.rb",

@@ -4,13 +4,13 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "auto_tagger"
+    gem.name = "factorylabs-auto_tagger"
     gem.summary = %Q{Helps you automatically create tags for each stage in a multi-stage deploment and deploy from the latest tag from the previous environment}
     gem.email = "jeff@zilkey.com"
     gem.homepage = "http://github.com/zilkey/auto_tagger"
     gem.authors = ["Jeff Dean", "Brian Takita", "Mike Grafton", "Bruce Krysiak", "Pat Nakajima"]
     gem.add_dependency('capistrano', [">= 2.5.3"])
-    gem.require_paths = ["lib", "recipes"]
+    gem.require_paths = ["lib"]
     gem.executables = ["autotag"]
     gem.default_executable = %q{autotag}
     gem.date = %q{2009-03-28}
