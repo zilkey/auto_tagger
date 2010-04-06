@@ -1,4 +1,4 @@
-require File.expand_path(File.join(File.dirname(__FILE__), "..", "lib", "auto_tagger"))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "auto_tagger"))
 
 Capistrano::Configuration.instance(:must_exist).load do
   namespace :release_tagger do
