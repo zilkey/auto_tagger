@@ -8,7 +8,7 @@ begin
     gem.summary = %Q{Helps you automatically create tags for each stage in a multi-stage deploment and deploy from the latest tag from the previous environment}
     gem.email = "jeff@zilkey.com"
     gem.homepage = "http://github.com/zilkey/auto_tagger"
-    gem.authors = ["Jeff Dean", "Brian Takita", "Mike Grafton", "Bruce Krysiak", "Pat Nakajima"]
+    gem.authors = ["Jeff Dean", "Brian Takita", "Mike Grafton", "Bruce Krysiak", "Pat Nakajima", "Jay Zeschin", "Mike Barinek"]
     gem.add_dependency('capistrano', [">= 2.5.3"])
     gem.require_paths = ["lib"]
     gem.executables = ["autotag"]
