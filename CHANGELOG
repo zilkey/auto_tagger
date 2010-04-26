@@ -1,6 +1,8 @@
 2010-04-25
 
 - Fixed creating incorrect tags when deploying from a branch, tag, or from head (Brian Takita & Bruce Krysiak)
+- Namespaced all classes under AutoTagger (Pat Nakajima)
+- Renamed Commander.execute! to Commander.execute? (Pat Nakjima)
 
 2009-10-15
 
