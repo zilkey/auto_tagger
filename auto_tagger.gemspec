@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{auto_tagger}
-  s.version = "0.1.1"
+  s.version = "0.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Jeff Dean", "Brian Takita", "Mike Grafton"]
-  s.date = %q{2010-04-06}
+  s.authors = ["Jeff Dean", "Brian Takita", "Mike Grafton", "Bruce Krysiak", "Pat Nakajima", "Jay Zeschin", "Mike Barinek"]
+  s.date = %q{2010-04-25}
   s.default_executable = %q{autotag}
   s.email = %q{jeff@zilkey.com}
   s.executables = ["autotag"]
@@ -37,14 +37,14 @@ Gem::Specification.new do |s|
      "features/templates/stage.erb",
      "geminstaller.yml",
      "lib/auto_tagger.rb",
-     "lib/auto_tagger/auto_tagger.rb",
+     "lib/auto_tagger/base.rb",
      "lib/auto_tagger/capistrano_helper.rb",
      "lib/auto_tagger/commander.rb",
      "lib/auto_tagger/recipes.rb",
      "lib/auto_tagger/repository.rb",
      "lib/auto_tagger/stage_manager.rb",
      "lib/auto_tagger/tag.rb",
-     "spec/auto_tagger/auto_tagger_spec.rb",
+     "spec/auto_tagger/base_spec.rb",
      "spec/auto_tagger/capistrano_helper_spec.rb",
      "spec/auto_tagger/commander_spec.rb",
      "spec/auto_tagger/repository_spec.rb",
@@ -58,7 +58,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{Helps you automatically create tags for each stage in a multi-stage deploment and deploy from the latest tag from the previous environment}
   s.test_files = [
-    "spec/auto_tagger/auto_tagger_spec.rb",
+    "spec/auto_tagger/base_spec.rb",
      "spec/auto_tagger/capistrano_helper_spec.rb",
      "spec/auto_tagger/commander_spec.rb",
      "spec/auto_tagger/repository_spec.rb",

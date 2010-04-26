@@ -4,7 +4,7 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "factorylabs-auto_tagger"
+    gem.name = "auto_tagger"
     gem.summary = %Q{Helps you automatically create tags for each stage in a multi-stage deploment and deploy from the latest tag from the previous environment}
     gem.email = "jeff@zilkey.com"
     gem.homepage = "http://github.com/zilkey/auto_tagger"
@@ -13,7 +13,7 @@ begin
     gem.require_paths = ["lib"]
     gem.executables = ["autotag"]
     gem.default_executable = %q{autotag}
-    gem.date = %q{2009-03-28}
+    gem.date = %q{2010-04-25}
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

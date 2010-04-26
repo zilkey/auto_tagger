@@ -1,6 +1,6 @@
 # IMPORTANT NOTE
 
-This gem is still in it's infancy, and lots of things might change.  Since this creates and pushes tags to your git repository, please use with caution.
+This creates and pushes tags to your git repository, please use with caution.
 
 # AutoTagger
 
@@ -162,12 +162,13 @@ To run the cucumber features, execute:
 
 ## Acknowledgments
 
-Special thanks to 
+Special thanks to:
 
  * Brian Takita for the original recipes
  * Mike Dalessio for his git fu
  * Chad Wooley for his feature ideas
  * Tim Holahan for his QA
+ * Pat Nakajima for making auto_tagger a better ruby citizen
 
 ## Links
 
