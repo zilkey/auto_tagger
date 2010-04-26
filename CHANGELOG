@@ -1,3 +1,7 @@
+2010-04-25
+
+- Fixed creating incorrect tags when deploying from a branch, tag, or from head (Brian Takita & Bruce Krysiak)
+
 2009-10-15
 
 - You can now define your stages as strings or symbols and auto-tagger will not fail (thanks to Chad Wooley for the bug report)
