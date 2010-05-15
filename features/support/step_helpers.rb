@@ -1,5 +1,5 @@
 class StepHelpers
-  attr_reader :test_files_dir, :app_dir, :repo_dir
+  attr_reader :test_files_dir, :app_dir, :repo_dir, :exit_code
 
   def initialize
     @test_files_dir = File.join(Dir.pwd, "test_files")
@@ -27,7 +27,9 @@ class StepHelpers
   def run_autotag(args = nil)
     cmd = "cd #{app_dir} && ../../bin/autotag"
     cmd += " #{args}" if args
-    `#{cmd}`
+    output = `#{cmd}`
+    @exit_code = $?.exitstatus
+    return output
   end
 
   def create_app_with_cap_ext_multistage

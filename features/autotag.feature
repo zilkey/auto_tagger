@@ -8,32 +8,45 @@ Feature: Deployment
     When I run autotag with no arguments
     Then I should see "USAGE:"
     And no tags should be created
+    And exit code should be 0
     
   Scenario: user runs autotag with "--help"
     Given a repo
     When I run autotag with "--help"
     Then I should see "USAGE:"
     And no tags should be created
+    And exit code should be 0
 
   Scenario: user runs autotag with "-h"
     Given a repo
     When I run autotag with "-h"
     Then I should see "USAGE:"
     And no tags should be created
+    And exit code should be 0
 
   Scenario: user runs autotag with "-?"
     Given a repo
     When I run autotag with "-?"
     Then I should see "USAGE:"
     And no tags should be created
+    And exit code should be 0
 
   Scenario: user runs autotag with "demo"
     Given a repo
     When I run autotag with "demo"
     # can't check output here for some reason
     Then a "demo" tag should be created
+    And exit code should be 0
 
   Scenario: user runs autotag with "demo ."
     Given a repo
     When I run autotag with "demo"
     Then a "demo" tag should be created
+    And exit code should be 0
+
+  Scenario: autotag cannot successfully complete
+    Given a repo
+    When I run autotag with "demo /no/such/path"
+    Then I should see "Error occured:"
+    And exit code should be 1
+

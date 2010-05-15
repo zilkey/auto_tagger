@@ -12,6 +12,7 @@ When /^I run autotag with no arguments$/ do
   helpers = StepHelpers.new
   @output = helpers.run_autotag
   @tags = helpers.tags
+  @exit_code = helpers.exit_code
   puts
 end
 
@@ -20,6 +21,7 @@ When /^I run autotag with "([^\"]*)"$/ do |args|
   helpers = StepHelpers.new
   @output = helpers.run_autotag(args)
   @tags = helpers.tags
+  @exit_code = helpers.exit_code
   puts
 end
 
@@ -38,4 +40,8 @@ end
 
 Then /^a "([^\"]*)" tag should be created$/ do |prefix|
   @tags.strip.split("\n").any?{|tag| tag.starts_with?("demo")}.should be_true
+end
+
+Then /^exit code should be (\d*)$/ do |exit_code|
+  @exit_code.should == exit_code.to_i
 end
