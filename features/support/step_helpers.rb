@@ -27,7 +27,7 @@ class StepHelpers
   def run_autotag(args = nil)
     cmd = "cd #{app_dir} && ../../bin/autotag"
     cmd += " #{args}" if args
-    `#{cmd}`
+    [`#{cmd}`, $?]
   end
 
   def create_app_with_cap_ext_multistage

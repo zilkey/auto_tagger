@@ -23,7 +23,7 @@ if ARGV[0] && ["-h", "--help", "-?", "--?"].include?(ARGV[0])
   usage
 elsif ARGV[0]
   AutoTagger::Runner.new(ARGV[0], ARGV[1]).create_tag
-  exit 1
+  exit 0
 else
   usage
 end

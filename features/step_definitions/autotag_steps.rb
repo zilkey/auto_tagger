@@ -10,7 +10,7 @@ end
 When /^I run autotag with no arguments$/ do
   puts
   helpers = StepHelpers.new
-  @output = helpers.run_autotag
+  @output, @exit_code = helpers.run_autotag
   @tags = helpers.tags
   puts
 end
@@ -18,13 +18,17 @@ end
 When /^I run autotag with "([^\"]*)"$/ do |args|
   puts
   helpers = StepHelpers.new
-  @output = helpers.run_autotag(args)
+  @output, @exit_code = helpers.run_autotag(args)
   @tags = helpers.tags
   puts
 end
 
 Then /^I should see "([^\"]*)"$/ do |text|
   @output.should =~ /#{Regexp.escape(text)}/
+end
+
+Then /^the exit code should be "(\d+)"$/ do |code|
+  @exit_code.exitstatus.should == code.to_i
 end
 
 Then /^no tags should be created$/ do
