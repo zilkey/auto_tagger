@@ -1,3 +1,7 @@
+2010-05-15
+
+- Fixed the exit status in autotag executable (thank you Sarah Mei)
+
 2010-04-25
 
 - Fixed creating incorrect tags when deploying from a branch, tag, or from head (Brian Takita & Bruce Krysiak)

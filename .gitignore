@@ -4,3 +4,4 @@ rdoc/*
 .DS_Store
 test_files/*
 .idea/*
+.bundle/*
