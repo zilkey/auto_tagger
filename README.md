@@ -45,7 +45,7 @@ AutoTagger comes with 2 capistrano tasks:
 
 Example `config/deploy.rb` file:
 
-    require 'release_tagger'
+    require 'auto_tagger/recipes'
 
     # The :autotagger_stages variable is required
     set :autotagger_stages, [:ci, :staging, :production]
