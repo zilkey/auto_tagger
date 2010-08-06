@@ -1,8 +1,13 @@
+require 'optparse'
 [
+  'base',
+  'command_line',
   'commander',
+  'configuration',
+  'options',
+  'parser',
   'repository',
   'tag',
-  'base',
   'stage_manager',
   'capistrano_helper'
 ].each do |file|

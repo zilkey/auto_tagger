@@ -19,7 +19,7 @@ end
 When /^I run autotag with "([^\"]*)"$/ do |args|
   puts
   helpers = StepHelpers.new
-  @output, @exit_code = helpers.run_autotag(args)
+  @output = helpers.run_autotag(args)
   @tags = helpers.tags
   @exit_code = helpers.exit_code
   puts

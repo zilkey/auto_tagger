@@ -1,35 +1,14 @@
 #!/usr/bin/env ruby
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "lib", "auto_tagger"))
-require 'getoptlong'
 
-def usage
-  puts
-  puts "USAGE: #{File.basename($0)} <stage> [<repository>]"
-  puts
-  puts '    where:    stage       sets the tag prefix'
-  puts '              repository  sets the repository to act on - defualts to the current directory'
-  puts
-  puts '    examples: autotag'
-  puts '              autotag .'
-  puts '              autotag ../'
-  puts '              autotag /data/myrepo'
-  puts '              autotag demo'
-  puts
-  puts
-  exit 0
-end
-
-if ARGV[0] && ["-h", "--help", "-?", "--?"].include?(ARGV[0])
-  usage
-elsif ARGV[0]
-  begin
-    AutoTagger::Runner.new(ARGV[0], ARGV[1]).create_tag
-  rescue Exception => e
-    puts "Error occured: #{e}"
-    exit 1
-  else
-    exit 0
-  end
-else
-  usage
+begin
+  # The dup is to keep ARGV intact, so that tools like ruby-debug can respawn.
+  success = AutoTagger::CommandLine.execute(ARGV.dup)
+  Kernel.exit(success ? 0 : 1)
+rescue SystemExit => e
+  Kernel.exit(e.status)
+rescue Exception => e
+  STDERR.puts("#{e.message} (#{e.class})")
+  STDERR.puts(e.backtrace.join("\n"))
+  Kernel.exit(1)
 end

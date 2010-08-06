@@ -27,6 +27,7 @@ class StepHelpers
   def run_autotag(args = nil)
     cmd = "cd #{app_dir} && ../../bin/autotag"
     cmd += " #{args}" if args
+    cmd += " 2>&1"
     output = `#{cmd}`
     @exit_code = $?.exitstatus
     return output

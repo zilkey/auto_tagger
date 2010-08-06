@@ -6,10 +6,10 @@ Feature: Deployment
   Scenario: user runs autotag with no args
     Given a repo
     When I run autotag with no arguments
-    And I should see "USAGE:"
+    And I should see "AutoTagger::EnvironmentCannotBeBlankError"
     And no tags should be created
-    And exit code should be 0
-    
+    And exit code should be 1
+
   Scenario: user runs autotag with "--help"
     Given a repo
     When I run autotag with "--help"
@@ -46,6 +46,6 @@ Feature: Deployment
   Scenario: autotag cannot successfully complete
     Given a repo
     When I run autotag with "demo /no/such/path"
-    Then I should see "Error occured:"
+    Then I should see "AutoTagger::NoSuchPathError"
     And exit code should be 1
     And no tags should be created
