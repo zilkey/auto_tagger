@@ -152,13 +152,18 @@ To ensure that this has worked, try this:
     
 If it asks you for a password, you've done something wrong.
 
-To run the specs, execute:
+To run the specs, first make sure you have the required gems:
 
-    spec spec/
+    gem install bundler
+    bundle install
+
+Then execute:
+
+    rspec spec
     
 To run the cucumber features, execute:
 
-    cucumber features/
+    cucumber features
 
 ## Acknowledgments
 

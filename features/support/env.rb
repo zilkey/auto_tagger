@@ -1,4 +1,4 @@
-require 'spec'
+require 'rspec'
 require 'erb'
 require 'etc'
 
