@@ -5,3 +5,4 @@ rdoc/*
 test_files/*
 .idea/*
 .bundle/*
+.rvmrc
