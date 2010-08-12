@@ -9,7 +9,7 @@ describe AutoTagger::Runner do
     it "blows up if you don't pass an stage" do
       proc do
         AutoTagger::Runner.new(nil)
-      end.should raise_error(AutoTagger::EnvironmentCannotBeBlankError)
+      end.should raise_error(AutoTagger::StageCannotBeBlankError)
     end
 
     it "sets the stage when it's passed" do

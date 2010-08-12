@@ -6,7 +6,7 @@ Feature: Deployment
   Scenario: user runs autotag with no args
     Given a repo
     When I run autotag with no arguments
-    And I should see "AutoTagger::EnvironmentCannotBeBlankError"
+    And I should see "AutoTagger::StageCannotBeBlankError"
     And no tags should be created
     And exit code should be 1
 

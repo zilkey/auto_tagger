@@ -1,11 +1,11 @@
 module AutoTagger
-  class EnvironmentCannotBeBlankError < StandardError; end
+  class StageCannotBeBlankError < StandardError; end
   
   class Runner
     attr_reader :stage, :repository, :working_directory
 
     def initialize(stage, path = nil)
-      raise EnvironmentCannotBeBlankError if stage.to_s.strip == ""
+      raise StageCannotBeBlankError if stage.to_s.strip == ""
       @working_directory = File.expand_path(path ||= Dir.pwd)
       @repository = Repository.new(@working_directory)
       @stage = stage
