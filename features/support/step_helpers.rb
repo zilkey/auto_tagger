@@ -29,6 +29,7 @@ class StepHelpers
     cmd += " #{args}" if args
     cmd += " 2>&1"
     output = `#{cmd}`
+    puts output
     @exit_code = $?.exitstatus
     return output
   end
@@ -91,12 +92,7 @@ class StepHelpers
     deploy_to = File.join(test_files_dir, "deployed")
     git_location = `which git`.strip
     user = Etc.getlogin
-
     path = File.expand_path(File.join(__FILE__, "..", "..", "templates", "deploy.erb"))
-    #puts "TRACE %s:%s" % [__FILE__, __LINE__]
-    #puts path
-    #puts File.exists?(path)
-
     template = ERB.new File.read(path)
     output = template.result(binding)
     File.open(File.join(app_dir, "config", "deploy.rb"), 'w') {|f| f.write(output) }
@@ -108,13 +104,10 @@ class StepHelpers
     git_location = `which git`.strip
     user = Etc.getlogin
     environments = [:ci, :staging, :production]
-
     path = File.expand_path(File.join(__FILE__, "..", "..", "templates", "cap_ext_deploy.erb"))
-
     template = ERB.new File.read(path)
     output = template.result(binding)
     File.open(File.join(app_dir, "config", "deploy.rb"), 'w') {|f| f.write(output) }
-
     %w(staging production).each do |stage|
       create_cap_ext_multistage_deploy_stage_file(stage)
     end
@@ -123,11 +116,9 @@ class StepHelpers
   def create_cap_ext_multistage_deploy_stage_file(stage)
     deploy_subdir = File.join(app_dir, "config", "deploy")
     FileUtils.mkdir_p deploy_subdir
-
     template_path = File.expand_path(File.join(__FILE__, "..", "..", "templates", "stage.erb"))
     template = ERB.new File.read(template_path)
     output = template.result(binding)
-
     File.open(File.join(deploy_subdir, "#{stage}.rb"), 'w') {|f| f.write(output) }
   end
 
