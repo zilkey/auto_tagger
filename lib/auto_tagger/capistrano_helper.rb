@@ -1,45 +1,61 @@
 module AutoTagger
   class CapistranoHelper
 
-    attr_reader :variables, :stage, :working_directory
+    attr_reader :variables
+    private :variables
 
     def initialize(variables)
-      @stage_manager = StageManager.new(variables[:autotagger_stages])
       @variables = variables
-      @stage = variables[:stage]
-      @working_directory = variables[:working_directory] || Dir.pwd
     end
 
-    def previous_stage
-      @stage_manager.previous_stage(stage)
+    def auto_tagger
+      @auto_tagger ||= AutoTagger::Base.new(auto_tagger_options)
     end
 
-    def configuration
-      AutoTagger::Configuration.new :stage => previous_stage, :path => working_directory
-    end
-
-    def branch
+    def ref
       if variables.has_key?(:head)
         variables[:branch]
       elsif variables.has_key?(:tag)
         variables[:tag]
-      elsif previous_stage && (latest = Runner.new(configuration).latest_tag)
-        latest
+      elsif variables.has_key?(:ref)
+        variables[:ref]
+      elsif auto_tagger.last_ref_from_previous_stage
+        auto_tagger.last_ref_from_previous_stage.sha
       else
         variables[:branch]
       end
     end
 
-    def release_tag_entries
-      entries = []
-      @stage_manager.stages.each do |stage|
-        configuration = AutoTagger::Configuration.new :stage => stage, :path => working_directory
-        tagger = Runner.new(configuration)
-        tag = tagger.latest_tag
-        commit = tagger.repository.commit_for(tag)
-        entries << "#{stage.to_s.ljust(10, " ")} #{tag.to_s.ljust(30, " ")} #{commit.to_s}"
+    def auto_tagger_options
+      options = {}
+      options[:stage] = variables[:auto_tagger_stage] || variables[:stage]
+      options[:stages] = stages
+
+      if variables[:working_directory]
+        AutoTagger::Deprecator.warn(":working_directory is deprecated.  Please use :auto_tagger_working_directory.")
+        options[:path] = variables[:working_directory]
+      else
+        options[:path] = variables[:auto_tagger_working_directory]
       end
-      entries
+
+      [
+        :date_separator, :push_refs, :fetch_refs, :remote, :ref_path, :offline,
+        :dry_run, :verbose, :refs_to_keep, :executable, :opts_file
+      ].each do |key|
+        options[key] = variables[:"auto_tagger_#{key}"]
+      end
+
+      options
+    end
+
+    def stages
+      if variables[:autotagger_stages]
+        AutoTagger::Deprecator.warn(":autotagger_stages is deprecated.  Please use :auto_tagger_stages.")
+        stages = variables[:autotagger_stages]
+      else
+        stages = variables[:auto_tagger_stages] || variables[:stages] || []
+      end
+      stages.map { |stage| stage.to_s }
     end
 
   end

@@ -1,17 +1,43 @@
 require 'spec_helper'
 
 describe AutoTagger::Commander do
-  describe ".execute" do
+
+  describe "#read" do
     it "execute the command and returns the results" do
-      mock(AutoTagger::Commander).`("cd /foo && ls") { "" } #`
-      AutoTagger::Commander.execute("/foo", "ls")
+      commander = AutoTagger::Commander.new("/foo", false)
+      commander.should_receive(:`).with("cd /foo && ls")
+      commander.read("ls")
+    end
+
+    it "puts the response when it's verbose" do
+      commander = AutoTagger::Commander.new("/foo", true)
+      commander.stub(:`)
+      commander.should_receive(:puts).with("cd /foo && ls")
+      commander.read("ls")
     end
   end
 
-  describe "system" do
+  describe "#execute" do
     it "executes and doesn't return anything" do
-      mock(AutoTagger::Commander).system("cd /foo && ls")
-      AutoTagger::Commander.execute?("/foo", "ls")
+      commander = AutoTagger::Commander.new("/foo", false)
+      commander.should_receive(:system).with("cd /foo && ls")
+      commander.execute("ls")
+    end
+
+    it "puts the response when it's verbose" do
+      commander = AutoTagger::Commander.new("/foo", true)
+      commander.stub(:system)
+      commander.should_receive(:puts).with("cd /foo && ls")
+      commander.execute("ls")
     end
   end
+
+  describe "#print" do
+    it "returns the command to be run" do
+      commander = AutoTagger::Commander.new("/foo", false)
+      commander.should_receive(:puts).with("cd /foo && ls")
+      commander.print("ls")
+    end
+  end
+
 end

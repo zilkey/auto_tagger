@@ -3,7 +3,7 @@ Given /^a repo$/ do
     helpers = StepHelpers.new
     helpers.create_git_repo
     helpers.create_app
-    @tags = helpers.tags
+    @refs = helpers.refs
   end
 end
 
@@ -11,7 +11,7 @@ When /^I run autotag with no arguments$/ do
   with_or_without_debugging do
     helpers = StepHelpers.new
     @output, @exit_code = helpers.run_autotag
-    @tags = helpers.tags
+    @refs = helpers.refs
     @exit_code = helpers.exit_code
   end
 end
@@ -20,7 +20,7 @@ When /^I run autotag with "([^\"]*)"$/ do |args|
   with_or_without_debugging do
     helpers = StepHelpers.new
     @output = helpers.run_autotag(args)
-    @tags = helpers.tags
+    @refs = helpers.refs
     @exit_code = helpers.exit_code
   end
 end
@@ -34,21 +34,21 @@ Then /^the exit code should be "(\d+)"$/ do |code|
 end
 
 Then /^no tags should be created$/ do
-  @tags.strip.should == ""
+  @refs.strip.should == ""
 end
 
 Then /^a "([^\"]*)" tag should be added to git$/ do |stage|
   helpers = StepHelpers.new
-  helpers.tags.starts_with?(stage).should be_true
+  helpers.refs.split("\n").last.should match(/\/#{stage}\//)
 end
 
 Then /^a "([^\"]*)" tag should be created$/ do |prefix|
-  @tags.strip.split("\n").any? { |tag| tag.starts_with?("demo") }.should be_true
+  @refs.strip.split("\n").any? { |ref| ref =~ /\/demo\// }.should be_true
 end
 
 Then /^a hyphen-delimited "([^\"]*)" tag should be created$/ do |prefix|
-  tag = @tags.strip.split("\n").detect { |tag| tag.starts_with?("demo") }
-  tag.split("/").last.split("-").first.should == Date.today.year.to_s
+  tag = @refs.strip.split("\n").detect { |ref| ref =~ /\/demo\// }
+  tag.split(" ").last.split("/").last.split("-").first.should == Date.today.year.to_s
 end
 
 Then /^(?:the )?exit code should be (\d*)$/ do |exit_code|

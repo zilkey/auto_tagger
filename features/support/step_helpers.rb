@@ -24,6 +24,13 @@ class StepHelpers
     create_single_deploy_file(environments)
   end
 
+  def create_app_with_dsl
+    create_git_repo
+    create_app
+    capify_app
+    create_dsl_deploy_file
+  end
+
   def run_autotag(args = nil)
     cmd = "cd #{app_dir} && ../../bin/autotag"
     cmd += " #{args}" if args
@@ -57,11 +64,11 @@ class StepHelpers
     system "cd #{app_dir} && git tag #{stage}/#{Time.now.utc.strftime('%Y%m%d%H%M%S')} && git push origin --tags"
   end
 
-  def tags
-    system "cd #{app_dir} && git fetch origin --tags"
-    tags = `cd #{app_dir} && git tag`
-    puts tags
-    tags
+  def refs(namespace = "tags")
+    system "cd #{app_dir} && git fetch origin refs/#{namespace}/*:refs/#{namespace}/*"
+    refs = `cd #{app_dir} && git show-ref | grep #{namespace}`
+    puts refs
+    refs
   end
 
   def create_app
@@ -88,22 +95,47 @@ class StepHelpers
   end
 
   def create_single_deploy_file(environments)
+
+    # ERB variables
     repository = repo_dir
     deploy_to = File.join(test_files_dir, "deployed")
     git_location = `which git`.strip
     user = Etc.getlogin
+
     path = File.expand_path(File.join(__FILE__, "..", "..", "templates", "deploy.erb"))
     template = ERB.new File.read(path)
     output = template.result(binding)
     File.open(File.join(app_dir, "config", "deploy.rb"), 'w') {|f| f.write(output) }
   end
 
+  def create_dsl_deploy_file
+
+    # ERB variables
+    repository = repo_dir
+    deploy_to = File.join(test_files_dir, "deployed")
+    git_location = `which git`.strip
+    user = Etc.getlogin
+    environments = ["ci", "staging"]
+
+    path = File.expand_path(File.join(__FILE__, "..", "..", "templates", "deploy_dsl.erb"))
+    template = ERB.new File.read(path)
+    output = template.result(binding)
+
+    puts "#{__FILE__}:#{__LINE__}"
+    p output
+
+    File.open(File.join(app_dir, "config", "deploy.rb"), 'w') {|f| f.write(output) }
+  end
+
   def create_cap_ext_multistage_deploy_files
+
+    # ERB variables
     repository = repo_dir
     deploy_to = File.join(test_files_dir, "deployed")
     git_location = `which git`.strip
     user = Etc.getlogin
     environments = [:ci, :staging, :production]
+
     path = File.expand_path(File.join(__FILE__, "..", "..", "templates", "cap_ext_deploy.erb"))
     template = ERB.new File.read(path)
     output = template.result(binding)

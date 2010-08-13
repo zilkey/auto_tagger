@@ -2,146 +2,114 @@ require 'spec_helper'
 
 describe AutoTagger::CapistranoHelper do
 
-  describe ".new" do
-    it "blows up if there are no stages" do
-      proc do
-        AutoTagger::CapistranoHelper.new({})
-      end.should raise_error(AutoTagger::StageManager::NoStagesSpecifiedError)
+  describe "#ref" do
+    it "returns the specified branch when passed the :head variable" do
+      helper = AutoTagger::CapistranoHelper.new :branch => "release", :head => nil
+      helper.ref.should == "release"
+    end
+
+    it "returns the specified tag" do
+      helper = AutoTagger::CapistranoHelper.new :tag => "v0.1.7"
+      helper.ref.should == "v0.1.7"
+    end
+
+    it "returns the specified ref" do
+      helper = AutoTagger::CapistranoHelper.new :ref => "refs/auto_tags/ci"
+      helper.ref.should == "refs/auto_tags/ci"
+    end
+
+    it "returns the sha of the last ref from that stage" do
+      helper = AutoTagger::CapistranoHelper.new({})
+      ref = mock(AutoTagger::Git::Ref, :sha => "abc123")
+      auto_tagger = mock AutoTagger::Base, :last_ref_from_previous_stage => ref
+      helper.stub(:auto_tagger) { auto_tagger }
+      helper.ref.should == "abc123"
+    end
+
+    it "returns the branch when specified" do
+      helper = AutoTagger::CapistranoHelper.new :branch => "release"
+      helper.ref.should == "release"
     end
   end
 
-  describe "#variables" do
-    it "returns all variables" do
-      AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar]}).variables.should == {:autotagger_stages => [:bar]}
+  describe "#auto_tagger" do
+    it "returns an AutoTagger::Base object with the correct options" do
+      helper = AutoTagger::CapistranoHelper.new({})
+      helper.stub(:auto_tagger_options).and_return({:foo => "bar"})
+      AutoTagger::Base.should_receive(:new).with({:foo => "bar"})
+      helper.auto_tagger
     end
   end
 
-  describe "#working_directory" do
-    it "returns the hashes' working directory value" do
-      AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar], :working_directory => "/foo"}).working_directory.should == "/foo"
+  describe "#auto_tagger_options" do
+    it "includes :stage from :auto_tagger_stage, :stage" do
+      helper = AutoTagger::CapistranoHelper.new :stage => "demo"
+      helper.auto_tagger_options[:stage].should == "demo"
+
+      helper = AutoTagger::CapistranoHelper.new :auto_tagger_stage => "demo"
+      helper.auto_tagger_options[:stage].should == "demo"
+
+      helper = AutoTagger::CapistranoHelper.new :auto_tagger_stage => "demo", :stage => "ci"
+      helper.auto_tagger_options[:stage].should == "demo"
     end
 
-    it "defaults to Dir.pwd if it's not set, or it's nil" do
-      mock(Dir).pwd { "/bar" }
-      AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar]}).working_directory.should == "/bar"
+    it "includes stages" do
+      helper = AutoTagger::CapistranoHelper.new :auto_tagger_stages => ["demo"]
+      helper.auto_tagger_options[:stages].should == ["demo"]
     end
+
+    it "includes :auto_tagger_working_directory" do
+      helper = AutoTagger::CapistranoHelper.new :auto_tagger_working_directory => "/foo"
+      helper.auto_tagger_options[:path].should == "/foo"
+    end
+
+    it "includes and deprecates :working_directory" do
+      AutoTagger::Deprecator.should_receive(:warn)
+      helper = AutoTagger::CapistranoHelper.new :working_directory => "/foo"
+      helper.auto_tagger_options[:path].should == "/foo"
+    end
+
+    [
+      :date_separator,
+      :push_refs,
+      :fetch_refs,
+      :remote,
+      :ref_path,
+      :offline,
+      :dry_run,
+      :verbose,
+      :refs_to_keep,
+      :executable,
+      :opts_file
+    ].each do |key|
+      it "incudes :#{key}" do
+        helper = AutoTagger::CapistranoHelper.new :"auto_tagger_#{key}" => "value"
+        helper.auto_tagger_options[key].should == "value"
+      end
+    end
+
   end
 
-  describe "#stage" do
-    it "returns the hashes' current stage value" do
-      AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar], :stage => :bar}).stage.should == :bar
-      AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar]}).stage.should be_nil
-    end
-  end
-
-  describe "#release_tag_entries" do
-    it "returns a column-justifed version of all the commits" do
-      mock(AutoTagger::Commander).execute("/foo", "git tag").times(any_times) { "ci/01\nstaging/01\nproduction/01" }
-      mock(AutoTagger::Commander).execute("/foo", "git --no-pager log ci/01 --pretty=oneline -1") { "guid1" }
-      mock(AutoTagger::Commander).execute("/foo", "git --no-pager log staging/01 --pretty=oneline -1") { "guid2" }
-      mock(AutoTagger::Commander).execute("/foo", "git --no-pager log production/01 --pretty=oneline -1") { "guid3" }
-      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags").times(any_times) { true }
-      mock(File).exists?(anything).times(any_times) {true}
-
-      variables = {
-        :working_directory => "/foo",
-        :autotagger_stages => [:ci, :staging, :production]
-      }
-      histories = AutoTagger::CapistranoHelper.new(variables).release_tag_entries
-      histories.length.should == 3
-      histories[0].should include("ci/01", "guid1")
-      histories[1].should include("staging/01", "guid2")
-      histories[2].should include("production/01", "guid3")
+  describe "#stages" do
+    it "understands :stages" do
+      helper = AutoTagger::CapistranoHelper.new :stages => ["demo"]
+      helper.stages.should == ["demo"]
     end
 
-    it "ignores tags delimited with '_'" do
-      mock(AutoTagger::Commander).execute("/foo", "git tag").times(any_times) { "ci/01\nci_02" }
-      mock(AutoTagger::Commander).execute("/foo", "git --no-pager log ci/01 --pretty=oneline -1") { "guid1" }
-      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags").times(any_times) { true }
-      mock(File).exists?(anything).times(any_times) {true}
-
-      variables = {
-        :working_directory => "/foo",
-        :autotagger_stages => [:ci]
-      }
-      histories = AutoTagger::CapistranoHelper.new(variables).release_tag_entries
-      histories.length.should == 1
-      histories[0].should include("ci/01", "guid1")
-    end
-  end
-
-  describe "#branch" do
-    describe "with :head and :branch specified" do
-      it "returns master" do
-        variables = {
-          :autotagger_stages => [:bar],
-          :head => nil,
-          :branch => "foo"
-        }
-        AutoTagger::CapistranoHelper.new(variables).branch.should == "foo"
-      end
+    it "understands :auto_tagger_stages" do
+      helper = AutoTagger::CapistranoHelper.new :auto_tagger_stages => ["demo"]
+      helper.auto_tagger_options[:stages].should == ["demo"]
     end
 
-    describe "with :head specified, but no branch specified" do
-      it "returns master" do
-        variables = {
-          :autotagger_stages => [:bar],
-          :head => nil
-        }
-        AutoTagger::CapistranoHelper.new(variables).branch.should == nil
-      end
+    it "understands and deprecates :autotagger_stages" do
+      AutoTagger::Deprecator.should_receive(:warn)
+      helper = AutoTagger::CapistranoHelper.new :autotagger_stages => ["demo"]
+      helper.stages.should == ["demo"]
     end
 
-    describe "with :branch specified" do
-      it "returns the value of branch" do
-        variables = {
-          :autotagger_stages => [:bar],
-          :branch => "foo"
-        }
-        AutoTagger::CapistranoHelper.new(variables).branch.should == "foo"
-      end
-    end
-
-    describe "with a previous stage with a tag" do
-      it "returns the latest tag for the previous stage" do
-        variables = {
-          :autotagger_stages => [:foo, :bar],
-          :stage => :bar,
-          :branch => "master",
-          :working_directory => "/foo"
-        }
-        tagger = Object.new
-        mock(tagger).latest_tag { "foo_01" }
-        mock(AutoTagger::Configuration).new(:stage => "foo", :path => "/foo")
-        mock(AutoTagger::Runner).new(anything) { tagger }
-        AutoTagger::CapistranoHelper.new(variables).branch.should == "foo_01"
-      end
-    end
-
-    describe "with no branch and a previous stage with no tag" do
-      it "returns nil" do
-        variables = {
-          :autotagger_stages => [:foo, :bar],
-          :stage => :bar,
-          :working_directory => "/foo"
-        }
-        tagger = Object.new
-        mock(tagger).latest_tag { nil }
-        mock(AutoTagger::Configuration).new(:stage => "foo", :path => "/foo")
-        mock(AutoTagger::Runner).new(anything) { tagger }
-        AutoTagger::CapistranoHelper.new(variables).branch.should == nil
-      end
-    end
-
-    describe "with no branch and previous stage" do
-      it "returns nil" do
-        variables = {
-          :autotagger_stages => [:bar],
-          :stage => :bar
-        }
-        AutoTagger::CapistranoHelper.new(variables).previous_stage.should be_nil
-        AutoTagger::CapistranoHelper.new(variables).branch.should == nil
-      end
+    it "makes all stages strings" do
+      helper = AutoTagger::CapistranoHelper.new :auto_tagger_stages => [:demo]
+      helper.stages.should == ["demo"]
     end
   end
 

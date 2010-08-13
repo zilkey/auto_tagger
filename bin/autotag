@@ -3,7 +3,8 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "lib", "auto_ta
 
 begin
   # The dup is to keep ARGV intact, so that tools like ruby-debug can respawn.
-  success = AutoTagger::CommandLine.execute(ARGV.dup)
+  success, message = AutoTagger::CommandLine.new(ARGV.dup).execute
+  puts message
   Kernel.exit(success ? 0 : 1)
 rescue SystemExit => e
   Kernel.exit(e.status)

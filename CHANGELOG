@@ -2,7 +2,7 @@
 
 - Added ability to specify a tag date format with --date-format option to autotag
 - Added ability to specify a tag separator with --tag-separator option to autotag
-- Added ability to specify whether or not to fetch / push tags with --offline, --fetch-tags and --push-tags options to autotag
+- Added ability to specify whether or not to fetch / push tags with --offline, --fetch-refs and --push-refs options to autotag
 - Added "help" and "version" as arguments
 
 2010-05-15
@@ -26,7 +26,7 @@
 
 2009-04-20
 
-- `release_tagger:create_tag` creates a production tag if you don't set any stages
+- `release_tagger:create_ref` creates a production tag if you don't set any stages
 
 2009-04-05
 
@@ -38,7 +38,7 @@
 
 - Capistrano bases new tags off of old tags from the previous environment when tagging if there is a tag from the previous environment
 - Added the following cap tasks:
-  - print_latest_tags
+  - print_latest_refs
   - read_tag_from_shared
   - write_tag_to_shared
 

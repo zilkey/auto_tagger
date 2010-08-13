@@ -18,6 +18,38 @@ You can use the `autotag` command to tag releases on your CI box, then use the c
 
     sudo gem install auto_tagger
 
+## 1.0 Roadmap
+
+You will be able to set the date format from autotag and from capistrano:
+
+    $ autotag demo --date-format=%Y-%m-%d-%H-%M-%S
+
+You will be able to tell auto_tagger to only create tags, not fetch or push them from autotag and from capistrano:
+
+    $ autotag demo --offline
+    $ autotag demo --fetch-refs=false --push-refs=false
+
+You will be able to specify how it creates refs (either by tags or by refs) in both autotag and capistrano:
+
+    $ autotag demo --ref-prefix=autotags
+
+The api for the autotag executable will change (but will remain almost 100% backwards compatible):
+
+    $ autotag help
+    $ autotag version
+    $ autotag create <stage>
+    $ autotag create <stage> --working-directory=../foo
+    
+## 1.x Roadmap
+
+You will be able to clean up old tags
+
+    $ autotag clean <stage> --refs-to-keep=10
+
+You will be able to specify custom commit messages
+
+    $ autotag clean ci --message="Another successful build :)"
+
 ## Contribute
 
   * [GitHub Repository](http://github.com/zilkey/auto_tagger/tree/master)
@@ -36,31 +68,12 @@ By default, running autotag does the following:
     $ git tag <stage>/<timestamp>
     $ git push origin --tags
 
-## When 1.0 is released
-
-You will be able to set the date format:
-
-    $ autotag demo --date-format=%Y-%m-%d-%H-%M-%S # => uses the passed in date formatter in the tag name
-
-If you specify --offline (or --fetch-tags=false --push-tags=false) it will only run the local commands:
-
-    $ git tag <stage>/<timestamp>
-
-You can specify whether it creates tags in a subdirectory (based on stage name) or just adds them to the top-level tag list with the --tag-separator option:
-
-    $ autotag demo --tag-separator=-
-
-You can also call:
-
-    $ autotag help
-    $ autotag version
-
 ## Capistrano Integration
 
 AutoTagger comes with 2 capistrano tasks: 
 
   * `release_tagger:set_branch` tries to set the branch to the last tag from the previous environment.
-  * `release_tagger:create_tag` runs autotag for the current stage
+  * `release_tagger:create_ref` runs autotag for the current stage
 
 Example `config/deploy.rb` file:
 
@@ -85,9 +98,9 @@ Example `config/deploy.rb` file:
 
     # You need to add the before/ater callbacks yourself
     before "deploy:update_code", "release_tagger:set_branch"
-    after  "deploy", "release_tagger:create_tag"
+    after  "deploy", "release_tagger:create_ref"
     after  "deploy", "release_tagger:write_tag_to_shared"
-    after  "deploy", "release_tagger:print_latest_tags"
+    after  "deploy", "release_tagger:print_latest_refs"
 
 ### Cpistano-ext multistage support
 
@@ -128,7 +141,7 @@ If you add `before "deploy:update_code", "release_tagger:set_branch"`, you can j
     
 and the branch will be set for you automatically.
 
-### release_tagger:create_tag
+### release_tagger:create_ref
 
 This cap task creates a new tag, based on the latest tag from the previous environment.  
 
@@ -136,21 +149,21 @@ If there is no tag from the previous stage, it creates a new tag from the latest
 
 If you don't specify any `autotagger_stages`, autotagger will create a tag that starts with "production".
 
-### release_tagger:print_latest_tags
+### release_tagger:print_latest_refs
 
 This task reads the git version from the text file in shared:
 
     cap staging release_tagger:read_tag_from_shared
 
-### release_tagger:print_latest_tags
+### release_tagger:print_latest_refs
 
 This task takes the latest tag from each environment and prints it to the screen.  You can add it to your deploy.rb like so:
 
-    after  "deploy", "release_tagger:print_latest_tags"
+    after  "deploy", "release_tagger:print_latest_refs"
 
 Or call it directly, like:
 
-    cap production release_tagger:print_latest_tags
+    cap production release_tagger:print_latest_refs
     
 This will produce output like:
 
