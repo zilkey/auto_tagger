@@ -24,17 +24,31 @@ You can use the `autotag` command to tag releases on your CI box, then use the c
 
 ## The autotag executable
 
-Installing the gem creates an executable file named autotag, which takes two arguments: the stage, and optionally the path to the git repo:
+Installing the gem creates an executable file named autotag, which takes the stage, optionally the path to the git repo, and options:
 
     $ autotag demo  # => creates a tag like demo/200804041234 in the current directory
     $ autotag demo . # => same as above
     $ autotag demo /Users/me/foo # => cd's to /Users/me/foo before creating the tag
+    $ autotag demo --date-format=%Y-%m-%d-%H-%M-%S # => uses the passed in date formatter in the tag name
 
-Running autotag does the following:
+By default, running autotag does the following:
 
     $ git fetch origin --tags
     $ git tag <stage>/<timestamp>
     $ git push origin --tags
+
+If you specify --offline (or --fetch-tags=false --push-tags=false) it will only run the local commands:
+
+    $ git tag <stage>/<timestamp>
+
+You can specify whether it creates tags in a subdirectory (based on stage name) or just adds them to the top-level tag list with the --tag-separator option:
+
+    $ autotag demo --tag-separator=-
+
+You can also call:
+
+    $ autotag help
+    $ autotag version
 
 ## Capistrano Integration
 
@@ -174,6 +188,7 @@ Special thanks to:
  * Chad Wooley for his feature ideas
  * Tim Holahan for his QA
  * Pat Nakajima for making auto_tagger a better ruby citizen
+ * Josh Susser for recommending the date format changes
 
 ## Links
 
