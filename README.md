@@ -29,13 +29,18 @@ Installing the gem creates an executable file named autotag, which takes the sta
     $ autotag demo  # => creates a tag like demo/200804041234 in the current directory
     $ autotag demo . # => same as above
     $ autotag demo /Users/me/foo # => cd's to /Users/me/foo before creating the tag
-    $ autotag demo --date-format=%Y-%m-%d-%H-%M-%S # => uses the passed in date formatter in the tag name
 
 By default, running autotag does the following:
 
     $ git fetch origin --tags
     $ git tag <stage>/<timestamp>
     $ git push origin --tags
+
+## When 1.0 is released
+
+You will be able to set the date format:
+
+    $ autotag demo --date-format=%Y-%m-%d-%H-%M-%S # => uses the passed in date formatter in the tag name
 
 If you specify --offline (or --fetch-tags=false --push-tags=false) it will only run the local commands:
 
