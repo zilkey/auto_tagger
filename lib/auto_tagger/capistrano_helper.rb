@@ -14,12 +14,16 @@ module AutoTagger
       @stage_manager.previous_stage(stage)
     end
 
+    def configuration
+      AutoTagger::Configuration.new :stage => previous_stage, :path => working_directory
+    end
+
     def branch
       if variables.has_key?(:head)
         variables[:branch]
       elsif variables.has_key?(:tag)
         variables[:tag]
-      elsif previous_stage && (latest = Runner.new(previous_stage, working_directory).latest_tag)
+      elsif previous_stage && (latest = Runner.new(configuration).latest_tag)
         latest
       else
         variables[:branch]
@@ -29,7 +33,8 @@ module AutoTagger
     def release_tag_entries
       entries = []
       @stage_manager.stages.each do |stage|
-        tagger = Runner.new(stage, working_directory)
+        configuration = AutoTagger::Configuration.new :stage => stage, :path => working_directory
+        tagger = Runner.new(configuration)
         tag = tagger.latest_tag
         commit = tagger.repository.commit_for(tag)
         entries << "#{stage.to_s.ljust(10, " ")} #{tag.to_s.ljust(30, " ")} #{commit.to_s}"

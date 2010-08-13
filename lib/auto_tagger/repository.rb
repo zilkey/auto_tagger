@@ -5,18 +5,16 @@ module AutoTagger
   class GitCommandFailedError < StandardError; end
   
   class Repository
-    attr_reader :path
 
-    def initialize(path)
-      if path.to_s.strip == ""
-        raise NoPathProvidedError
-      elsif ! File.exists?(path)
-        raise NoSuchPathError
-      elsif ! File.exists?(File.join(path, ".git"))
-        raise InvalidGitRepositoryError
-      else
-        @path = path
-      end
+    attr_reader :configuration
+
+    def initialize(configuration)
+      @configuration = configuration
+      validate
+    end
+
+    def path
+      @configuration.working_directory
     end
 
     def ==(other)
@@ -37,6 +35,20 @@ module AutoTagger
 
     def run!(cmd)
       Commander.execute?(path, cmd) || raise(GitCommandFailedError)
+    end
+
+    private
+
+    def validate
+      if path.to_s.strip == ""
+        raise NoPathProvidedError
+      elsif ! File.exists?(path)
+        raise NoSuchPathError
+      elsif ! File.exists?(File.join(path, ".git"))
+        raise InvalidGitRepositoryError
+      else
+        @path = path
+      end
     end
 
   end

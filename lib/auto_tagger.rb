@@ -5,7 +5,6 @@ require 'optparse'
   'commander',
   'configuration',
   'options',
-  'parser',
   'repository',
   'tag',
   'stage_manager',

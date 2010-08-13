@@ -10,11 +10,11 @@ module AutoTagger
     end
 
     def find_all
-      repository.run("git tag").split("\n")
+      run("git tag").split("\n")
     end
 
     def fetch
-      repository.run! "git fetch origin --tags"
+      run!("git fetch origin --tags") if fetch_tags?
     end
 
     def latest_from(stage)
@@ -22,7 +22,7 @@ module AutoTagger
     end
 
     def push
-      repository.run! "git push origin --tags"
+      run!("git push origin --tags") if push_tags?
     end
 
     def create(stage, commit = nil)
@@ -35,8 +35,36 @@ module AutoTagger
 
     private
 
+    def run(cmd)
+      repository.run cmd
+    end
+
+    def run!(cmd)
+      repository.run! cmd
+    end
+
+    def configuration
+      repository.configuration
+    end
+
+    def fetch_tags?
+      configuration.fetch_tags?
+    end
+
+    def push_tags?
+      configuration.push_tags?
+    end
+
+    def tag_separator
+      configuration.tag_separator
+    end
+
+    def date_format
+      configuration.date_format
+    end
+
     def name_for(stage)
-      "%s/%s" % [stage, Time.now.utc.strftime('%Y%m%d%H%M%S')]
+      "%s%s%s" % [stage, tag_separator, Time.now.utc.strftime(date_format)]
     end
 
   end
