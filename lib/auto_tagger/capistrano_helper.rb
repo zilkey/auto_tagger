@@ -3,18 +3,53 @@ module AutoTagger
 
     attr_reader :variables, :stage, :working_directory
 
+    class Dsl
+      attr_reader :cap
+
+      def initialize(cap)
+        @cap = cap
+      end
+
+      def stages(array)
+        cap.set :auto_tagger_stages, array
+      end
+
+      def date_format(string)
+        cap.set :auto_tagger_date_format, string
+      end
+    end
+
     def initialize(variables)
-      @stage_manager = StageManager.new(variables[:autotagger_stages])
       @variables = variables
-      @stage = variables[:stage]
-      @working_directory = variables[:working_directory] || Dir.pwd
+
+      if variables[:working_directory]
+        AutoTagger::Deprecator.warn(":working_directory is deprecated.  Please use :auto_tagger_working_directory or see the readme for the new api.")
+      end
+
+      if stages = variables.delete(:stages)
+        variables[:auto_tagger_stages] = stages
+        AutoTagger::Deprecator.warn(":stages is deprecated.  Please use :auto_tagger_stages or see the readme for the new api.")
+      end
+
+      options = {}
+      options[:stage] = variables[:auto_tagger_stage] || variables[:stage]
+      options[:path] = variables[:auto_tagger_working_directory] || variables[:working_directory]
+      options[:date_format] = variables[:auto_tagger_date_format]
+      options[:push_tags] = variables[:auto_tagger_push_tags]
+      options[:fetch_tags] = variables[:auto_tagger_fetch_tags]
+      options[:tag_separator] = variables[:auto_tagger_tag_separator]
+      @configuration = AutoTagger::Configuration.new(options)
+    end
+
+    def stage_manager
+      @stage_manager ||= StageManager.new(@variables[:auto_tagger_stages])
     end
 
     def previous_stage
-      @stage_manager.previous_stage(stage)
+      stage_manager.previous_stage(@configuration.stage)
     end
 
-    def configuration
+    def previous_configuration
       AutoTagger::Configuration.new :stage => previous_stage, :path => working_directory
     end
 
@@ -23,7 +58,7 @@ module AutoTagger
         variables[:branch]
       elsif variables.has_key?(:tag)
         variables[:tag]
-      elsif previous_stage && (latest = Runner.new(configuration).latest_tag)
+      elsif previous_stage && (latest = Runner.new(previous_configuration).latest_tag)
         latest
       else
         variables[:branch]
@@ -32,7 +67,7 @@ module AutoTagger
 
     def release_tag_entries
       entries = []
-      @stage_manager.stages.each do |stage|
+      stage_manager.stages.each do |stage|
         configuration = AutoTagger::Configuration.new :stage => stage, :path => working_directory
         tagger = Runner.new(configuration)
         tag = tagger.latest_tag

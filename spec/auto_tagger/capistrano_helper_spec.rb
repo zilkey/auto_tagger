@@ -2,10 +2,30 @@ require 'spec_helper'
 
 describe AutoTagger::CapistranoHelper do
 
-  describe ".new" do
+  describe AutoTagger::CapistranoHelper::Dsl do
+    describe ".configure" do
+      it "should set the stages correctly" do
+        fake_cap = Object.new
+        mock(fake_cap).set(:auto_tagger_stages, ["ci", "staging"])
+        AutoTagger::CapistranoHelper::Dsl.new(fake_cap).instance_eval do
+          stages ["ci", "staging"]
+        end
+      end
+
+      it "should set the date format correctly" do
+        fake_cap = Object.new
+        mock(fake_cap).set(:auto_tagger_date_format, "foo")
+        AutoTagger::CapistranoHelper::Dsl.new(fake_cap).instance_eval do
+          date_format "foo"
+        end
+      end
+    end
+  end
+
+  describe "#stage_manager" do
     it "blows up if there are no stages" do
       proc do
-        AutoTagger::CapistranoHelper.new({})
+        AutoTagger::CapistranoHelper.new({}).stage_manager
       end.should raise_error(AutoTagger::StageManager::NoStagesSpecifiedError)
     end
   end
@@ -17,11 +37,16 @@ describe AutoTagger::CapistranoHelper do
   end
 
   describe "#working_directory" do
-    it "returns the hashes' working directory value" do
+    it "returns the hashes' working directory value", :deprecated => true do
+      mock(AutoTagger::Deprecator).warn(":working_directory is deprecated.  Please use :auto_tagger_working_directory or see the readme for the new api.")
       AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar], :working_directory => "/foo"}).working_directory.should == "/foo"
     end
 
-    it "defaults to Dir.pwd if it's not set, or it's nil" do
+    it "returns the hashes' auto_tagger_working_directory value" do
+      AutoTagger::CapistranoHelper.new({:auto_tagger_working_directory => "/foo"}).working_directory.should == "/foo"
+    end
+
+    it "defaults to Dir.pwd if it's not set, or it's nil", :deprecated => true do
       mock(Dir).pwd { "/bar" }
       AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar]}).working_directory.should == "/bar"
     end
@@ -41,7 +66,7 @@ describe AutoTagger::CapistranoHelper do
       mock(AutoTagger::Commander).execute("/foo", "git --no-pager log staging/01 --pretty=oneline -1") { "guid2" }
       mock(AutoTagger::Commander).execute("/foo", "git --no-pager log production/01 --pretty=oneline -1") { "guid3" }
       mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags").times(any_times) { true }
-      mock(File).exists?(anything).times(any_times) {true}
+      mock(File).exists?(anything).times(any_times) { true }
 
       variables = {
         :working_directory => "/foo",
@@ -58,7 +83,7 @@ describe AutoTagger::CapistranoHelper do
       mock(AutoTagger::Commander).execute("/foo", "git tag").times(any_times) { "ci/01\nci_02" }
       mock(AutoTagger::Commander).execute("/foo", "git --no-pager log ci/01 --pretty=oneline -1") { "guid1" }
       mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags").times(any_times) { true }
-      mock(File).exists?(anything).times(any_times) {true}
+      mock(File).exists?(anything).times(any_times) { true }
 
       variables = {
         :working_directory => "/foo",

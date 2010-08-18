@@ -1,6 +1,11 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "auto_tagger"))
 
 Capistrano::Configuration.instance(:must_exist).load do
+
+  def auto_tagger(&block)
+    AutoTagger::CapistranoHelper::Configuration.configure(self, &block)
+  end
+
   namespace :release_tagger do
     desc %Q{
       Sets the branch to the latest tag from the previous stage.

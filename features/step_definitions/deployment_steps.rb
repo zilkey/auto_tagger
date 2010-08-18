@@ -22,6 +22,14 @@ Given /^a three-stage app using cap-multistage$/ do
   end
 end
 
+Given /^an app with deploy file that uses the dsl$/ do
+  with_or_without_debugging do
+    helpers = StepHelpers.new
+    helpers.create_app_with_dsl
+    @tags = helpers.tags
+  end
+end
+
 Given /^a ci tag$/ do
   with_or_without_debugging do
     helpers = StepHelpers.new
@@ -49,5 +57,14 @@ Then /^a tag should be added to git$/ do
     helpers = StepHelpers.new
     new_tags = helpers.tags
     @tags.length.should < new_tags.length
+  end
+end
+
+Then /^a tag should be added to git with the proper date format$/ do
+  with_or_without_debugging do
+    helpers = StepHelpers.new
+    new_tags = helpers.tags
+    @tags.length.should < new_tags.length
+    @tags.last.should match(/\d{4}-\d{2}-\d{2}-\d{2}/)
   end
 end

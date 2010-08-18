@@ -1,5 +1,6 @@
 require 'optparse'
 [
+  'deprecator',
   'base',
   'command_line',
   'commander',
