@@ -1,3 +1,8 @@
+# repo.refs.create name, sha
+# repo.refs.all
+# repo.refs.find_by_name name
+# repo.refs.push origin, pattern
+# repo.refs.fetch origin, pattern
 module AutoTagger
   module Git
     class Repo

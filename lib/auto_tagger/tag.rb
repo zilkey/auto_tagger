@@ -1,6 +1,5 @@
 # git --no-pager log --pretty=oneline -1
 # git tag -a -m 'Successful continuous integration build on #{timestamp}' #{tag_name}"
-#http://book.git-scm.com/7_git_references.html
 module AutoTagger
   class Tag
 

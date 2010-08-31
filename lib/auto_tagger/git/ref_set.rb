@@ -14,25 +14,28 @@ module AutoTagger
         end
       end
 
+      # name = refs/autotags/2009857463
+      # returns a ref
       def find_by_name(name)
         sha = repo.exec("rev-parse").strip
         Ref.new(name, sha)
       end
 
+      # name = refs/autotags/2009857463
+      # returns a ref
       def create(name, sha_or_ref)
-        repo.exec "update-ref #{name} #{sha_or_ref}"
+        ref = Ref.new(repo, sha_or_ref, name)
+        ref.save
       end
 
-      def push(pattern = "refs/autotags/*")
+      # pattern = refs/autotags/*
+      def push(pattern, origin = "origin")
         repo.exec "push #{origin} #{pattern}:#{pattern}"
       end
 
-      def fetch(pattern = "refs/autotags/*")
+      # pattern = refs/autotags/*
+      def fetch(pattern, origin = "origin")
         repo.exec "fetch #{origin} #{pattern}:#{pattern}"
-      end
-
-      def origin
-        "origin"
       end
 
     end
