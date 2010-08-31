@@ -1,7 +1,7 @@
 module AutoTagger
   class CapistranoHelper
 
-    attr_reader :variables, :stage, :working_directory
+    attr_reader :variables, :configuration
 
     class Dsl
       attr_reader :cap
@@ -31,14 +31,14 @@ module AutoTagger
         AutoTagger::Deprecator.warn(":stages is deprecated.  Please use :auto_tagger_stages or see the readme for the new api.")
       end
 
-      options = {}
-      options[:stage] = variables[:auto_tagger_stage] || variables[:stage]
-      options[:path] = variables[:auto_tagger_working_directory] || variables[:working_directory]
-      options[:date_format] = variables[:auto_tagger_date_format]
-      options[:push_tags] = variables[:auto_tagger_push_tags]
-      options[:fetch_tags] = variables[:auto_tagger_fetch_tags]
-      options[:tag_separator] = variables[:auto_tagger_tag_separator]
-      @configuration = AutoTagger::Configuration.new(options)
+      @options = {}
+      @options[:stage] = variables[:auto_tagger_stage] || variables[:stage]
+      @options[:path] = variables[:auto_tagger_working_directory] || variables[:working_directory]
+      @options[:date_format] = variables[:auto_tagger_date_format]
+      @options[:push_tags] = variables[:auto_tagger_push_tags]
+      @options[:fetch_tags] = variables[:auto_tagger_fetch_tags]
+      @options[:tag_separator] = variables[:auto_tagger_tag_separator]
+      @configuration = AutoTagger::Configuration.new(@options)
     end
 
     def stage_manager
@@ -50,9 +50,11 @@ module AutoTagger
     end
 
     def previous_configuration
-      AutoTagger::Configuration.new :stage => previous_stage, :path => working_directory
+      AutoTagger::Configuration.new :stage => previous_stage,
+                                    :path => configuration.working_directory
     end
 
+    # should be Ref
     def branch
       if variables.has_key?(:head)
         variables[:branch]
@@ -68,7 +70,7 @@ module AutoTagger
     def release_tag_entries
       entries = []
       stage_manager.stages.each do |stage|
-        configuration = AutoTagger::Configuration.new :stage => stage, :path => working_directory
+        configuration = AutoTagger::Configuration.new :stage => stage, :path => @configuration.working_directory
         tagger = Runner.new(configuration)
         tag = tagger.latest_tag
         commit = tagger.repository.commit_for(tag)

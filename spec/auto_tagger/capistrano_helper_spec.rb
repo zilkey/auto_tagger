@@ -32,30 +32,30 @@ describe AutoTagger::CapistranoHelper do
 
   describe "#variables" do
     it "returns all variables" do
-      AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar]}).variables.should == {:autotagger_stages => [:bar]}
+      AutoTagger::CapistranoHelper.new({:auto_tagger_stages => [:bar]}).variables.should == {:auto_tagger_stages => [:bar]}
     end
   end
 
   describe "#working_directory" do
     it "returns the hashes' working directory value", :deprecated => true do
       mock(AutoTagger::Deprecator).warn(":working_directory is deprecated.  Please use :auto_tagger_working_directory or see the readme for the new api.")
-      AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar], :working_directory => "/foo"}).working_directory.should == "/foo"
+      AutoTagger::CapistranoHelper.new({:auto_tagger_stages => [:bar], :working_directory => "/foo"})
     end
 
     it "returns the hashes' auto_tagger_working_directory value" do
-      AutoTagger::CapistranoHelper.new({:auto_tagger_working_directory => "/foo"}).working_directory.should == "/foo"
+      AutoTagger::CapistranoHelper.new({:auto_tagger_working_directory => "/foo"}).configuration.working_directory.should == "/foo"
     end
 
     it "defaults to Dir.pwd if it's not set, or it's nil", :deprecated => true do
       mock(Dir).pwd { "/bar" }
-      AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar]}).working_directory.should == "/bar"
+      AutoTagger::CapistranoHelper.new({:auto_tagger_stages => [:bar]}).configuration.working_directory.should == "/bar"
     end
   end
 
   describe "#stage" do
     it "returns the hashes' current stage value" do
-      AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar], :stage => :bar}).stage.should == :bar
-      AutoTagger::CapistranoHelper.new({:autotagger_stages => [:bar]}).stage.should be_nil
+      AutoTagger::CapistranoHelper.new({:auto_tagger_stages => [:bar], :stage => :bar}).configuration.stage.should == :bar
+      AutoTagger::CapistranoHelper.new({:auto_tagger_stages => [:bar]}).configuration.stage.should be_nil
     end
   end
 
@@ -69,8 +69,8 @@ describe AutoTagger::CapistranoHelper do
       mock(File).exists?(anything).times(any_times) { true }
 
       variables = {
-        :working_directory => "/foo",
-        :autotagger_stages => [:ci, :staging, :production]
+        :auto_tagger_working_directory => "/foo",
+        :auto_tagger_stages => [:ci, :staging, :production]
       }
       histories = AutoTagger::CapistranoHelper.new(variables).release_tag_entries
       histories.length.should == 3
@@ -86,8 +86,8 @@ describe AutoTagger::CapistranoHelper do
       mock(File).exists?(anything).times(any_times) { true }
 
       variables = {
-        :working_directory => "/foo",
-        :autotagger_stages => [:ci]
+        :auto_tagger_working_directory => "/foo",
+        :auto_tagger_stages => [:ci]
       }
       histories = AutoTagger::CapistranoHelper.new(variables).release_tag_entries
       histories.length.should == 1
@@ -99,7 +99,7 @@ describe AutoTagger::CapistranoHelper do
     describe "with :head and :branch specified" do
       it "returns master" do
         variables = {
-          :autotagger_stages => [:bar],
+          :auto_tagger_stages => [:bar],
           :head => nil,
           :branch => "foo"
         }
@@ -110,7 +110,7 @@ describe AutoTagger::CapistranoHelper do
     describe "with :head specified, but no branch specified" do
       it "returns master" do
         variables = {
-          :autotagger_stages => [:bar],
+          :auto_tagger_stages => [:bar],
           :head => nil
         }
         AutoTagger::CapistranoHelper.new(variables).branch.should == nil
@@ -120,7 +120,7 @@ describe AutoTagger::CapistranoHelper do
     describe "with :branch specified" do
       it "returns the value of branch" do
         variables = {
-          :autotagger_stages => [:bar],
+          :auto_tagger_stages => [:bar],
           :branch => "foo"
         }
         AutoTagger::CapistranoHelper.new(variables).branch.should == "foo"
@@ -130,10 +130,10 @@ describe AutoTagger::CapistranoHelper do
     describe "with a previous stage with a tag" do
       it "returns the latest tag for the previous stage" do
         variables = {
-          :autotagger_stages => [:foo, :bar],
+          :auto_tagger_stages => [:foo, :bar],
           :stage => :bar,
           :branch => "master",
-          :working_directory => "/foo"
+          :auto_tagger_working_directory => "/foo"
         }
         tagger = Object.new
         mock(tagger).latest_tag { "foo_01" }
@@ -146,9 +146,9 @@ describe AutoTagger::CapistranoHelper do
     describe "with no branch and a previous stage with no tag" do
       it "returns nil" do
         variables = {
-          :autotagger_stages => [:foo, :bar],
+          :auto_tagger_stages => [:foo, :bar],
           :stage => :bar,
-          :working_directory => "/foo"
+          :auto_tagger_working_directory => "/foo"
         }
         tagger = Object.new
         mock(tagger).latest_tag { nil }
@@ -161,7 +161,7 @@ describe AutoTagger::CapistranoHelper do
     describe "with no branch and previous stage" do
       it "returns nil" do
         variables = {
-          :autotagger_stages => [:bar],
+          :auto_tagger_stages => [:bar],
           :stage => :bar
         }
         AutoTagger::CapistranoHelper.new(variables).previous_stage.should be_nil

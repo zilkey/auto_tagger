@@ -1,19 +1,24 @@
 module AutoTagger
   class Commander
-    class << self
-      def execute(path, cmd)
-        `#{command_in_context(path, cmd)}`
-      end
 
-      def execute?(path, cmd)
-        system command_in_context(path, cmd)
-      end
+    attr_reader :path
 
-      private
+    def initialize(path)
+      @path = path
+    end
 
-      def command_in_context(path, cmd)
-        "cd #{path} && #{cmd}"
-      end
+    def execute(cmd)
+      `#{command_in_context(path, cmd)}`
+    end
+
+    def execute?(cmd)
+      system command_in_context(path, cmd)
+    end
+
+    private
+
+    def command_in_context(cmd)
+      "cd #{path} && #{cmd}"
     end
   end
 end
