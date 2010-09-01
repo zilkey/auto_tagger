@@ -15,7 +15,7 @@ describe AutoTagger::Options do
 
     it "understands --tag-separator" do
       options = AutoTagger::Options.parse ["--tag-separator=|"]
-      options[:tag_separator].should == "|"
+      options[:ref_prefix].should == "|"
     end
 
     it "understands --date-format" do
@@ -25,24 +25,24 @@ describe AutoTagger::Options do
 
     it "understands --fetch-tags" do
       options = AutoTagger::Options.parse ["--fetch-tags=true"]
-      options[:fetch_tags].should == true
+      options[:fetch_refs].should == true
 
       options = AutoTagger::Options.parse ["--fetch-tags=false"]
-      options[:fetch_tags].should == false
+      options[:fetch_refs].should == false
     end
 
     it "understands --push-tags" do
       options = AutoTagger::Options.parse ["--push-tags=true"]
-      options[:push_tags].should == true
+      options[:push_refs].should == true
 
       options = AutoTagger::Options.parse ["--push-tags=false"]
-      options[:push_tags].should == false
+      options[:push_refs].should == false
     end
 
     it "understands --offline" do
       options = AutoTagger::Options.parse ["--offline"]
-      options[:push_tags].should == false
-      options[:fetch_tags].should == false
+      options[:push_refs].should == false
+      options[:fetch_refs].should == false
     end
 
     it "understands all help options" do

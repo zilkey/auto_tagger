@@ -14,7 +14,7 @@ module AutoTagger
     end
 
     def fetch
-      run!("git fetch origin --tags") if fetch_tags?
+      run!("git fetch origin --tags") if fetch_refs?
     end
 
     def latest_from(stage)
@@ -22,7 +22,7 @@ module AutoTagger
     end
 
     def push
-      run!("git push origin --tags") if push_tags?
+      run!("git push origin --tags") if push_refs?
     end
 
     def create(stage, commit = nil)
@@ -47,16 +47,16 @@ module AutoTagger
       repository.configuration
     end
 
-    def fetch_tags?
-      configuration.fetch_tags?
+    def fetch_refs?
+      configuration.fetch_refs?
     end
 
-    def push_tags?
-      configuration.push_tags?
+    def push_refs?
+      configuration.push_refs?
     end
 
-    def tag_separator
-      configuration.tag_separator
+    def ref_prefix
+      configuration.ref_prefix
     end
 
     def date_format
@@ -64,7 +64,7 @@ module AutoTagger
     end
 
     def name_for(stage)
-      "%s%s%s" % [stage, tag_separator, Time.now.utc.strftime(date_format)]
+      "%s%s%s" % [stage, ref_prefix, Time.now.utc.strftime(date_format)]
     end
 
   end

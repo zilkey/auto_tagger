@@ -73,7 +73,7 @@ By default, running autotag does the following:
 AutoTagger comes with 2 capistrano tasks: 
 
   * `release_tagger:set_branch` tries to set the branch to the last tag from the previous environment.
-  * `release_tagger:create_tag` runs autotag for the current stage
+  * `release_tagger:create_ref` runs autotag for the current stage
 
 Example `config/deploy.rb` file:
 
@@ -98,7 +98,7 @@ Example `config/deploy.rb` file:
 
     # You need to add the before/ater callbacks yourself
     before "deploy:update_code", "release_tagger:set_branch"
-    after  "deploy", "release_tagger:create_tag"
+    after  "deploy", "release_tagger:create_ref"
     after  "deploy", "release_tagger:write_tag_to_shared"
     after  "deploy", "release_tagger:print_latest_tags"
 
@@ -141,7 +141,7 @@ If you add `before "deploy:update_code", "release_tagger:set_branch"`, you can j
     
 and the branch will be set for you automatically.
 
-### release_tagger:create_tag
+### release_tagger:create_ref
 
 This cap task creates a new tag, based on the latest tag from the previous environment.  
 

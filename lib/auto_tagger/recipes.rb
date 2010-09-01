@@ -7,6 +7,11 @@ Capistrano::Configuration.instance(:must_exist).load do
   end
 
   namespace :release_tagger do
+
+    def auto_tagger
+
+    end
+
     desc %Q{
       Sets the branch to the latest tag from the previous stage.
       Use -Shead=true to set the branch to master, -Stag=<tag> to specify the tag explicitly.
@@ -46,16 +51,16 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
 
     desc %Q{Creates a tag using the stage variable}
-    task :create_tag, :roles => :app do
+    task :create_ref, :roles => :app do
       if variables[:stage]
         configuration = AutoTagger::Configuration.new :stage => variables[:stage],
                                                       :path => variables[:working_directory]
-        tag_name = AutoTagger::Runner.new(configuration).create_tag(real_revision)
+        tag_name = AutoTagger::Runner.new(configuration).create_ref(real_revision)
         logger.info "AUTO TAGGER created tag #{tag_name} from #{real_revision}"
       else
         configuration = AutoTagger::Configuration.new :stage => :production,
                                                       :path => variables[:working_directory]
-        tag_name = AutoTagger::Runner.new(configuration).create_tag
+        tag_name = AutoTagger::Runner.new(configuration).create_ref
         logger.info "AUTO TAGGER created tag #{tag_name}"
       end
     end

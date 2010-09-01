@@ -1,3 +1,4 @@
+# kill
 module AutoTagger
   class StageManager
     class NoStagesSpecifiedError < StandardError

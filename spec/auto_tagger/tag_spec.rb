@@ -39,10 +39,10 @@ describe AutoTagger::Tag do
     end
   end
 
-  describe "#fetch_tags" do
+  describe "#fetch_refs" do
     it "sends the correct command" do
       tag = AutoTagger::Tag.new(@repository)
-      stub(tag).fetch_tags?.returns(true)
+      stub(tag).fetch_refs?.returns(true)
       mock(@repository).run!("git fetch origin --tags")
       tag.fetch
     end
@@ -51,7 +51,7 @@ describe AutoTagger::Tag do
   describe "#push" do
     it "sends the correct command" do
       tag = AutoTagger::Tag.new(@repository)
-      stub(tag).push_tags?.returns(true)
+      stub(tag).push_refs?.returns(true)
       mock(@repository).run!("git push origin --tags")
       tag.push
     end
@@ -64,9 +64,9 @@ describe AutoTagger::Tag do
       mock(Time).now.once {time}
       tag_name = "ci/#{time.utc.strftime('%Y%m%d%H%M%S')}"
 
-      stub(tag).fetch_tags?.returns(true)
-      stub(tag).push_tags?.returns(true)
-      stub(tag).tag_separator.returns("/")
+      stub(tag).fetch_refs?.returns(true)
+      stub(tag).push_refs?.returns(true)
+      stub(tag).ref_prefix.returns("/")
       stub(tag).date_format.returns("%Y%m%d%H%M%S")
       mock(@repository).run!("git tag #{tag_name}")
       tag.create("ci").should == tag_name

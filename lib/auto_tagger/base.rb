@@ -5,18 +5,18 @@ module AutoTagger
     File.read(File.expand_path(File.join(__FILE__, "/../../../VERSION")))
   end
 
-  class Runner
-    attr_reader :configuration
+  class Base
+    attr_reader :options
 
-    def initialize(configuration)
-      @configuration = configuration
+    def initialize(options)
+      @options = options
     end
 
     def repository
-      @repository ||= Repository.new(configuration)
+      @repository ||= Repository.new(options[:path])
     end
 
-    def create_tag(commit = nil)
+    def create_ref(commit = nil)
       ensure_stage
       repository.tags.fetch
       new_tag = repository.tags.create(stage, commit)

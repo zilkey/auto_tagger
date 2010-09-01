@@ -28,7 +28,7 @@ module AutoTagger
         opts.on("--tag-separator SEPARATOR",
                 "Sets the character used to separate the stage name",
                 "from the timestamp in the tag.  Defaults to /") do |o|
-          options[:tag_separator] = o
+          options[:ref_prefix] = o
         end
 
         opts.on("--date-format FORMAT",
@@ -40,19 +40,29 @@ module AutoTagger
         opts.on("--fetch-tags FETCH_TAGS", TrueClass,
                 "Whether or not to fetch tags before creating the tag",
                 "Defaults to true") do |o|
-          options[:fetch_tags] = o
+          options[:fetch_refs] = o
         end
 
         opts.on("--push-tags PUSH_TAGS", TrueClass,
                 "Whether or not to push tags after creating the tag",
                 "Defaults to true") do |o|
-          options[:push_tags] = o
+          options[:push_refs] = o
         end
 
         opts.on("--offline", FalseClass,
                 "Same as --fetch-tags=false and --push-tags=false") do |o|
-          options[:push_tags] = false
-          options[:fetch_tags] = false
+          options[:push_refs] = false
+          options[:fetch_refs] = false
+        end
+
+        opts.on("--remote",
+                "specify the git remote") do |o|
+          options[:remote] = o
+        end
+
+        opts.on("--ref-path",
+                "specify the ref-path") do |o|
+          options[:ref_path] = o
         end
 
         opts.on_tail("-h", "--help", "-?", "You're looking at it.") do

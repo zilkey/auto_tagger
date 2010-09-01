@@ -7,11 +7,11 @@ describe AutoTagger::Runner do
     @configuration = OpenStruct.new
   end
 
-  describe "#create_tag" do
+  describe "#create_ref" do
     it "blows up if you don't pass a stage" do
       proc do
         @configuration.stage = nil
-        AutoTagger::Runner.new(@configuration).create_tag
+        AutoTagger::Runner.new(@configuration).create_ref
       end.should raise_error(AutoTagger::StageCannotBeBlankError)
     end
 
@@ -26,7 +26,7 @@ describe AutoTagger::Runner do
       mock(AutoTagger::Commander).execute?("/foo", "git push origin --tags")  {true}
 
       configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Runner.new(configuration).create_tag
+      AutoTagger::Runner.new(configuration).create_ref
     end
 
     it "allows you to base it off an existing tag or commit" do
@@ -40,7 +40,7 @@ describe AutoTagger::Runner do
       mock(AutoTagger::Commander).execute?("/foo", "git push origin --tags")  {true}
 
       configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Runner.new(configuration).create_tag("guid")
+      AutoTagger::Runner.new(configuration).create_ref("guid")
     end
 
     it "returns the tag that was created" do
@@ -51,7 +51,7 @@ describe AutoTagger::Runner do
       mock(AutoTagger::Commander).execute?(anything, anything).times(any_times) {true}
 
       configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Runner.new(configuration).create_tag.should == "ci/#{timestamp}"
+      AutoTagger::Runner.new(configuration).create_ref.should == "ci/#{timestamp}"
     end
   end
 

@@ -35,9 +35,9 @@ module AutoTagger
       @options[:stage] = variables[:auto_tagger_stage] || variables[:stage]
       @options[:path] = variables[:auto_tagger_working_directory] || variables[:working_directory]
       @options[:date_format] = variables[:auto_tagger_date_format]
-      @options[:push_tags] = variables[:auto_tagger_push_tags]
-      @options[:fetch_tags] = variables[:auto_tagger_fetch_tags]
-      @options[:tag_separator] = variables[:auto_tagger_tag_separator]
+      @options[:push_refs] = variables[:auto_tagger_push_refs]
+      @options[:fetch_refs] = variables[:auto_tagger_fetch_refs]
+      @options[:ref_prefix] = variables[:auto_tagger_ref_prefix]
       @configuration = AutoTagger::Configuration.new(@options)
     end
 

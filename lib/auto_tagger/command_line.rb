@@ -13,7 +13,7 @@ module AutoTagger
           puts configuration.help_text
           Kernel.exit(0)
         else
-          AutoTagger::Runner.new(configuration).create_tag
+          AutoTagger::Runner.new(configuration).create_ref
           true
       end
     end

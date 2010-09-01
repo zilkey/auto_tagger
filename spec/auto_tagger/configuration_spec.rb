@@ -24,27 +24,27 @@ describe AutoTagger::Configuration do
     config.stage.should == "ci"
   end
 
-  describe "#push_tags" do
+  describe "#push_refs" do
     it "defaults to true" do
       config = AutoTagger::Configuration.new({})
-      config.push_tags?.should be_true
+      config.push_refs?.should be_true
     end
 
     it "respects the passed-in option" do
-      config = AutoTagger::Configuration.new :push_tags => false
-      config.push_tags?.should be_false
+      config = AutoTagger::Configuration.new :push_refs => false
+      config.push_refs?.should be_false
     end
   end
 
-  describe "#fetch_tags" do
+  describe "#fetch_refs" do
     it "defaults to true" do
       config = AutoTagger::Configuration.new({})
-      config.fetch_tags?.should be_true
+      config.fetch_refs?.should be_true
     end
 
     it "respects the passed-in option" do
-      config = AutoTagger::Configuration.new :fetch_tags => false
-      config.fetch_tags?.should be_false
+      config = AutoTagger::Configuration.new :fetch_refs => false
+      config.fetch_refs?.should be_false
     end
   end
 
@@ -63,15 +63,15 @@ describe AutoTagger::Configuration do
     end
   end
 
-  describe "#tag_separator" do
+  describe "#ref_prefix" do
     it "defaults to /" do
       config = AutoTagger::Configuration.new({})
-      config.tag_separator.should == "/"
+      config.ref_prefix.should == "/"
     end
 
     it "returns the passed in separator" do
-      config = AutoTagger::Configuration.new :tag_separator => "|"
-      config.tag_separator.should == "|"
+      config = AutoTagger::Configuration.new :ref_prefix => "|"
+      config.ref_prefix.should == "|"
     end
   end
 
