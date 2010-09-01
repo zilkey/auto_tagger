@@ -13,9 +13,23 @@ module AutoTagger
       @options = options
     end
 
+    def stages
+      @stages = stages.map { |stage| stage.to_s }
+    end
+
     def repo
       @repo ||= AutoTagger::Git::Repo.new(options[:path])
     end
+
+    #    configuration = AutoTagger::Configuration.new :stage => variables[:stage],
+    #                                                  :path => variables[:working_directory]
+    #    tag_name = AutoTagger::Runner.new(configuration).create_ref(real_revision)
+    #
+    #   OR
+    #
+    #    configuration = AutoTagger::Configuration.new :stage => :production,
+    #                                                  :path => variables[:working_directory]
+    #    tag_name = AutoTagger::Runner.new(configuration).create_ref
 
     def create_ref(commit = nil)
       ensure_stage
@@ -29,6 +43,18 @@ module AutoTagger
       ensure_stage
       repo.tags.fetch
       repo.tags.latest_from(stage)
+    end
+
+    def release_tag_entries
+      entries = []
+      stage_manager.stages.each do |stage|
+        configuration = AutoTagger::Configuration.new :stage => stage, :path => @configuration.working_directory
+        tagger = Runner.new(configuration)
+        tag = tagger.latest_ref
+        commit = tagger.repository.commit_for(tag)
+        entries << "#{stage.to_s.ljust(10, " ")} #{tag.to_s.ljust(30, " ")} #{commit.to_s}"
+      end
+      entries
     end
 
     private

@@ -48,7 +48,7 @@ module AutoTagger
       end
 
       def refs
-        @refset ||= RefSet.new(self)
+        RefSet.new(self)
       end
 
       def tags
@@ -69,6 +69,7 @@ module AutoTagger
         AutoTagger::Commander.new(path)
       end
 
+      # TODO: make this an option one can pass in
       def git
         "/opt/local/bin/git"
       end

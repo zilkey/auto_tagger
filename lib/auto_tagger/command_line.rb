@@ -6,19 +6,16 @@ module AutoTagger
     end
 
     def execute
-      auto_tagger = AutoTagger::Base.new(options)
-
-      case task
+      message = case task
         when :version
-          puts "AutoTagger version #{AutoTagger.version}"
-          Kernel.exit(0)
+          "AutoTagger version #{AutoTagger.version}"
         when :help
-          puts options[:help_text]
-          Kernel.exit(0)
+          options[:help_text]
         else
-          auto_tagger.create_ref
-          true
+          ref = AutoTagger::Base.new(options).create_ref
+          "Created ref #{ref.name}"
       end
+      [true, message]
     end
 
     private
