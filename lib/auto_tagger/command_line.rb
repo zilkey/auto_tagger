@@ -1,22 +1,41 @@
 module AutoTagger
-
   class CommandLine
-    def self.execute(args)
-      options = AutoTagger::Options.parse(args)
-      configuration = AutoTagger::Configuration.new(options)
 
-      case configuration.task
+    def initialize(args)
+      @args = args
+    end
+
+    def execute
+      auto_tagger = AutoTagger::Base.new(options)
+
+      case task
         when :version
           puts "AutoTagger version #{AutoTagger.version}"
           Kernel.exit(0)
         when :help
-          puts configuration.help_text
+          puts options[:help_text]
           Kernel.exit(0)
         else
-          AutoTagger::Runner.new(configuration).create_ref
+          auto_tagger.create_ref
           true
       end
     end
-  end
 
+    private
+
+    def options
+      @options ||= AutoTagger::Options.parse(@args)
+    end
+
+    def task
+      if options[:show_help]
+        :help
+      elsif options[:show_version]
+        :version
+      else
+        :tagger
+      end
+    end
+
+  end
 end

@@ -25,12 +25,6 @@ module AutoTagger
           "",
         ].join("\n")
 
-        opts.on("--tag-separator SEPARATOR",
-                "Sets the character used to separate the stage name",
-                "from the timestamp in the tag.  Defaults to /") do |o|
-          options[:ref_prefix] = o
-        end
-
         opts.on("--date-format FORMAT",
                 "Sets the format of the date for tags",
                 "Defaults to %Y%m%d%H%M%S") do |o|

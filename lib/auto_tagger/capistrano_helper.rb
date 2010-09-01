@@ -37,7 +37,6 @@ module AutoTagger
       @options[:date_format] = variables[:auto_tagger_date_format]
       @options[:push_refs] = variables[:auto_tagger_push_refs]
       @options[:fetch_refs] = variables[:auto_tagger_fetch_refs]
-      @options[:ref_prefix] = variables[:auto_tagger_ref_prefix]
       @configuration = AutoTagger::Configuration.new(@options)
     end
 
@@ -60,7 +59,7 @@ module AutoTagger
         variables[:branch]
       elsif variables.has_key?(:tag)
         variables[:tag]
-      elsif previous_stage && (latest = Runner.new(previous_configuration).latest_tag)
+      elsif previous_stage && (latest = Runner.new(previous_configuration).latest_ref)
         latest
       else
         variables[:branch]
@@ -72,7 +71,7 @@ module AutoTagger
       stage_manager.stages.each do |stage|
         configuration = AutoTagger::Configuration.new :stage => stage, :path => @configuration.working_directory
         tagger = Runner.new(configuration)
-        tag = tagger.latest_tag
+        tag = tagger.latest_ref
         commit = tagger.repository.commit_for(tag)
         entries << "#{stage.to_s.ljust(10, " ")} #{tag.to_s.ljust(30, " ")} #{commit.to_s}"
       end

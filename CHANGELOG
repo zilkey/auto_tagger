@@ -38,7 +38,7 @@
 
 - Capistrano bases new tags off of old tags from the previous environment when tagging if there is a tag from the previous environment
 - Added the following cap tasks:
-  - print_latest_tags
+  - print_latest_refs
   - read_tag_from_shared
   - write_tag_to_shared
 

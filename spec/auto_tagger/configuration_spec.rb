@@ -63,18 +63,6 @@ describe AutoTagger::Configuration do
     end
   end
 
-  describe "#ref_prefix" do
-    it "defaults to /" do
-      config = AutoTagger::Configuration.new({})
-      config.ref_prefix.should == "/"
-    end
-
-    it "returns the passed in separator" do
-      config = AutoTagger::Configuration.new :ref_prefix => "|"
-      config.ref_prefix.should == "|"
-    end
-  end
-
   describe "#date_format" do
     it "defaults to %Y%m%d%H%M%S" do
       config = AutoTagger::Configuration.new({})

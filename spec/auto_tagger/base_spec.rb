@@ -55,11 +55,11 @@ describe AutoTagger::Runner do
     end
   end
 
-  describe "#latest_tag" do
+  describe "#latest_ref" do
     it "should raise a stage cannot be blank error if stage is blank" do
       proc do
         configuration = AutoTagger::Configuration.new(:stage => nil)
-        AutoTagger::Runner.new(configuration).latest_tag
+        AutoTagger::Runner.new(configuration).latest_ref
       end.should raise_error(AutoTagger::StageCannotBeBlankError)
     end
 
@@ -69,7 +69,7 @@ describe AutoTagger::Runner do
       mock(AutoTagger::Commander).execute("/foo", "git tag") { "ci_01" }
 
       configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Runner.new(configuration).latest_tag
+      AutoTagger::Runner.new(configuration).latest_ref
     end
   end
 

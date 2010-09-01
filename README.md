@@ -100,7 +100,7 @@ Example `config/deploy.rb` file:
     before "deploy:update_code", "release_tagger:set_branch"
     after  "deploy", "release_tagger:create_ref"
     after  "deploy", "release_tagger:write_tag_to_shared"
-    after  "deploy", "release_tagger:print_latest_tags"
+    after  "deploy", "release_tagger:print_latest_refs"
 
 ### Cpistano-ext multistage support
 
@@ -149,21 +149,21 @@ If there is no tag from the previous stage, it creates a new tag from the latest
 
 If you don't specify any `autotagger_stages`, autotagger will create a tag that starts with "production".
 
-### release_tagger:print_latest_tags
+### release_tagger:print_latest_refs
 
 This task reads the git version from the text file in shared:
 
     cap staging release_tagger:read_tag_from_shared
 
-### release_tagger:print_latest_tags
+### release_tagger:print_latest_refs
 
 This task takes the latest tag from each environment and prints it to the screen.  You can add it to your deploy.rb like so:
 
-    after  "deploy", "release_tagger:print_latest_tags"
+    after  "deploy", "release_tagger:print_latest_refs"
 
 Or call it directly, like:
 
-    cap production release_tagger:print_latest_tags
+    cap production release_tagger:print_latest_refs
     
 This will produce output like:
 

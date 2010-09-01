@@ -13,11 +13,6 @@ describe AutoTagger::Options do
       options[:path].should == "../"
     end
 
-    it "understands --tag-separator" do
-      options = AutoTagger::Options.parse ["--tag-separator=|"]
-      options[:ref_prefix].should == "|"
-    end
-
     it "understands --date-format" do
       options = AutoTagger::Options.parse ["--date-format=%Y%m%d%H%M%S"]
       options[:date_format].should == "%Y%m%d%H%M%S"

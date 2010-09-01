@@ -26,7 +26,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
 
     desc %Q{Prints the most current tags from all stages}
-    task :print_latest_tags, :roles => :app do
+    task :print_latest_refs, :roles => :app do
       logger.info "AUTO TAGGER: release tag history is:"
       entries = AutoTagger::CapistranoHelper.new(variables).release_tag_entries
       entries.each do |entry|

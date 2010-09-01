@@ -33,4 +33,4 @@ end
 before "deploy:update_code", "release_tagger:set_branch"
 after  "deploy", "release_tagger:create_ref"
 after  "deploy", "release_tagger:write_tag_to_shared"
-after  "deploy", "release_tagger:print_latest_tags"
+after  "deploy", "release_tagger:print_latest_refs"

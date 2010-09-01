@@ -55,16 +55,12 @@ module AutoTagger
       configuration.push_refs?
     end
 
-    def ref_prefix
-      configuration.ref_prefix
-    end
-
     def date_format
       configuration.date_format
     end
 
     def name_for(stage)
-      "%s%s%s" % [stage, ref_prefix, Time.now.utc.strftime(date_format)]
+      "%s%s%s" % [stage, ref_separator, Time.now.utc.strftime(date_format)]
     end
 
   end

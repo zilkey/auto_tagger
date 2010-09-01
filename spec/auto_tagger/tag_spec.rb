@@ -66,7 +66,6 @@ describe AutoTagger::Tag do
 
       stub(tag).fetch_refs?.returns(true)
       stub(tag).push_refs?.returns(true)
-      stub(tag).ref_prefix.returns("/")
       stub(tag).date_format.returns("%Y%m%d%H%M%S")
       mock(@repository).run!("git tag #{tag_name}")
       tag.create("ci").should == tag_name
