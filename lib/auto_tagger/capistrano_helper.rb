@@ -34,7 +34,7 @@ module AutoTagger
 
       options = {}
       options[:stage] = @variables[:auto_tagger_stage] || @variables[:stage]
-      options[:stages] = (@variables[:auto_tagger_stages] || @variables[:autotagger_stages] || @variables[:stages]).map{|stage| stage.to_s}.join(",")
+      options[:stages] = (@variables[:auto_tagger_stages] || @variables[:autotagger_stages] || @variables[:stages] || []).map{|stage| stage.to_s}.join(",")
       options[:path] = @variables[:auto_tagger_working_directory] || @variables[:working_directory]
       options[:date_format] = @variables[:auto_tagger_date_format]
       options[:push_refs] = @variables[:auto_tagger_push_refs]
