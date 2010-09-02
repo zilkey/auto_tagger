@@ -87,6 +87,8 @@ module AutoTagger
       options
     end
 
+    private
+
     def self.common_options(opts, options)
 
       opts.on("--date-format FORMAT",
