@@ -11,7 +11,7 @@ end
 module Silencers
 
   def with_or_without_debugging
-    if ENV['AUTO_TAGGER_DEBUG']
+    if ENV['AUTO_TAGGER_DEBUG'] == "true"
       puts
       yield
       puts

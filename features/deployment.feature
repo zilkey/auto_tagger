@@ -31,10 +31,3 @@ Feature: Deployment
     And a ci tag
     When I deploy to staging
     Then a tag should be added to git
-
-  @1.0.0
-  Scenario: user deploys with a recipe using the dsl
-    Given an app with deploy file that uses the dsl
-    And a ci tag
-    When I deploy to staging
-    Then a tag should be added to git with the proper date format

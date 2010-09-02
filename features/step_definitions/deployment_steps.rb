@@ -59,12 +59,3 @@ Then /^a tag should be added to git$/ do
     @refs.length.should < new_tags.length
   end
 end
-
-Then /^a tag should be added to git with the proper date format$/ do
-  with_or_without_debugging do
-    helpers = StepHelpers.new
-    new_tags = helpers.refs
-    @refs.length.should < new_tags.length
-    @refs.last.should match(/\d{4}-\d{2}-\d{2}-\d{2}/)
-  end
-end
