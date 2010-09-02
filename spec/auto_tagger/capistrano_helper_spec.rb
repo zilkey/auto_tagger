@@ -2,26 +2,6 @@ require 'spec_helper'
 
 describe AutoTagger::CapistranoHelper do
 
-  describe AutoTagger::CapistranoHelper::Dsl do
-    describe ".configure" do
-      it "should set the stages correctly" do
-        fake_cap = Object.new
-        mock(fake_cap).set(:auto_tagger_stages, ["ci", "staging"])
-        AutoTagger::CapistranoHelper::Dsl.new(fake_cap).instance_eval do
-          stages ["ci", "staging"]
-        end
-      end
-
-      it "should set the date format correctly" do
-        fake_cap = Object.new
-        mock(fake_cap).set(:auto_tagger_date_format, "foo")
-        AutoTagger::CapistranoHelper::Dsl.new(fake_cap).instance_eval do
-          date_format "foo"
-        end
-      end
-    end
-  end
-
   describe "#stage_manager" do
     it "blows up if there are no stages" do
       proc do
@@ -138,7 +118,7 @@ describe AutoTagger::CapistranoHelper do
         tagger = Object.new
         mock(tagger).latest_ref { "foo_01" }
         mock(AutoTagger::Configuration).new(:stage => "foo", :path => "/foo")
-        mock(AutoTagger::Runner).new(anything) { tagger }
+        mock(AutoTagger::Base).new(anything) { tagger }
         AutoTagger::CapistranoHelper.new(variables).branch.should == "foo_01"
       end
     end
@@ -153,7 +133,7 @@ describe AutoTagger::CapistranoHelper do
         tagger = Object.new
         mock(tagger).latest_ref { nil }
         mock(AutoTagger::Configuration).new(:stage => "foo", :path => "/foo")
-        mock(AutoTagger::Runner).new(anything) { tagger }
+        mock(AutoTagger::Base).new(anything) { tagger }
         AutoTagger::CapistranoHelper.new(variables).branch.should == nil
       end
     end

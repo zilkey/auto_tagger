@@ -79,7 +79,7 @@ module AutoTagger
       entries = []
       configuration.stages.each do |stage|
         configuration = AutoTagger::Configuration.new :stage => stage, :path => @configuration.working_directory
-        tagger = Runner.new(configuration)
+        tagger = Base.new(configuration)
         tag = tagger.latest_ref
         commit = tagger.repository.commit_for(tag)
         entries << "#{stage.to_s.ljust(10, " ")} #{tag.to_s.ljust(30, " ")} #{commit.to_s}"

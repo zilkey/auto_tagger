@@ -1,17 +1,35 @@
 require 'spec_helper'
 require 'ostruct'
 
-describe AutoTagger::Runner do
+describe AutoTagger::Base do
   before(:each) do
     stub(Dir).pwd { File.join(File.dirname(__FILE__), '..', '..') }
     @configuration = OpenStruct.new
+  end
+
+  describe "#previous_stage" do
+    it "returns the previous stage as a string if there is more than one stage, and there is a current stage" do
+      AutoTagger::StageManager.new([:foo, :bar]).previous_stage(:bar).should == "foo"
+    end
+
+    it "returns nil if there is no previous stage" do
+      AutoTagger::StageManager.new([:bar]).previous_stage(:bar).should be_nil
+    end
+
+    it "deals with mixed strings and symbols" do
+      AutoTagger::StageManager.new([:"foo-bar", "baz"]).previous_stage(:baz).should == "foo-bar"
+    end
+
+    it "returns nil if there is no current stage" do
+      AutoTagger::StageManager.new([:bar]).previous_stage(nil).should be_nil
+    end
   end
 
   describe "#create_ref" do
     it "blows up if you don't pass a stage" do
       proc do
         @configuration.stage = nil
-        AutoTagger::Runner.new(@configuration).create_ref
+        AutoTagger::Base.new(@configuration).create_ref
       end.should raise_error(AutoTagger::StageCannotBeBlankError)
     end
 
@@ -26,7 +44,7 @@ describe AutoTagger::Runner do
       mock(AutoTagger::Commander).execute?("/foo", "git push origin --tags")  {true}
 
       configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Runner.new(configuration).create_ref
+      AutoTagger::Base.new(configuration).create_ref
     end
 
     it "allows you to base it off an existing tag or commit" do
@@ -40,7 +58,7 @@ describe AutoTagger::Runner do
       mock(AutoTagger::Commander).execute?("/foo", "git push origin --tags")  {true}
 
       configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Runner.new(configuration).create_ref("guid")
+      AutoTagger::Base.new(configuration).create_ref("guid")
     end
 
     it "returns the tag that was created" do
@@ -51,7 +69,7 @@ describe AutoTagger::Runner do
       mock(AutoTagger::Commander).execute?(anything, anything).times(any_times) {true}
 
       configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Runner.new(configuration).create_ref.should == "ci/#{timestamp}"
+      AutoTagger::Base.new(configuration).create_ref.should == "ci/#{timestamp}"
     end
   end
 
@@ -59,7 +77,7 @@ describe AutoTagger::Runner do
     it "should raise a stage cannot be blank error if stage is blank" do
       proc do
         configuration = AutoTagger::Configuration.new(:stage => nil)
-        AutoTagger::Runner.new(configuration).latest_ref
+        AutoTagger::Base.new(configuration).latest_ref
       end.should raise_error(AutoTagger::StageCannotBeBlankError)
     end
 
@@ -69,7 +87,7 @@ describe AutoTagger::Runner do
       mock(AutoTagger::Commander).execute("/foo", "git tag") { "ci_01" }
 
       configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Runner.new(configuration).latest_ref
+      AutoTagger::Base.new(configuration).latest_ref
     end
   end
 
