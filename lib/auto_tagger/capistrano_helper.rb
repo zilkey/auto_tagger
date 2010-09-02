@@ -13,15 +13,11 @@ module AutoTagger
         @variables[:tag]
       elsif @variables.has_key?(:ref)
         @variables[:ref]
-      elsif previous_ref
-        previous_ref
+      elsif auto_tagger.last_tag_from_previous_stage
+        auto_tagger.last_tag_from_previous_stage.sha
       else
         @variables[:branch]
       end
-    end
-
-    def previous_ref
-      previous_stage ? auto_tagger.last_tag_from_previous_stage : nil
     end
 
     def auto_tagger
@@ -38,12 +34,14 @@ module AutoTagger
 
       options = {}
       options[:stage] = @variables[:auto_tagger_stage] || @variables[:stage]
+      options[:stages] = (@variables[:auto_tagger_stages] || @variables[:autotagger_stages] || @variables[:stages]).map{|stage| stage.to_s}.join(",")
       options[:path] = @variables[:auto_tagger_working_directory] || @variables[:working_directory]
       options[:date_format] = @variables[:auto_tagger_date_format]
       options[:push_refs] = @variables[:auto_tagger_push_refs]
       options[:fetch_refs] = @variables[:auto_tagger_fetch_refs]
       options[:remote] = @variables[:auto_tagger_remote]
       options[:ref_path] = @variables[:auto_tagger_ref_path]
+      # todo: add all other options here
 
       @auto_tagger ||= AutoTagger::Base.new(options)
     end

@@ -20,6 +20,22 @@ module AutoTagger
                                           :executable => configuration.executable
     end
 
+    def last_tag_from_previous_stage
+      previous_stage = if configuration.stage
+        index = configuration.stages.index(configuration.stage) - 1
+        configuration.stages[index] if index > -1
+      end
+
+      if previous_stage
+        stage_regexp = Regexp.escape(previous_stage)
+        refs = repo.refs.all.select do |ref|
+          regexp = /refs\/#{Regexp.escape(configuration.ref_path)}\/(#{stage_regexp})\/.*/
+          (ref.name =~ regexp) ? ref : nil
+        end
+        refs.last
+      end
+    end
+
     def create_ref(commit = nil)
       commit ||= repo.latest_commit_sha
       ensure_stage

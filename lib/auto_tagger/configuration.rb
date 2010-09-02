@@ -42,12 +42,15 @@ module AutoTagger
       merged_options[:stage]
     end
 
-    def date_format
-      merged_options[:date_format] ||= "%Y%m%d%H%M%S"
-    end
-
+    # set a stages string and split it
+    # so that capistrano can pass in real options
+    # make sure all keys are symbols
     def stages
       merged_options[:stages].to_s.split(",").map{|stage| stage.strip}.reject{|stage| stage.to_s == ""}
+    end
+
+    def date_format
+      merged_options[:date_format] ||= "%Y%m%d%H%M%S"
     end
 
     def dry_run?
@@ -67,11 +70,11 @@ module AutoTagger
     end
 
     def executable
-      merged_options.fetch(:executable, "git")
+      merged_options[:executable] || "git"
     end
 
     def refs_to_keep
-      merged_options.fetch(:refs_to_keep, 1).to_i
+      (merged_options[:refs_to_keep] || 1).to_i
     end
 
     def fetch_refs?
@@ -79,11 +82,11 @@ module AutoTagger
     end
 
     def remote
-      merged_options.fetch(:remote, "origin")
+      merged_options[:remote] || "origin"
     end
 
     def ref_path
-      path = merged_options.fetch(:ref_path, "auto_tags")
+      path = merged_options[:ref_path] || "auto_tags"
       raise "#{path} is a reserved word in git.  Please use something else." if ["heads", "remotes"].include?(path)
       path
     end

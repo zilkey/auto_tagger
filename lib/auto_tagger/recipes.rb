@@ -48,13 +48,13 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
 
     desc %Q{DEPRECATED: Reads the text file with the latest tag from the shared directory}
-    task :read_tag_from_shared, :roles => :app do
+    task :read_ref_from_shared, :roles => :app do
       log_auto_tagger "latest tag deployed to this environment was:"
       run "cat #{shared_path}/released_git_tag.txt"
     end
 
     desc %Q{DEPRECATED: Writes the tag name to a file in the shared directory}
-    task :write_tag_to_shared, :roles => :app do
+    task :write_ref_to_shared, :roles => :app do
       if exists?(:branch)
         log_auto_tagger "writing tag to shared text file on remote server"
         run "echo '#{branch}' > #{shared_path}/released_git_tag.txt"
@@ -64,6 +64,31 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
   end
 
-  #TODO: alias release_tagger to auto_tagger
+  namespace :release_tagger do
+    desc %Q{DEPRECATED: use auto_tagger:set_branch }
+    task :set_branch do
+      auto_tagger.set_branch
+    end
+
+    desc %Q{DEPRECATED: use auto_tagger:create_ref}
+    task :create_tag, :roles => :app do
+      auto_tagger.create_ref
+    end
+
+    desc %Q{DEPRECATED: use auto_tagger:print_latest_tags}
+    task :print_latest_refs, :roles => :app do
+      auto_tagger.print_latest_tags
+    end
+
+    desc %Q{DEPRECATED: use auto_tagger:read_ref_from_shared}
+    task :read_tag_from_shared, :roles => :app do
+      auto_tagger.read_ref_from_shared
+    end
+
+    desc %Q{DEPRECATED: use auto_tagger:write_ref_to_shared}
+    task :write_tag_to_shared, :roles => :app do
+      auto_tagger.write_ref_to_shared
+    end
+  end
 
 end
