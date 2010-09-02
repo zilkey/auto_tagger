@@ -7,7 +7,7 @@ module AutoTagger
       end
 
       def all
-        @repo.exec("show-ref").split(/\n/).map do |line|
+        @repo.read("show-ref").split(/\n/).map do |line|
           parts = line.split(" ")
           Ref.new(@repo, parts.first, parts.last)
         end
@@ -16,7 +16,7 @@ module AutoTagger
       # name = refs/autotags/2009857463
       # returns a ref
       def find_by_name(name)
-        sha = @repo.exec("rev-parse").strip
+        sha = @repo.read("rev-parse").strip
         Ref.new(name, sha)
       end
 

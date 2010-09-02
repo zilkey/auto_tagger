@@ -23,8 +23,10 @@ module AutoTagger
       class GitCommandFailedError < StandardError
       end
 
-      def initialize(given_path)
+      def initialize(given_path, options = {})
         @given_path = given_path
+        @execute_commands = options[:execute_commands]
+        @verbose = options[:verbose]
       end
 
       def path
@@ -40,15 +42,19 @@ module AutoTagger
       end
 
       def latest_commit_sha
-        exec("rev-parse HEAD").strip
+        read("rev-parse HEAD").strip
+      end
+
+      def read(cmd)
+        commander.read("%s %s" % [git, cmd])
       end
 
       def exec(cmd)
-        commander.execute("%s %s" % [git, cmd])
-      end
-
-      def exec!(cmd)
-        commander.execute?("%s %s" % [git, cmd]) || raise(GitCommandFailedError)
+        if @execute_commands
+          commander.execute("%s %s" % [git, cmd]) || raise(GitCommandFailedError)
+        else
+          commander.print("%s %s" % [git, cmd])
+        end
       end
 
       def refs
@@ -76,7 +82,7 @@ module AutoTagger
       private
 
       def commander
-        AutoTagger::Commander.new(path)
+        AutoTagger::Commander.new(path, @verbose)
       end
 
       # TODO: make this an option one can pass in

@@ -14,7 +14,9 @@ module AutoTagger
     end
 
     def repo
-      @repo ||= AutoTagger::Git::Repo.new(configuration.working_directory)
+      @repo ||= AutoTagger::Git::Repo.new configuration.working_directory,
+                                          :execute_commands => !configuration.dry_run?,
+                                          :verbose => configuration.verbose?
     end
 
     #    configuration = AutoTagger::Configuration.new :stage => variables[:stage],
@@ -39,18 +41,13 @@ module AutoTagger
     def purge
       raise("You must provide stages") unless configuration.stages.any?
       stages_regexp = configuration.stages.map{|stage| Regexp.escape(stage)}.join("|")
-      puts "#{__FILE__}:#{__LINE__}"
       refs = repo.refs.all.select do |ref|
         regexp = /refs\/#{Regexp.escape(configuration.ref_path)}\/(#{stages_regexp})\/.*/
         (ref.name =~ regexp) ? ref : nil
       end
       refs.each do |ref|
-        if configuration.dry_run?
-          # ref.delete_locally
-          # ref.delete_on_remote(configuration.remote)
-        else
-
-        end
+        ref.delete_locally
+        ref.delete_on_remote(configuration.remote)
       end
       refs.length
     end
@@ -76,7 +73,11 @@ module AutoTagger
     private
 
     def configuration
-      @configuration ||= AutoTagger::Configuration.new(@options)
+      @configuration ||= begin
+        config = AutoTagger::Configuration.new(@options)
+        raise "Stage must be included in stages" unless config.stages.include?(config.stage)
+        config
+      end
     end
 
     def ref_name

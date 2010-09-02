@@ -35,6 +35,10 @@ module AutoTagger
       merged_options.fetch(:dry_run, false)
     end
 
+    def verbose?
+      merged_options.fetch(:verbose, false)
+    end
+
     def push_refs?
       merged_options.fetch(:push_refs, true)
     end
@@ -48,7 +52,9 @@ module AutoTagger
     end
 
     def ref_path
-      merged_options.fetch(:ref_path, "auto_tags")
+      path = merged_options.fetch(:ref_path, "auto_tags")
+      raise "#{path} is a reserved word in git.  Please use something else." if ["heads", "remotes"].include?(path)
+      path
     end
 
   end

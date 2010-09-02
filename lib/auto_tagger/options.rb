@@ -69,6 +69,11 @@ module AutoTagger
           options[:dry_run] = true
         end
 
+        opts.on("--verbose",
+                "logs all commands") do |o|
+          options[:verbose] = true
+        end
+
         opts.on_tail("-h", "--help", "-?", "You're looking at it.") do
           options[:show_help] = true
         end
@@ -88,6 +93,7 @@ module AutoTagger
           options[:show_version] = true
         when "purge"
           options[:purge] = true
+          options[:stage] = args[1]
         else
           options[:stage] = args[0]
           options[:path] = args[1]
