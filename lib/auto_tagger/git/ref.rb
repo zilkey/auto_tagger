@@ -12,8 +12,8 @@ module AutoTagger
         @repo.exec "update-ref -d #{name}"
       end
 
-      def delete_on_remote
-        @repo.exec "push origin :#{name}"
+      def delete_on_remote(remote = "origin")
+        @repo.exec "push #{remote} :#{name}"
       end
 
       def save

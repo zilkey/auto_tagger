@@ -43,20 +43,30 @@ module AutoTagger
           options[:push_refs] = o
         end
 
+        opts.on("--remote REMOTE",
+                "specify the git remote") do |o|
+          options[:remote] = o
+        end
+
+        opts.on("--ref-path REF_PATH",
+                "specify the ref-path") do |o|
+          options[:ref_path] = o
+        end
+
+        opts.on("--stages STAGES",
+                "specify a comma-separated list of stages") do |o|
+          options[:stages] = o
+        end
+
         opts.on("--offline", FalseClass,
                 "Same as --fetch-tags=false and --push-tags=false") do |o|
           options[:push_refs] = false
           options[:fetch_refs] = false
         end
 
-        opts.on("--remote",
-                "specify the git remote") do |o|
-          options[:remote] = o
-        end
-
-        opts.on("--ref-path",
-                "specify the ref-path") do |o|
-          options[:ref_path] = o
+        opts.on("--dry-run",
+                "doesn't execute anything, but logs what it would run") do |o|
+          options[:dry_run] = true
         end
 
         opts.on_tail("-h", "--help", "-?", "You're looking at it.") do
@@ -76,6 +86,8 @@ module AutoTagger
           options[:show_help] = true
         when "version"
           options[:show_version] = true
+        when "purge"
+          options[:purge] = true
         else
           options[:stage] = args[0]
           options[:path] = args[1]

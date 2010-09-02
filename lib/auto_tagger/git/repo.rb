@@ -39,12 +39,16 @@ module AutoTagger
         other.is_a?(AutoTagger::Git::Repo) && other.path == path
       end
 
+      def latest_commit_sha
+        exec("rev-parse HEAD").strip
+      end
+
       def exec(cmd)
-        commander.execute(path, cmd)
+        commander.execute("%s %s" % [git, cmd])
       end
 
       def exec!(cmd)
-        commander.execute?(path, cmd) || raise(GitCommandFailedError)
+        commander.execute?("%s %s" % [git, cmd]) || raise(GitCommandFailedError)
       end
 
       def refs
@@ -60,6 +64,12 @@ module AutoTagger
       def branches
         refs.all.select do |ref|
           ref.name =~ /^refs\/heads/
+        end
+      end
+
+      def auto_tags
+        refs.all.select do |ref|
+          ref.name =~ /^refs\/auto_tags/
         end
       end
 

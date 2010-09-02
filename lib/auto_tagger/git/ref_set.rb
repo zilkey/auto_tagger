@@ -9,7 +9,7 @@ module AutoTagger
       def all
         @repo.exec("show-ref").split(/\n/).map do |line|
           parts = line.split(" ")
-          Ref.new(parts.first, parts.last)
+          Ref.new(@repo, parts.first, parts.last)
         end
       end
 
@@ -29,13 +29,13 @@ module AutoTagger
       end
 
       # pattern = refs/autotags/*
-      def push(pattern, origin = "origin")
-        @repo.exec "push #{origin} #{pattern}:#{pattern}"
+      def push(pattern, remote = "origin")
+        @repo.exec "push #{remote} #{pattern}:#{pattern}"
       end
 
-      # pattern = refs/autotags/*
-      def fetch(pattern, origin = "origin")
-        @repo.exec "fetch #{origin} #{pattern}:#{pattern}"
+      # pattern = refs/auto_tags/*
+      def fetch(pattern, remote = "origin")
+        @repo.exec "fetch #{remote} #{pattern}:#{pattern}"
       end
 
     end

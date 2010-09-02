@@ -12,6 +12,7 @@ module AutoTagger
     def merged_options_with_auto_tagger_config_file
       # read file and parse
       # merge in options
+      @options
     end
     
     def stage
@@ -24,6 +25,14 @@ module AutoTagger
 
     def date_format
       merged_options[:date_format] ||= "%Y%m%d%H%M%S"
+    end
+
+    def stages
+      merged_options[:stages].to_s.split(",").map{|stage| stage.strip}.reject{|stage| stage.to_s == ""}
+    end
+
+    def dry_run?
+      merged_options.fetch(:dry_run, false)
     end
 
     def push_refs?
@@ -39,7 +48,7 @@ module AutoTagger
     end
 
     def ref_path
-      merged_options.fetch(:ref_path, "refs/tags")
+      merged_options.fetch(:ref_path, "auto_tags")
     end
 
   end

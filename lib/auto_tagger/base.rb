@@ -13,12 +13,8 @@ module AutoTagger
       @options = options
     end
 
-    def stages
-      @stages = stages.map { |stage| stage.to_s }
-    end
-
     def repo
-      @repo ||= AutoTagger::Git::Repo.new(options[:path])
+      @repo ||= AutoTagger::Git::Repo.new(configuration.working_directory)
     end
 
     #    configuration = AutoTagger::Configuration.new :stage => variables[:stage],
@@ -32,11 +28,31 @@ module AutoTagger
     #    tag_name = AutoTagger::Runner.new(configuration).create_ref
 
     def create_ref(commit = nil)
+      commit ||= repo.latest_commit_sha
       ensure_stage
-      repo.refs.fetch if options[:fetch_refs]
+      repo.refs.fetch("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.fetch_refs?
       new_tag = repo.refs.create(ref_name, commit)
-      repo.ref.push if options[:push_refs]
+      repo.refs.push("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.push_refs?
       new_tag
+    end
+
+    def purge
+      raise("You must provide stages") unless configuration.stages.any?
+      stages_regexp = configuration.stages.map{|stage| Regexp.escape(stage)}.join("|")
+      puts "#{__FILE__}:#{__LINE__}"
+      refs = repo.refs.all.select do |ref|
+        regexp = /refs\/#{Regexp.escape(configuration.ref_path)}\/(#{stages_regexp})\/.*/
+        (ref.name =~ regexp) ? ref : nil
+      end
+      refs.each do |ref|
+        if configuration.dry_run?
+          # ref.delete_locally
+          # ref.delete_on_remote(configuration.remote)
+        else
+
+        end
+      end
+      refs.length
     end
 
     def latest_ref
@@ -47,7 +63,7 @@ module AutoTagger
 
     def release_tag_entries
       entries = []
-      stage_manager.stages.each do |stage|
+      configuration.stages.each do |stage|
         configuration = AutoTagger::Configuration.new :stage => stage, :path => @configuration.working_directory
         tagger = Runner.new(configuration)
         tag = tagger.latest_ref
@@ -59,16 +75,16 @@ module AutoTagger
 
     private
 
-    def ref_name
-      # formatted ref with correct path and timestamp
+    def configuration
+      @configuration ||= AutoTagger::Configuration.new(@options)
     end
 
-    def stage
-      options[:stage]
+    def ref_name
+      "refs/#{configuration.ref_path}/#{configuration.stage}/#{Time.now.utc.strftime(configuration.date_format)}"
     end
 
     def ensure_stage
-      raise StageCannotBeBlankError if stage.to_s.strip == ""
+      raise StageCannotBeBlankError if configuration.stage.to_s.strip == ""
     end
   end
 end
