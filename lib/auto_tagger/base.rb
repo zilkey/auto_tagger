@@ -38,18 +38,28 @@ module AutoTagger
       new_tag
     end
 
-    def purge
-      raise("You must provide stages") unless configuration.stages.any?
-      stages_regexp = configuration.stages.map{|stage| Regexp.escape(stage)}.join("|")
+    def cleanup
+      stage_regexp = Regexp.escape(configuration.stage)
       refs = repo.refs.all.select do |ref|
-        regexp = /refs\/#{Regexp.escape(configuration.ref_path)}\/(#{stages_regexp})\/.*/
+        regexp = /refs\/#{Regexp.escape(configuration.ref_path)}\/(#{stage_regexp})\/.*/
         (ref.name =~ regexp) ? ref : nil
       end
+
+      refs = refs[(configuration.refs_to_keep)..-1]
+
       refs.each do |ref|
         ref.delete_locally
-        ref.delete_on_remote(configuration.remote)
+        ref.delete_on_remote(configuration.remote) if configuration.push_refs?
       end
       refs.length
+    end
+
+    def list
+      stage_regexp = Regexp.escape(configuration.stage)
+      repo.refs.all.select do |ref|
+        regexp = /refs\/#{Regexp.escape(configuration.ref_path)}\/(#{stage_regexp})\/.*/
+        (ref.name =~ regexp) ? ref : nil
+      end
     end
 
     def latest_ref
@@ -75,7 +85,7 @@ module AutoTagger
     def configuration
       @configuration ||= begin
         config = AutoTagger::Configuration.new(@options)
-        raise "Stage must be included in stages" unless config.stages.include?(config.stage)
+        # raise "Stage must be included in stages" unless config.stages.include?(config.stage)
         config
       end
     end

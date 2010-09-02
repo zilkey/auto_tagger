@@ -43,6 +43,10 @@ module AutoTagger
       merged_options.fetch(:push_refs, true)
     end
 
+    def refs_to_keep
+      merged_options.fetch(:refs_to_keep, 1).to_i
+    end
+
     def fetch_refs?
       merged_options.fetch(:fetch_refs, true)
     end

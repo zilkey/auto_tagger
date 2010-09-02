@@ -9,18 +9,24 @@ module AutoTagger
       args.options do |opts|
         opts.banner = [
           "",
-          "  USAGE: autotag [options] STAGE [REPOSITORY]",
+          "  USAGE: autotag command [stage] [options]",
           "",
           "  Examples:",
           "",
           "    autotag help",
           "    autotag version",
-          "    autotag demo",
-          "    autotag demo .",
-          "    autotag demo ../",
-          "    autotag ci /data/myrepo",
-          "    autotag --fetch-tags=false --push-tags=false ci /data/myrepo",
-          "    autotag ci /data/myrepo --fetch-tags=false --push-tags=false",
+          "    autotag create demo",
+          "    autotag create demo .",
+          "    autotag create demo ../",
+          "    autotag create ci /data/myrepo",
+          "    autotag create ci /data/myrepo --fetch-tags=false --push-tags=false",
+          "    autotag create ci /data/myrepo --offline",
+          "    autotag create ci /data/myrepo --dry-run",
+          "",
+          "    autotag list demo",
+          "",
+          "    autotag cleanup demo --refs-to-keep=2",
+          "    autotag cleanup demo --refs-to-keep=2 --dry-run",
           "",
           "",
         ].join("\n")
@@ -44,12 +50,14 @@ module AutoTagger
         end
 
         opts.on("--remote REMOTE",
-                "specify the git remote") do |o|
+                "specify the git remote",
+                "Defaults to origin") do |o|
           options[:remote] = o
         end
 
         opts.on("--ref-path REF_PATH",
-                "specify the ref-path") do |o|
+                "specify the ref-path",
+                "Defaults to auto_tags") do |o|
           options[:ref_path] = o
         end
 
@@ -74,6 +82,11 @@ module AutoTagger
           options[:verbose] = true
         end
 
+        opts.on("--refs-to-keep REFS_TO_KEEP",
+                "logs all commands") do |o|
+          options[:refs_to_keep] = o
+        end
+
         opts.on_tail("-h", "--help", "-?", "You're looking at it.") do
           options[:show_help] = true
         end
@@ -91,10 +104,18 @@ module AutoTagger
           options[:show_help] = true
         when "version"
           options[:show_version] = true
-        when "purge"
-          options[:purge] = true
+        when "cleanup"
+          options[:cleanup] = true
           options[:stage] = args[1]
+        when "list"
+          options[:list] = true
+          options[:stage] = args[1]
+        when "create"
+          options[:create] = true
+          options[:stage] = args[1]
+          options[:path] = args[2]
         else
+          options[:create] = true
           options[:stage] = args[0]
           options[:path] = args[1]
       end

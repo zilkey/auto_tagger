@@ -8,6 +8,10 @@ module AutoTagger
         @repo, @sha, @name = repo, sha, name
       end
 
+      def to_s
+        "%s %s" % [sha, name]
+      end
+
       def delete_locally
         @repo.exec "update-ref -d #{name}"
       end
