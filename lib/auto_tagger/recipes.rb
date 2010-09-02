@@ -11,7 +11,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     def auto_tagger
       auto_tagger_capistrano_helper.auto_tagger
     end
-    
+
     def log_auto_tagger(message)
       logger.info "AUTO TAGGER: #{message}"
     end
@@ -40,7 +40,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         log_auto_tagger "created tag #{ref.name}"
       end
     end
-    
+
     desc %Q{DEPRECATED: Prints the most current tags from all stages}
     task :print_latest_refs, :roles => :app do
       log_auto_tagger "release tag history is:"

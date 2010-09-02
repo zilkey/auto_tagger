@@ -39,7 +39,7 @@ end
 
 Then /^a "([^\"]*)" tag should be added to git$/ do |stage|
   helpers = StepHelpers.new
-  helpers.refs.starts_with?(stage).should be_true
+  helpers.refs.split("\n").last.should match(/\/#{stage}\//)
 end
 
 Then /^a "([^\"]*)" tag should be created$/ do |prefix|

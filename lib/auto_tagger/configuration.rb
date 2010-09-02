@@ -39,7 +39,7 @@ module AutoTagger
     end
 
     def stage
-      merged_options[:stage]
+      merged_options[:stage] || stages.last
     end
 
     # set a stages string and split it
