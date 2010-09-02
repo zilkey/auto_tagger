@@ -2,7 +2,7 @@
 
 - Added ability to specify a tag date format with --date-format option to autotag
 - Added ability to specify a tag separator with --tag-separator option to autotag
-- Added ability to specify whether or not to fetch / push tags with --offline, --fetch-tags and --push-tags options to autotag
+- Added ability to specify whether or not to fetch / push tags with --offline, --fetch-refs and --push-refs options to autotag
 - Added "help" and "version" as arguments
 
 2010-05-15

@@ -18,19 +18,19 @@ describe AutoTagger::Options do
       options[:date_format].should == "%Y%m%d%H%M%S"
     end
 
-    it "understands --fetch-tags" do
-      options = AutoTagger::Options.parse ["--fetch-tags=true"]
+    it "understands --fetch-refs" do
+      options = AutoTagger::Options.parse ["--fetch-refs=true"]
       options[:fetch_refs].should == true
 
-      options = AutoTagger::Options.parse ["--fetch-tags=false"]
+      options = AutoTagger::Options.parse ["--fetch-refs=false"]
       options[:fetch_refs].should == false
     end
 
-    it "understands --push-tags" do
-      options = AutoTagger::Options.parse ["--push-tags=true"]
+    it "understands --push-refs" do
+      options = AutoTagger::Options.parse ["--push-refs=true"]
       options[:push_refs].should == true
 
-      options = AutoTagger::Options.parse ["--push-tags=false"]
+      options = AutoTagger::Options.parse ["--push-refs=false"]
       options[:push_refs].should == false
     end
 

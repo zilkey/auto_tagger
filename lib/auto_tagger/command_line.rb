@@ -6,7 +6,7 @@ module AutoTagger
     end
 
     def execute
-      message = case task
+      message = case options[:command]
         when :version
           "AutoTagger version #{AutoTagger.version}"
         when :help
@@ -16,8 +16,14 @@ module AutoTagger
           "Deleted: #{purged}"
         when :list
           AutoTagger::Base.new(options).list.join("\n")
+        when :config
+          AutoTagger::Configuration.new(options).specified_options.map do |key, value|
+            "#{key} : #{value}"
+          end.join("\n")
         else
-          AutoTagger::Deprecator.warn("Please use create instead")
+          if options[:deprecated]
+            AutoTagger::Deprecator.warn("Please use `autotag create #{options[:stage]}` instead")
+          end
           ref = AutoTagger::Base.new(options).create_ref
           "Created ref #{ref.name}"
       end
@@ -27,21 +33,7 @@ module AutoTagger
     private
 
     def options
-      @options ||= AutoTagger::Options.parse(@args)
-    end
-
-    def task
-      if options[:show_help]
-        :help
-      elsif options[:show_version]
-        :version
-      elsif options[:cleanup]
-        :cleanup
-      elsif options[:list]
-        :list
-      else # options[:create]
-        :tagger
-      end
+      @options ||= AutoTagger::Options.from_command_line(@args)
     end
 
   end

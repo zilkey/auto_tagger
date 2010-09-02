@@ -27,6 +27,7 @@ module AutoTagger
         @given_path = given_path
         @execute_commands = options[:execute_commands]
         @verbose = options[:verbose]
+        @executable = options[:executable]
       end
 
       def path
@@ -46,15 +47,19 @@ module AutoTagger
       end
 
       def read(cmd)
-        commander.read("%s %s" % [git, cmd])
+        commander.read(git_command(cmd))
       end
 
       def exec(cmd)
         if @execute_commands
-          commander.execute("%s %s" % [git, cmd]) || raise(GitCommandFailedError)
+          commander.execute(git_command(cmd)) || raise(GitCommandFailedError)
         else
-          commander.print("%s %s" % [git, cmd])
+          commander.print(git_command(cmd))
         end
+      end
+
+      def git_command(cmd)
+        "%s %s" % [@executable, cmd]
       end
 
       def refs
@@ -83,11 +88,6 @@ module AutoTagger
 
       def commander
         AutoTagger::Commander.new(path, @verbose)
-      end
-
-      # TODO: make this an option one can pass in
-      def git
-        "/opt/local/bin/git"
       end
 
     end

@@ -1,7 +1,7 @@
 module AutoTagger
   class Deprecator
     def self.warn(msg)
-      puts msg
+      puts "AUTO_TAGGER DEPRECATION: #{msg}"
     end
   end
 end

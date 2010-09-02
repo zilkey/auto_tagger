@@ -5,22 +5,41 @@ module AutoTagger
       @options = options
     end
 
+    # you can't override this in the options file
+    def opts_file
+      @options[:opts_file]
+    end
+
+    # you can't override this in the options file
+    def working_directory
+      File.expand_path(@options[:path] || Dir.pwd)
+    end
+
+    def merged_options_with_auto_tagger_config_file
+      file_options.merge(@options)
+    end
+
+    def file_options
+      opts_file_path = opts_file ? File.expand_path(opts_file) : File.join(Dir.pwd, ".auto_tagger")
+      file_options = {}
+      if File.exists?(opts_file_path)
+        text = File.read(opts_file_path)
+        args = text.split("\n").map{|line| line.strip}.reject{|line| line == ""}
+        file_options = AutoTagger::Options.from_file(args)
+      end
+      file_options
+    end
+
+    def specified_options
+      file_options.merge(@options)
+    end
+
     def merged_options
       @merged_options ||= merged_options_with_auto_tagger_config_file
     end
 
-    def merged_options_with_auto_tagger_config_file
-      # read file and parse
-      # merge in options
-      @options
-    end
-    
     def stage
       merged_options[:stage]
-    end
-
-    def working_directory
-      File.expand_path(merged_options[:path] || Dir.pwd)
     end
 
     def date_format
@@ -40,7 +59,11 @@ module AutoTagger
     end
 
     def push_refs?
-      merged_options.fetch(:push_refs, true)
+      !offline? && merged_options.fetch(:push_refs, true)
+    end
+
+    def executable
+      merged_options.fetch(:executable, "git")
     end
 
     def refs_to_keep
@@ -48,7 +71,7 @@ module AutoTagger
     end
 
     def fetch_refs?
-      merged_options.fetch(:fetch_refs, true)
+      !offline? && merged_options.fetch(:fetch_refs, true)
     end
 
     def remote

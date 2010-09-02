@@ -16,18 +16,9 @@ module AutoTagger
     def repo
       @repo ||= AutoTagger::Git::Repo.new configuration.working_directory,
                                           :execute_commands => !configuration.dry_run?,
-                                          :verbose => configuration.verbose?
+                                          :verbose => configuration.verbose?,
+                                          :executable => configuration.executable
     end
-
-    #    configuration = AutoTagger::Configuration.new :stage => variables[:stage],
-    #                                                  :path => variables[:working_directory]
-    #    tag_name = AutoTagger::Runner.new(configuration).create_ref(real_revision)
-    #
-    #   OR
-    #
-    #    configuration = AutoTagger::Configuration.new :stage => :production,
-    #                                                  :path => variables[:working_directory]
-    #    tag_name = AutoTagger::Runner.new(configuration).create_ref
 
     def create_ref(commit = nil)
       commit ||= repo.latest_commit_sha

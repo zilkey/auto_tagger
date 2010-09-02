@@ -27,7 +27,7 @@ You will be able to set the date format from autotag and from capistrano:
 You will be able to tell auto_tagger to only create tags, not fetch or push them from autotag and from capistrano:
 
     $ autotag demo --offline
-    $ autotag demo --fetch-tags=false --push-tags=false
+    $ autotag demo --fetch-refs=false --push-refs=false
 
 You will be able to specify how it creates refs (either by tags or by refs) in both autotag and capistrano:
 
