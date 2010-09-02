@@ -64,11 +64,11 @@ class StepHelpers
     system "cd #{app_dir} && git tag #{stage}/#{Time.now.utc.strftime('%Y%m%d%H%M%S')} && git push origin --tags"
   end
 
-  def tags
-    system "cd #{app_dir} && git fetch origin --tags"
-    tags = `cd #{app_dir} && git tag`
-    puts tags
-    tags
+  def refs
+    system "cd #{app_dir} && git fetch origin refs/auto_tags/*:refs/auto_tags/*"
+    refs = `cd #{app_dir} && git show-ref | grep auto_tags`
+    puts refs
+    refs
   end
 
   def create_app

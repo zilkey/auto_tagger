@@ -58,6 +58,10 @@ module AutoTagger
       merged_options.fetch(:verbose, false)
     end
 
+    def offline?
+      merged_options.fetch(:offline, false)
+    end
+
     def push_refs?
       !offline? && merged_options.fetch(:push_refs, true)
     end
