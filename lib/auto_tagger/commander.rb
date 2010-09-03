@@ -21,7 +21,7 @@ module AutoTagger
     end
 
     private
-
+    
     def command_in_context(cmd)
       "cd #{@path} && #{cmd}"
     end
