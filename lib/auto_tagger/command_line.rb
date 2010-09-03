@@ -21,11 +21,13 @@ module AutoTagger
             "#{key} : #{value}"
           end.join("\n")
         else
+          create_message = []
           if options[:deprecated]
-            AutoTagger::Deprecator.warn("Please use `autotag create #{options[:stage]}` instead")
+            create_message << AutoTagger::Deprecator.string("Please use `autotag create #{options[:stage]}` instead")
           end
           ref = AutoTagger::Base.new(options).create_ref
-          "Created ref #{ref.name}"
+          create_message << "Created ref #{ref.name}"
+          create_message.join("\n")
       end
       [true, message]
     end
