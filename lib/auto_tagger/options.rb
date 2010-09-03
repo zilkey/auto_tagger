@@ -4,7 +4,6 @@ module AutoTagger
     def self.from_command_line(args)
       options = {}
       args.extend(::OptionParser::Arguable)
-
       args.options do |opts|
         opts.banner = [
           "",
@@ -96,9 +95,9 @@ module AutoTagger
 
     def self.common_options(opts, options)
 
-      opts.on("--date-format FORMAT",
-              "Sets the format of the date for tags",
-              "Defaults to %Y%m%d%H%M%S") do |o|
+      opts.on("--date-separator SEPARATOR",
+              "Sets the separator of the date part of the ref",
+              "Defaults to ''") do |o|
         options[:date_separator] = o
       end
 

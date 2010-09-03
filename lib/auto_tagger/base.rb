@@ -20,7 +20,7 @@ module AutoTagger
                                           :executable => configuration.executable
     end
 
-    def last_tag_from_previous_stage
+    def last_ref_from_previous_stage
       previous_stage = if configuration.stage
         index = configuration.stages.index(configuration.stage).to_i - 1
         configuration.stages[index] if index > -1

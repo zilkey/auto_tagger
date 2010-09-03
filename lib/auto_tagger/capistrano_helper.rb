@@ -1,49 +1,61 @@
 module AutoTagger
   class CapistranoHelper
 
+    attr_reader :variables
+    private :variables
+
     def initialize(variables)
       @variables = variables
     end
 
-    # TODO: use fetch here
+    def auto_tagger
+      @auto_tagger ||= AutoTagger::Base.new(auto_tagger_options)
+    end
+
     def ref
-      if @variables.has_key?(:head)
-        @variables[:branch] # shouldn't this be HEAD??
-      elsif @variables.has_key?(:tag)
-        @variables[:tag]
-      elsif @variables.has_key?(:ref)
-        @variables[:ref]
-      elsif auto_tagger.last_tag_from_previous_stage
-        auto_tagger.last_tag_from_previous_stage.sha
+      if variables.has_key?(:head)
+        variables[:branch]
+      elsif variables.has_key?(:tag)
+        variables[:tag]
+      elsif variables.has_key?(:ref)
+        variables[:ref]
+      elsif auto_tagger.last_ref_from_previous_stage
+        auto_tagger.last_ref_from_previous_stage.sha
       else
-        @variables[:branch]
+        variables[:branch]
       end
     end
 
-    def auto_tagger
-      return @auto_tagger if @auto_tagger
-
-      if @variables[:working_directory]
-        AutoTagger::Deprecator.warn(":working_directory is deprecated.  Please use :auto_tagger_working_directory or see the readme for the new api.")
-      end
-
-      if stages = @variables.delete(:stages)
-        @variables[:auto_tagger_stages] = stages
-        AutoTagger::Deprecator.warn(":stages is deprecated.  Please use :auto_tagger_stages or see the readme for the new api.")
-      end
-
+    def auto_tagger_options
       options = {}
-      options[:stage] = @variables[:auto_tagger_stage] || @variables[:stage]
-      options[:stages] = (@variables[:auto_tagger_stages] || @variables[:autotagger_stages] || @variables[:stages] || []).map{|stage| stage.to_s}
-      options[:path] = @variables[:auto_tagger_working_directory] || @variables[:working_directory]
-      options[:date_separator] = @variables[:auto_tagger_date_separator]
-      options[:push_refs] = @variables[:auto_tagger_push_refs]
-      options[:fetch_refs] = @variables[:auto_tagger_fetch_refs]
-      options[:remote] = @variables[:auto_tagger_remote]
-      options[:ref_path] = @variables[:auto_tagger_ref_path]
-      # TODO: add all other options here
+      options[:stage] = variables[:auto_tagger_stage] || variables[:stage]
+      options[:stages] = stages
 
-      @auto_tagger ||= AutoTagger::Base.new(options)
+      if variables[:working_directory]
+        AutoTagger::Deprecator.warn(":working_directory is deprecated.  Please use :auto_tagger_working_directory.")
+        options[:path] = variables[:working_directory]
+      else
+        options[:path] = variables[:auto_tagger_working_directory]
+      end
+
+      [
+        :date_separator, :push_refs, :fetch_refs, :remote, :ref_path, :offline,
+        :dry_run, :verbose, :refs_to_keep, :executable, :opts_file
+      ].each do |key|
+        options[key] = variables[:"auto_tagger_#{key}"]
+      end
+
+      options
+    end
+
+    def stages
+      if variables[:autotagger_stages]
+        AutoTagger::Deprecator.warn(":autotagger_stages is deprecated.  Please use :auto_tagger_stages.")
+        stages = variables[:autotagger_stages]
+      else
+        stages = variables[:auto_tagger_stages] || variables[:stages] || []
+      end
+      stages.map { |stage| stage.to_s }
     end
 
   end

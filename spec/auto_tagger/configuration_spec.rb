@@ -23,7 +23,7 @@ describe AutoTagger::Configuration do
   end
 
   describe "#opts_file" do
-    it "expands the passed in opts file path in reference to the path" do
+    it "expands the passed in opts file path in reference to the working directory" do
       config = AutoTagger::Configuration.new :opts_file => "../.foo_tagger", :path => "/foo/bar"
       config.opts_file.should == "/foo/.foo_tagger"
     end
