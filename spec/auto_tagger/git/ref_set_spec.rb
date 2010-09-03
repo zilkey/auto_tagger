@@ -2,73 +2,59 @@ require 'spec_helper'
 
 describe AutoTagger::Git::RefSet do
 
-  before(:each) do
-    @repository = Object.new
+  before do
+    @repo = mock(AutoTagger::Git::Repo, :exec => true)
+    @ref_set = AutoTagger::Git::RefSet.new(@repo)
+    @refstring = <<-LIST
+      23087241c495773c8eece1c195cc453a8055c4eb refs/tags/200808080808
+      23087241c495773c8eece1c195cc453a8055c4eb refs/tags/200808080809
+    LIST
   end
 
-  describe ".new" do
-    it "sets the repository" do
-      AutoTagger::Git::RefSet.new(@repository).repository.should == @repository
-    end
-  end
-
-  describe "#find_all" do
-    it "returns an array of tags" do
-      mock(@repository).run("git tag") { "ci_01\nci_02" }
-      AutoTagger::Git::RefSet.new(@repository).find_all.should == ["ci_01", "ci_02"]
-    end
-
-    it "returns an empty array if there are none" do
-      mock(@repository).run("git tag") { "" }
-      AutoTagger::Git::RefSet.new(@repository).find_all.should be_empty
-    end
-  end
-
-  describe "#latest_from" do
-    before do
-      @tag = AutoTagger::Git::RefSet.new(@repository)
-      mock(@tag).find_all { ["ci/01", "ci/02"] }
-    end
-
-    it "returns the latest tag that starts with the specified stage" do
-      @tag.latest_from(:ci).should == "ci/02"
-    end
-
-    it "returns nil if none match" do
-      @tag.latest_from(:staging).should be_nil
-    end
-  end
-
-  describe "#fetch_refs" do
-    it "sends the correct command" do
-      tag = AutoTagger::Git::RefSet.new(@repository)
-      stub(tag).fetch_refs?.returns(true)
-      mock(@repository).run!("git fetch origin --tags")
-      tag.fetch
-    end
-  end
-
-  describe "#push" do
-    it "sends the correct command" do
-      tag = AutoTagger::Git::RefSet.new(@repository)
-      stub(tag).push_refs?.returns(true)
-      mock(@repository).run!("git push origin --tags")
-      tag.push
+  describe "#all" do
+    it "returns an array of refs" do
+      @repo.should_receive(:read).with("show-ref").and_return(@refstring)
+      refs = @ref_set.all
+      refs.length.should == 2
+      refs.first.name.should == "refs/tags/200808080808"
+      refs.first.sha.should == "23087241c495773c8eece1c195cc453a8055c4eb"
     end
   end
 
   describe "#create" do
-    it "creates the right command and returns the name" do
-      tag = AutoTagger::Git::RefSet.new(@repository)
-      time = Time.local(2001, 1, 1)
-      mock(Time).now.once { time }
-      tag_name = "ci/#{time.utc.strftime('%Y%m%d%H%M%S')}"
+    it "instantiates and saves a ref" do
+      @repo.should_receive(:exec).with("update-ref refs/auto_tags/demo/2008 abc123")
+      @ref_set.create "abc123", "refs/auto_tags/demo/2008"
+    end
 
-      stub(tag).fetch_refs?.returns(true)
-      stub(tag).push_refs?.returns(true)
-      stub(tag).date_format.returns("%Y%m%d%H%M%S")
-      mock(@repository).run!("git tag #{tag_name}")
-      tag.create("ci").should == tag_name
+    it "returns the ref" do
+      ref = @ref_set.create("abc123", "refs/auto_tags/demo/2008")
+      ref.sha.should == "abc123"
+      ref.name.should == "refs/auto_tags/demo/2008"
+    end
+  end
+
+  describe "#push" do
+    it "pushes all refs to the specified remote" do
+      @repo.should_receive(:exec).with("push myremote refs/auto_tags/*:refs/auto_tags/*")
+      @ref_set.push "refs/auto_tags/*", "myremote"
+    end
+
+    it "defaults to origin" do
+      @repo.should_receive(:exec).with("push origin refs/auto_tags/*:refs/auto_tags/*")
+      @ref_set.push "refs/auto_tags/*"
+    end
+  end
+
+  describe "#fetch" do
+    it "fetches all refs to the specified remote" do
+      @repo.should_receive(:exec).with("fetch myremote refs/auto_tags/*:refs/auto_tags/*")
+      @ref_set.fetch "refs/auto_tags/*", "myremote"
+    end
+
+    it "defaults to origin" do
+      @repo.should_receive(:exec).with("fetch origin refs/auto_tags/*:refs/auto_tags/*")
+      @ref_set.fetch "refs/auto_tags/*"
     end
   end
 
