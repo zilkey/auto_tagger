@@ -24,9 +24,9 @@ module AutoTagger
 
       def initialize(given_path, options = {})
         @given_path = given_path
-        @execute_commands = options[:execute_commands]
+        @execute_commands = options.fetch(:execute_commands, true)
         @verbose = options[:verbose]
-        @executable = options[:executable]
+        @executable = options[:executable] || "git"
       end
 
       def path
@@ -37,6 +37,10 @@ module AutoTagger
         @path = @given_path
       end
 
+      def refs
+        RefSet.new(self)
+      end
+      
       def ==(other)
         other.is_a?(AutoTagger::Git::Repo) && other.path == path
       end
@@ -57,33 +61,11 @@ module AutoTagger
         end
       end
 
+      private
+
       def git_command(cmd)
         "%s %s" % [@executable, cmd]
       end
-
-      def refs
-        RefSet.new(self)
-      end
-
-      def tags
-        refs.all.select do |ref|
-          ref.name =~ /^refs\/tags/
-        end
-      end
-
-      def branches
-        refs.all.select do |ref|
-          ref.name =~ /^refs\/heads/
-        end
-      end
-
-      def auto_tags
-        refs.all.select do |ref|
-          ref.name =~ /^refs\/auto_tags/
-        end
-      end
-
-      private
 
       def commander
         AutoTagger::Commander.new(path, @verbose)
