@@ -40,7 +40,7 @@ module AutoTagger
       commit ||= repo.latest_commit_sha
       ensure_stage
       repo.refs.fetch("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.fetch_refs?
-      new_tag = repo.refs.create(ref_name, commit)
+      new_tag = repo.refs.create(commit, ref_name)
       repo.refs.push("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.push_refs?
       new_tag
     end
