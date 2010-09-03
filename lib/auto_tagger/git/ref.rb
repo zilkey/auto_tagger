@@ -8,6 +8,10 @@ module AutoTagger
         @repo, @sha, @name = repo, sha, name
       end
 
+      def ==(other)
+        other.is_a?(self.class) && other.sha == sha && other.name == name
+      end
+
       def to_s
         "%s %s" % [sha, name]
       end
