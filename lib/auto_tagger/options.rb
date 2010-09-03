@@ -1,5 +1,4 @@
 module AutoTagger
-
   class Options
 
     def self.from_command_line(args)
@@ -42,10 +41,12 @@ module AutoTagger
 
         opts.on_tail("-h", "--help", "-?", "You're looking at it.") do
           options[:show_help] = true
+          options[:command] = :help
         end
 
-        opts.on_tail("--version", "Show version") do
+        opts.on_tail("--version", "-v", "Show version") do
           options[:show_version] = true
+          options[:command] = :version
         end
 
       end.parse!
@@ -54,8 +55,10 @@ module AutoTagger
         when "config"
           options[:command] = :config
         when "version"
+          options[:show_version] = true
           options[:command] = :version
         when * ["help", ""]
+          options[:show_help] = true
           options[:help_text] = args.options.help
           options[:command] = :help
         when "cleanup"
@@ -69,10 +72,12 @@ module AutoTagger
           options[:stage] = args[1]
           options[:path] = args[2]
         else
-          options[:deprecated] = true
-          options[:command] = :create
-          options[:stage] = args[0]
-          options[:path] = args[1]
+          if options[:command].nil?
+            options[:command] = :create # allow 
+            options[:deprecated] = true
+            options[:stage] = args[0]
+            options[:path] = args[1]
+          end
       end
 
       options
@@ -131,9 +136,9 @@ module AutoTagger
         options[:offline] = o
       end
 
-      opts.on("--dry-run [DRYRUN]",
+      opts.on("--dry-run [DRYRUN]", TrueClass,
               "doesn't execute anything, but logs what it would run") do |o|
-        options[:dry_run] = o
+        options[:dry_run] = o.nil? || (o == true)
       end
 
       opts.on("--verbose [VERBOSE]", TrueClass,
@@ -143,7 +148,7 @@ module AutoTagger
 
       opts.on("--refs-to-keep REFS_TO_KEEP",
               "logs all commands") do |o|
-        options[:refs_to_keep] = o
+        options[:refs_to_keep] = (o ? o.to_i : nil)
       end
 
       opts.on("--executable EXECUTABLE",
