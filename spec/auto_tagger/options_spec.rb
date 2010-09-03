@@ -5,7 +5,7 @@ describe AutoTagger::Options do
   shared_examples_for "common options" do
     it "understands --date-format" do
       options = AutoTagger::Options.from_command_line ["--date-format=%Y%m%d%H%M%S"]
-      options[:date_format].should == "%Y%m%d%H%M%S"
+      options[:date_separator].should == "%Y%m%d%H%M%S"
     end
 
     it "understands --remote" do

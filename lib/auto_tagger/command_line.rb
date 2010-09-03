@@ -17,7 +17,7 @@ module AutoTagger
         when :list
           AutoTagger::Base.new(options).list.join("\n")
         when :config
-          AutoTagger::Configuration.new(options).specified_options.map do |key, value|
+          AutoTagger::Configuration.new(options).settings.map do |key, value|
             "#{key} : #{value}"
           end.join("\n")
         else

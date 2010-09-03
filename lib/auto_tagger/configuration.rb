@@ -1,96 +1,88 @@
 module AutoTagger
 
   class Configuration
-    def initialize(options)
+
+    class InvalidRefPath < StandardError
+    end
+
+    def initialize(options = {})
       @options = options
     end
 
-    # you can't override this in the options file
-    def opts_file
-      @options[:opts_file]
-    end
-
-    # you can't override this in the options file
     def working_directory
       File.expand_path(@options[:path] || Dir.pwd)
     end
 
-    def merged_options_with_auto_tagger_config_file
-      file_options.merge(@options)
+    def opts_file
+      file = @options[:opts_file] || ".auto_tagger"
+      File.expand_path File.join(working_directory, file)
     end
 
-    def file_options
-      opts_file_path = opts_file ? File.expand_path(opts_file) : File.join(Dir.pwd, ".auto_tagger")
-      file_options = {}
-      if File.exists?(opts_file_path)
-        text = File.read(opts_file_path)
-        args = text.split("\n").map{|line| line.strip}.reject{|line| line == ""}
-        file_options = AutoTagger::Options.from_file(args)
-      end
-      file_options
+    def file_settings
+      return {} unless File.exists?(opts_file)
+      args = File.read(opts_file).to_s.split("\n").map { |line| line.strip }
+      args.reject! { |line| line == "" }
+      AutoTagger::Options.from_file(args)
     end
 
-    def specified_options
-      file_options.merge(@options)
+    def settings
+      file_settings.merge(@options)
     end
 
-    def merged_options
-      @merged_options ||= merged_options_with_auto_tagger_config_file
+    def stages
+      stages = settings[:stages]
+      stages = stages.to_s.split(",").map { |stage| stage.strip } if stages.is_a?(String)
+      stages.reject { |stage| stage.to_s == "" }
     end
 
     def stage
-      merged_options[:stage] || stages.last
+      settings[:stage] || stages.last
     end
 
-    # set a stages string and split it
-    # so that capistrano can pass in real options
-    # make sure all keys are symbols
-    def stages
-      merged_options[:stages].to_s.split(",").map{|stage| stage.strip}.reject{|stage| stage.to_s == ""}
-    end
-
-    def date_format
-      merged_options[:date_format] ||= "%Y%m%d%H%M%S"
+    def date_separator
+      settings[:date_separator] ||= ""
     end
 
     def dry_run?
-      merged_options.fetch(:dry_run, false)
+      settings.fetch(:dry_run, false)
     end
 
     def verbose?
-      merged_options.fetch(:verbose, false)
+      settings.fetch(:verbose, false)
     end
 
     def offline?
-      merged_options.fetch(:offline, false)
-    end
-
-    def push_refs?
-      !offline? && merged_options.fetch(:push_refs, true)
-    end
-
-    def executable
-      merged_options[:executable] || "git"
-    end
-
-    def refs_to_keep
-      (merged_options[:refs_to_keep] || 1).to_i
+      settings.fetch(:offline, false)
     end
 
     def fetch_refs?
-      !offline? && merged_options.fetch(:fetch_refs, true)
+      !offline? && settings.fetch(:fetch_refs, true)
+    end
+
+    def push_refs?
+      !offline? && settings.fetch(:push_refs, true)
+    end
+
+    def executable
+      settings[:executable] || "git"
+    end
+
+    def refs_to_keep
+      (settings[:refs_to_keep] || 1).to_i
     end
 
     def remote
-      merged_options[:remote] || "origin"
+      settings[:remote] || "origin"
     end
 
     def ref_path
-      path = merged_options[:ref_path] || "auto_tags"
-      raise "#{path} is a reserved word in git.  Please use something else." if ["heads", "remotes"].include?(path)
+      path = settings[:ref_path] || "tags"
+      if ["heads", "remotes"].include?(path)
+        raise InvalidRefPath, "#{path} is a reserved word in git.  Please use something else."
+      end
       path
     end
 
   end
-  
+
 end

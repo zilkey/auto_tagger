@@ -30,7 +30,7 @@ describe AutoTagger::CommandLine do
 
     it "runs the config command" do
       command_line = AutoTagger::CommandLine.new ["config"]
-      config = mock(AutoTagger::Configuration, :specified_options => {"foo" =>  "bar"})
+      config = mock(AutoTagger::Configuration, :settings => {"foo" =>  "bar"})
       AutoTagger::Configuration.should_receive(:new).and_return(config)
       command_line.execute.last.should include("foo", "bar")
     end

@@ -98,7 +98,7 @@ module AutoTagger
     end
 
     def ref_name
-      "refs/#{configuration.ref_path}/#{configuration.stage}/#{Time.now.utc.strftime(configuration.date_format)}"
+      "refs/#{configuration.ref_path}/#{configuration.stage}/#{Time.now.utc.strftime(configuration.date_separator)}"
     end
 
     def ensure_stage

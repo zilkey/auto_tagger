@@ -99,7 +99,7 @@ module AutoTagger
       opts.on("--date-format FORMAT",
               "Sets the format of the date for tags",
               "Defaults to %Y%m%d%H%M%S") do |o|
-        options[:date_format] = o
+        options[:date_separator] = o
       end
 
       opts.on("--fetch-refs FETCH_REFS", TrueClass,
