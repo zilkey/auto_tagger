@@ -103,6 +103,11 @@ describe AutoTagger::Configuration do
       config = AutoTagger::Configuration.new :stages => ["demo", "production"]
       config.stage.should == "production"
     end
+
+    it "returns nil if stage and stages are not passed in" do
+      config = AutoTagger::Configuration.new
+      config.stage.should be_nil
+    end
   end
 
   describe "#date_separator" do

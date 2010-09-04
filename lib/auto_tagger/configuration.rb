@@ -30,7 +30,7 @@ module AutoTagger
     end
 
     def stages
-      stages = settings[:stages]
+      stages = settings[:stages] || []
       stages = stages.to_s.split(",").map { |stage| stage.strip } if stages.is_a?(String)
       stages.reject { |stage| stage.to_s == "" }
     end

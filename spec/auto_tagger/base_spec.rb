@@ -44,22 +44,15 @@ describe AutoTagger::Base do
     end
   end
 
-#      commit ||= repo.latest_commit_sha
-#      ensure_stage
-#      repo.refs.fetch("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.fetch_refs?
-#      new_tag = repo.refs.create(commit, ref_name)
-#      repo.refs.push("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.push_refs?
-#      new_tag
   describe "#create_ref" do
-    it "creates a ref" do
+    it "creates a ref with the given sha and returns the ref" do
       base = AutoTagger::Base.new :stages => ["ci", "demo", "production"], :stage => "demo"
       base.stub(:timestamp).and_return("20081010")
 
-      base.repo.should_receive(:latest_commit_sha).and_return("abc123")
       base.repo.stub(:exec) { true }
       base.repo.should_receive(:exec).with("update-ref refs/tags/demo/20081010 abc123")
 
-      ref = base.create_ref
+      ref = base.create_ref "abc123"
       ref.name.should == "refs/tags/demo/20081010"
       ref.sha.should == "abc123"
     end
@@ -75,6 +68,49 @@ describe AutoTagger::Base do
       ref = base.create_ref
       ref.name.should == "refs/tags/demo/20081010"
       ref.sha.should == "abc123"
+    end
+
+    it "respects the passed in date separator" do
+      time = Time.now.utc
+      timestamp = time.strftime("%Y-%m-%d-%H-%M-%S")
+      base = AutoTagger::Base.new :stages => ["ci"], :stage => "ci", :date_separator => "-"
+      base.repo.stub(:exec) { true }
+      base.repo.should_receive(:exec).with("update-ref refs/tags/ci/#{timestamp} abc123")
+      base.create_ref "abc123"
+    end
+
+    it "raises an error if the stage is not set" do
+      proc do
+        AutoTagger::Base.new({}).create_ref
+      end.should raise_error(AutoTagger::Base::StageCannotBeBlankError)
+    end
+
+    it "fetches tags before creating tags" do
+      base = AutoTagger::Base.new :stages => ["ci"], :stage => "ci"
+      base.repo.stub(:exec) { true }
+      base.repo.should_receive(:exec).with("fetch origin refs/tags/*:refs/tags/*")
+      base.create_ref "abc123"
+    end
+
+    it "does not fetch tags before creating tags if fetch tags is false" do
+      base = AutoTagger::Base.new :stages => ["ci"], :stage => "ci", :fetch_tags => false
+      base.repo.stub(:exec) { true }
+      base.repo.should_receive(:exec).with("push origin refs/tags/*:refs/tags/*")
+      base.create_ref "abc123"
+    end
+
+    it "pushes tags before creating tags" do
+      base = AutoTagger::Base.new :stages => ["ci"], :stage => "ci"
+      base.repo.stub(:exec) { true }
+      base.repo.should_receive(:exec).with("push origin refs/tags/*:refs/tags/*")
+      base.create_ref "abc123"
+    end
+
+    it "does not push tags before creating tags if push tags is false" do
+      base = AutoTagger::Base.new :stages => ["ci"], :stage => "ci", :push_tags => false
+      base.repo.stub(:exec) { true }
+      base.repo.should_receive(:exec).with("push origin refs/tags/*:refs/tags/*")
+      base.create_ref "abc123"
     end
   end
 

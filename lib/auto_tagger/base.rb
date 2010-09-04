@@ -1,12 +1,13 @@
 module AutoTagger
-  class StageCannotBeBlankError < StandardError;
-  end
 
   def self.version
     File.read(File.expand_path(File.join(__FILE__, "/../../../VERSION")))
   end
 
   class Base
+    class StageCannotBeBlankError < StandardError;
+    end
+
     attr_reader :options
 
     def initialize(options)
@@ -22,18 +23,20 @@ module AutoTagger
 
     def last_ref_from_previous_stage
       return unless previous_stage
-      matcher = /refs\/#{Regexp.escape(configuration.ref_path)}\/(#{Regexp.escape(previous_stage)})\/.*/
+      ref_path = Regexp.escape(configuration.ref_path)
+      stage = Regexp.escape(previous_stage)
+      matcher = /refs\/#{ref_path}\/(#{stage})\/.*/
       repo.refs.all.select do |ref|
         (ref.name =~ matcher) ? ref : nil
       end.last
     end
 
     def create_ref(commit = nil)
-      commit ||= repo.latest_commit_sha
       ensure_stage
-      repo.refs.fetch("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.fetch_refs?
-      new_tag = repo.refs.create(commit, ref_name)
-      repo.refs.push("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.push_refs?
+      pattern = "refs/#{configuration.ref_path}/*"
+      repo.refs.fetch(pattern, configuration.remote) if configuration.fetch_refs?
+      new_tag = repo.refs.create(commit || repo.latest_commit_sha, ref_name)
+      repo.refs.push(pattern, configuration.remote) if configuration.push_refs?
       new_tag
     end
 
