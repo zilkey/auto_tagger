@@ -21,19 +21,11 @@ module AutoTagger
     end
 
     def last_ref_from_previous_stage
-      previous_stage = if configuration.stage
-        index = configuration.stages.index(configuration.stage).to_i - 1
-        configuration.stages[index] if index > -1
-      end
-
-      if previous_stage
-        stage_regexp = Regexp.escape(previous_stage)
-        refs = repo.refs.all.select do |ref|
-          regexp = /refs\/#{Regexp.escape(configuration.ref_path)}\/(#{stage_regexp})\/.*/
-          (ref.name =~ regexp) ? ref : nil
-        end
-        refs.last
-      end
+      return unless previous_stage
+      matcher = /refs\/#{Regexp.escape(configuration.ref_path)}\/(#{Regexp.escape(previous_stage)})\/.*/
+      repo.refs.all.select do |ref|
+        (ref.name =~ matcher) ? ref : nil
+      end.last
     end
 
     def create_ref(commit = nil)
@@ -88,6 +80,12 @@ module AutoTagger
     end
 
     private
+
+    def previous_stage
+      return unless configuration.stage
+      index = configuration.stages.index(configuration.stage).to_i - 1
+      configuration.stages[index] if index > -1
+    end
 
     def configuration
       @configuration ||= begin

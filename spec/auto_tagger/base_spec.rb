@@ -1,112 +1,109 @@
 require 'spec_helper'
-require 'ostruct'
 
 describe AutoTagger::Base do
-  before(:each) do
-    stub(Dir).pwd { File.join(File.dirname(__FILE__), '..', '..') }
-    @configuration = OpenStruct.new
-  end
 
-  describe "#create_ref" do
-    it "blows up if you don't pass a stage" do
-      proc do
-        @configuration.stage = nil
-        AutoTagger::Base.new(@configuration).create_ref
-      end.should raise_error(AutoTagger::StageCannotBeBlankError)
-    end
-
-    it "generates the correct commands" do
-      time = Time.local(2001,1,1)
-      mock(Time).now.once {time}
-      timestamp = time.utc.strftime('%Y%m%d%H%M%S')
-      mock(File).exists?(anything).twice { true }
-
-      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags") {true}
-      mock(AutoTagger::Commander).execute?("/foo", "git tag ci/#{timestamp}") {true}
-      mock(AutoTagger::Commander).execute?("/foo", "git push origin --tags")  {true}
-
-      configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Base.new(configuration).create_ref
-    end
-
-    it "allows you to base it off an existing tag or commit" do
-      time = Time.local(2001,1,1)
-      mock(Time).now.once {time}
-      timestamp = time.utc.strftime('%Y%m%d%H%M%S')
-      mock(File).exists?(anything).twice { true }
-
-      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags") {true}
-      mock(AutoTagger::Commander).execute?("/foo", "git tag ci/#{timestamp} guid") {true}
-      mock(AutoTagger::Commander).execute?("/foo", "git push origin --tags")  {true}
-
-      configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Base.new(configuration).create_ref("guid")
-    end
-
-    it "returns the tag that was created" do
-      time = Time.local(2001,1,1)
-      mock(Time).now.once {time}
-      timestamp = time.utc.strftime('%Y%m%d%H%M%S')
-      mock(File).exists?(anything).twice { true }
-      mock(AutoTagger::Commander).execute?(anything, anything).times(any_times) {true}
-
-      configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Base.new(configuration).create_ref.should == "ci/#{timestamp}"
+  describe "#repo" do
+    it "returns a repo with the correct options" do
+      base = AutoTagger::Base.new :path => "/foo",
+                                  :dry_run => true,
+                                  :verbose => true,
+                                  :executable => "/usr/bin/git"
+      AutoTagger::Git::Repo.should_receive(:new).with "/foo",
+                                                      :execute_commands => false,
+                                                      :verbose => true,
+                                                      :executable => "/usr/bin/git"
+      base.repo
     end
   end
 
-  describe "#latest_ref" do
-    it "should raise a stage cannot be blank error if stage is blank" do
-      proc do
-        configuration = AutoTagger::Configuration.new(:stage => nil)
-        AutoTagger::Base.new(configuration).latest_ref
-      end.should raise_error(AutoTagger::StageCannotBeBlankError)
+  describe "#last_ref_from_previous_stage" do
+    it "returns nil if there is no previous stage" do
+      refs = "0f7324495f06e2b refs/tags/ci/2001"
+      base = AutoTagger::Base.new :stages => ["ci", "demo", "production"], :stage => "ci"
+      base.repo.stub(:read).and_return(refs)
+      base.last_ref_from_previous_stage.should be_nil
     end
 
-    it "generates the correct commands" do
-      mock(File).exists?(anything).twice { true }
-      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags") {true}
-      mock(AutoTagger::Commander).execute("/foo", "git tag") { "ci_01" }
-
-      configuration = AutoTagger::Configuration.new(:stage => "ci", :path => "/foo")
-      AutoTagger::Base.new(configuration).latest_ref
+    it "returns nil if there are no matching refs" do
+      refs = "0f7324495f06e2b refs/tags-ci/2001"
+      base = AutoTagger::Base.new :stages => ["ci", "demo", "production"], :stage => "ci"
+      base.repo.stub(:read).and_return(refs)
+      base.last_ref_from_previous_stage.should be_nil
     end
-  end
 
-  describe "#release_tag_entries" do
-    it "returns a column-justifed version of all the commits" do
-      mock(AutoTagger::Commander).execute("/foo", "git tag").times(any_times) { "ci/01\nstaging/01\nproduction/01" }
-      mock(AutoTagger::Commander).execute("/foo", "git --no-pager log ci/01 --pretty=oneline -1") { "guid1" }
-      mock(AutoTagger::Commander).execute("/foo", "git --no-pager log staging/01 --pretty=oneline -1") { "guid2" }
-      mock(AutoTagger::Commander).execute("/foo", "git --no-pager log production/01 --pretty=oneline -1") { "guid3" }
-      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags").times(any_times) { true }
-      mock(File).exists?(anything).times(any_times) { true }
-
-      variables = {
-        :auto_tagger_working_directory => "/foo",
-        :auto_tagger_stages => [:ci, :staging, :production]
+    it "should return the last ref from the previous stage" do
+      refs = %Q{
+        41dee06050450ac refs/tags/ci/2003
+        41dee06050450a5 refs/tags/ci/2003
+        61c6627d766c1be refs/tags/demo/2001
       }
-      histories = AutoTagger::CapistranoHelper.new(variables).release_tag_entries
-      histories.length.should == 3
-      histories[0].should include("ci/01", "guid1")
-      histories[1].should include("staging/01", "guid2")
-      histories[2].should include("production/01", "guid3")
-    end
-
-    it "ignores tags delimited with '_'" do
-      mock(AutoTagger::Commander).execute("/foo", "git tag").times(any_times) { "ci/01\nci_02" }
-      mock(AutoTagger::Commander).execute("/foo", "git --no-pager log ci/01 --pretty=oneline -1") { "guid1" }
-      mock(AutoTagger::Commander).execute?("/foo", "git fetch origin --tags").times(any_times) { true }
-      mock(File).exists?(anything).times(any_times) { true }
-
-      variables = {
-        :auto_tagger_working_directory => "/foo",
-        :auto_tagger_stages => [:ci]
-      }
-      histories = AutoTagger::CapistranoHelper.new(variables).release_tag_entries
-      histories.length.should == 1
-      histories[0].should include("ci/01", "guid1")
+      base = AutoTagger::Base.new :stages => ["ci", "demo", "production"], :stage => "demo"
+      base.repo.stub(:read).and_return(refs)
+      ref = AutoTagger::Git::Ref.new(base.repo, "41dee06050450ac", "refs/tags/ci/2003")
+      base.last_ref_from_previous_stage.name.should == "refs/tags/ci/2003"
     end
   end
 
+#  describe "#create_ref(commit = nil)" do
+#    it "should do something" do
+#      commit ||= repo.latest_commit_sha
+#      ensure_stage
+#      repo.refs.fetch("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.fetch_refs?
+#      new_tag = repo.refs.create(commit, ref_name)
+#      repo.refs.push("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.push_refs?
+#      new_tag
+#    end
+#  end
+#
+#  describe "#cleanup" do
+#    it "should do something" do
+#      stage_regexp = Regexp.escape(configuration.stage)
+#      refs = repo.refs.all.select do |ref|
+#        regexp = /refs\/#{Regexp.escape(configuration.ref_path)}\/(#{stage_regexp})\/.*/
+#        (ref.name =~ regexp) ? ref : nil
+#      end
+#
+#      refs = refs[(configuration.refs_to_keep)..-1]
+#
+#      refs.each do |ref|
+#        ref.delete_locally
+#        ref.delete_on_remote(configuration.remote) if configuration.push_refs?
+#      end
+#      refs.length
+#    end
+#  end
+#
+#  describe "#list" do
+#    it "should do something" do
+#      stage_regexp = Regexp.escape(configuration.stage)
+#      repo.refs.all.select do |ref|
+#        regexp = /refs\/#{Regexp.escape(configuration.ref_path)}\/(#{stage_regexp})\/.*/
+#        (ref.name =~ regexp) ? ref : nil
+#      end
+#    end
+#  end
+#
+#  describe "#latest_ref" do
+#    it "should do something" do
+#      ensure_stage
+#      repo.tags.fetch
+#      repo.tags.latest_from(stage)
+#    end
+#  end
+#
+#  describe "#release_tag_entries" do
+#    it "should do something" do
+#      entries = []
+#      configuration.stages.each do |stage|
+#        configuration = AutoTagger::Configuration.new :stage => stage, :path => @configuration.working_directory
+#        tagger = Base.new(configuration)
+#        tag = tagger.latest_ref
+#        commit = tagger.repository.commit_for(tag)
+#        entries << "#{stage.to_s.ljust(10, " ")} #{tag.to_s.ljust(30, " ")} #{commit.to_s}"
+#      end
+#      entries
+#    end
+#  end
+#
+#
 end
