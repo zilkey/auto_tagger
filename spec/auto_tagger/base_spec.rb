@@ -44,17 +44,40 @@ describe AutoTagger::Base do
     end
   end
 
-#  describe "#create_ref(commit = nil)" do
-#    it "should do something" do
 #      commit ||= repo.latest_commit_sha
 #      ensure_stage
 #      repo.refs.fetch("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.fetch_refs?
 #      new_tag = repo.refs.create(commit, ref_name)
 #      repo.refs.push("refs/#{configuration.ref_path}/*", configuration.remote) if configuration.push_refs?
 #      new_tag
-#    end
-#  end
-#
+  describe "#create_ref" do
+    it "creates a ref" do
+      base = AutoTagger::Base.new :stages => ["ci", "demo", "production"], :stage => "demo"
+      base.stub(:timestamp).and_return("20081010")
+
+      base.repo.should_receive(:latest_commit_sha).and_return("abc123")
+      base.repo.stub(:exec) { true }
+      base.repo.should_receive(:exec).with("update-ref refs/tags/demo/20081010 abc123")
+
+      ref = base.create_ref
+      ref.name.should == "refs/tags/demo/20081010"
+      ref.sha.should == "abc123"
+    end
+
+    it "defaults to the latest commit sha" do
+      base = AutoTagger::Base.new :stages => ["ci", "demo", "production"], :stage => "demo"
+      base.stub(:timestamp).and_return("20081010")
+
+      base.repo.should_receive(:latest_commit_sha).and_return("abc123")
+      base.repo.stub(:exec) { true }
+      base.repo.should_receive(:exec).with("update-ref refs/tags/demo/20081010 abc123")
+
+      ref = base.create_ref
+      ref.name.should == "refs/tags/demo/20081010"
+      ref.sha.should == "abc123"
+    end
+  end
+
 #  describe "#cleanup" do
 #    it "should do something" do
 #      stage_regexp = Regexp.escape(configuration.stage)

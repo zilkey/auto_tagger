@@ -96,7 +96,19 @@ module AutoTagger
     end
 
     def ref_name
-      "refs/#{configuration.ref_path}/#{configuration.stage}/#{Time.now.utc.strftime(configuration.date_separator)}"
+      "refs/#{configuration.ref_path}/#{configuration.stage}/#{timestamp}"
+    end
+
+    def timestamp
+      time = Time.now.utc
+      [
+        time.strftime("%Y"),
+        time.strftime("%m"),
+        time.strftime("%d"),
+        time.strftime("%H"),
+        time.strftime("%M"),
+        time.strftime("%S")
+      ].join(configuration.date_separator)
     end
 
     def ensure_stage
