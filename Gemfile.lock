@@ -34,6 +34,7 @@ GEM
     net-ssh (2.0.23)
     net-ssh-gateway (1.0.1)
       net-ssh (>= 1.99.1)
+    rake (0.8.7)
     rspec (2.0.0.beta.19)
       rspec-core (= 2.0.0.beta.19)
       rspec-expectations (= 2.0.0.beta.19)
@@ -54,5 +55,6 @@ DEPENDENCIES
   capistrano (= 2.5.18)
   capistrano-ext (= 1.2.1)
   cucumber (= 0.8.5)
-  jeweler
+  jeweler (= 1.4.0)
+  rake (= 0.8.7)
   rspec (= 2.0.0.beta.19)
