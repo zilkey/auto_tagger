@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jeff Dean", "Brian Takita", "Mike Grafton", "Bruce Krysiak", "Pat Nakajima", "Jay Zeschin", "Mike Barinek", "Sarah Mei"]
-  s.date = %q{2010-09-09}
+  s.date = %q{2010-09-10}
   s.default_executable = %q{autotag}
   s.email = %q{jeff@zilkey.com}
   s.executables = ["autotag"]
@@ -17,8 +17,7 @@ Gem::Specification.new do |s|
     "README.md"
   ]
   s.files = [
-    ".auto_tagger",
-     ".document",
+    ".document",
      ".gitignore",
      "CHANGELOG",
      "Gemfile",

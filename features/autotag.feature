@@ -83,3 +83,10 @@ Feature: Deployment
     When I run autotag with "create demo --date-separator -"
     Then a hyphen-delimited "demo" tag should be created
     And the exit code should be 0
+
+  @1.0.0
+  Scenario: user runs autotag with "cleanup" with no stage
+    Given a repo
+    When I run autotag with "cleanup"
+    Then I should see "Error occured: You must provide a stage"
+    And the exit code should be 1

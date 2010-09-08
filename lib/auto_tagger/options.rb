@@ -24,7 +24,9 @@ module AutoTagger
           "    autotag list demo",
           "",
           "    autotag cleanup demo --refs-to-keep=2",
-          "    autotag cleanup demo --refs-to-keep=2 --dry-run",
+          "    autotag cleanup demo --refs-to-keep=2",
+          "    autotag delete_locally demo",
+          "    autotag delete_on_remote demo",
           "",
           "",
         ].join("\n")

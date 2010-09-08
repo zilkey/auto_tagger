@@ -59,9 +59,10 @@ module AutoTagger
     private :push
 
     def cleanup
-      length = delete_locally
-      delete_on_remote if configuration.push_refs?
-      return length
+      refs = refs_to_remove
+      delete_local_refs(refs)
+      delete_remote_refs(refs) if configuration.push_refs?
+      refs.length
     end
 
     def delete_locally
@@ -70,13 +71,27 @@ module AutoTagger
       refs.length
     end
 
+    def delete_local_refs(refs)
+      refs.each { |ref| ref.delete_locally }
+    end
+
+    private :delete_local_refs
+
     def delete_on_remote
       refs = refs_to_remove
-      cmd = ["push #{configuration.remote}"]
-      cmd += refs.map { |ref| ":#{ref.name}" }
-      repo.exec cmd.join(" ")
+      delete_remote_refs(refs)
       refs.length
     end
+
+    def delete_remote_refs(refs)
+      if refs.any?
+        cmd = ["push #{configuration.remote}"]
+        cmd += refs.map { |ref| ":#{ref.name}" }
+        repo.exec cmd.join(" ")
+      end
+    end
+
+    private :delete_remote_refs
 
     def list
       ensure_stage
@@ -91,6 +106,7 @@ module AutoTagger
     end
 
     def refs_for_stage(stage)
+      raise StageCannotBeBlankError if stage.to_s.strip == ""
       ref_path = Regexp.escape(configuration.ref_path)
       matcher = /refs\/#{ref_path}\/#{Regexp.escape(stage)}\/.*/
       repo.refs.all.select do |ref|

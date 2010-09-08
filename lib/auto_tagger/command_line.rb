@@ -6,36 +6,53 @@ module AutoTagger
     end
 
     def execute
-      message = case options[:command]
+      case options[:command]
         when :version
-          "AutoTagger version #{AutoTagger.version}"
+          [true, "AutoTagger version #{AutoTagger.version}"]
         when :help
-          options[:help_text]
+          [true, options[:help_text]]
         when :cleanup
-          purged = AutoTagger::Base.new(options).cleanup
-          "Deleted: #{purged}"
-        when :delete_locally
-          purged = AutoTagger::Base.new(options).delete_locally
-          "Deleted: #{purged}"
-        when :delete_on_remote
-          purged = AutoTagger::Base.new(options).delete_on_remote
-          "Deleted: #{purged}"
-        when :list
-          AutoTagger::Base.new(options).list.join("\n")
-        when :config
-          AutoTagger::Configuration.new(options).settings.map do |key, value|
-            "#{key} : #{value}"
-          end.join("\n")
-        else
-          create_message = []
-          if options[:deprecated]
-            create_message << AutoTagger::Deprecator.string("Please use `autotag create #{options[:stage]}` instead")
+          begin
+            purged = AutoTagger::Base.new(options).cleanup
+            [true, "Deleted: #{purged}"]
+          rescue AutoTagger::Base::StageCannotBeBlankError
+            [false, "You must provide a stage"]
           end
-          ref = AutoTagger::Base.new(options).create_ref
-          create_message << "Created ref #{ref.name}"
-          create_message.join("\n")
+        when :delete_locally
+          begin
+            purged = AutoTagger::Base.new(options).delete_locally
+            [true, "Deleted: #{purged}"]
+          rescue AutoTagger::Base::StageCannotBeBlankError
+            [false, "You must provide a stage"]
+          end
+        when :delete_on_remote
+          begin
+            purged = AutoTagger::Base.new(options).delete_on_remote
+            [true, "Deleted: #{purged}"]
+          rescue AutoTagger::Base::StageCannotBeBlankError
+            [false, "You must provide a stage"]
+          end
+        when :list
+          begin
+            [true, AutoTagger::Base.new(options).list.join("\n")]
+          rescue AutoTagger::Base::StageCannotBeBlankError
+            [false, "You must provide a stage"]
+          end
+        when :config
+          [true, AutoTagger::Configuration.new(options).settings.map { |key, value| "#{key} : #{value}" }.join("\n")]
+        else
+          begin
+            create_message = []
+            if options[:deprecated]
+              create_message << AutoTagger::Deprecator.string("Please use `autotag create #{options[:stage]}` instead")
+            end
+            ref = AutoTagger::Base.new(options).create_ref
+            create_message << "Created ref #{ref.name}"
+            [true, create_message.join("\n")]
+          rescue AutoTagger::Base::StageCannotBeBlankError
+            [false, "You must provide a stage"]
+          end
       end
-      [true, message]
     end
 
     private

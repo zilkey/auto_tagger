@@ -115,6 +115,13 @@ describe AutoTagger::Base do
   end
 
   describe "#delete_locally" do
+    it "blows up if you don't enter a stage" do
+      base = AutoTagger::Base.new({})
+      proc do
+        base.delete_locally
+      end.should raise_error(AutoTagger::Base::StageCannotBeBlankError)
+    end
+
     it "executes the local delete commands for all the refs that match" do
       base = AutoTagger::Base.new :stage => "ci"
       base.repo.stub(:exec) { true }
@@ -133,6 +140,20 @@ describe AutoTagger::Base do
   end
 
   describe "#delete_on_remote" do
+    it "blows up if you don't enter a stage" do
+      base = AutoTagger::Base.new({})
+      proc do
+        base.delete_on_remote
+      end.should raise_error(AutoTagger::Base::StageCannotBeBlankError)
+    end
+
+    it "does not push if there are no tags" do
+      base = AutoTagger::Base.new :stage => "ci"
+      base.stub(:refs_for_stage).with("ci") {[]}
+      base.repo.should_not_receive(:exec)
+      base.delete_on_remote
+    end
+
     it "executes the remote delete commands in a batch" do
       base = AutoTagger::Base.new :stage => "ci"
       base.repo.stub(:exec) { true }
@@ -149,11 +170,18 @@ describe AutoTagger::Base do
   end
 
   describe "#cleanup" do
+    it "blows up if you don't enter a stage" do
+      base = AutoTagger::Base.new({})
+      proc do
+        base.cleanup
+      end.should raise_error(AutoTagger::Base::StageCannotBeBlankError)
+    end
+
     it "executes delete locally" do
       base = AutoTagger::Base.new :stage => "ci"
       base.repo.stub(:exec) { true }
       base.stub(:refs_for_stage).with("ci") { [AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2008")] }
-      base.should_receive(:delete_locally)
+      base.should_receive(:delete_local_refs)
       base.cleanup
     end
 
@@ -161,7 +189,7 @@ describe AutoTagger::Base do
       base = AutoTagger::Base.new :stage => "ci"
       base.repo.stub(:exec) { true }
       base.stub(:refs_for_stage).with("ci") { [AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2008")] }
-      base.should_receive(:delete_on_remote)
+      base.should_receive(:delete_remote_refs)
       base.cleanup
     end
 
@@ -169,7 +197,7 @@ describe AutoTagger::Base do
       base = AutoTagger::Base.new :stage => "ci", :offline => true
       base.repo.stub(:exec) { true }
       base.stub(:refs_for_stage).with("ci") { [AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2008")] }
-      base.should_not_receive(:delete_on_remote)
+      base.should_not_receive(:delete_remote_refs)
       base.cleanup
     end
   end
