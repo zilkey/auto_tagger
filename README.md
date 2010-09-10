@@ -18,38 +18,6 @@ You can use the `autotag` command to tag releases on your CI box, then use the c
 
     sudo gem install auto_tagger
 
-## 1.0 Roadmap
-
-You will be able to set the date format from autotag and from capistrano:
-
-    $ autotag demo --date-format=%Y-%m-%d-%H-%M-%S
-
-You will be able to tell auto_tagger to only create tags, not fetch or push them from autotag and from capistrano:
-
-    $ autotag demo --offline
-    $ autotag demo --fetch-refs=false --push-refs=false
-
-You will be able to specify how it creates refs (either by tags or by refs) in both autotag and capistrano:
-
-    $ autotag demo --ref-prefix=autotags
-
-The api for the autotag executable will change (but will remain almost 100% backwards compatible):
-
-    $ autotag help
-    $ autotag version
-    $ autotag create <stage>
-    $ autotag create <stage> --working-directory=../foo
-    
-## 1.x Roadmap
-
-You will be able to clean up old tags
-
-    $ autotag clean <stage> --refs-to-keep=10
-
-You will be able to specify custom commit messages
-
-    $ autotag clean ci --message="Another successful build :)"
-
 ## Contribute
 
   * [GitHub Repository](http://github.com/zilkey/auto_tagger/tree/master)
@@ -58,29 +26,54 @@ You will be able to specify custom commit messages
 
 Installing the gem creates an executable file named autotag, which takes the stage, optionally the path to the git repo, and options:
 
-    $ autotag demo  # => creates a tag like demo/200804041234 in the current directory
-    $ autotag demo . # => same as above
-    $ autotag demo /Users/me/foo # => cd's to /Users/me/foo before creating the tag
+    $ autotag create demo  # => creates a tag like demo/200804041234 in the current directory
+    $ autotag create demo . # => same as above
+    $ autotag create demo /Users/me/foo # => cd's to /Users/me/foo before creating the tag
 
 By default, running autotag does the following:
 
-    $ git fetch origin --tags
-    $ git tag <stage>/<timestamp>
-    $ git push origin --tags
+    $ git fetch origin refs/tags/*:refs/tags/*
+    $ git update-ref refs/tags/demo/20100910051459 1242b283208d06661b2a916097c41c046510af68
+    $ git push origin refs/tags/*:refs/tags/*
+
+The autotag executable has the following commands:
+
+    help
+    version
+    create STAGE
+    list STAGE
+    cleanup STAGE
+    delete_locally STAGE
+    delete_on_remote STAGE
+
+The autotag executable accepts the following options:
+
+    --date-separator - the character used to separate parts of the timestamp
+    --fetch-refs - whether to fetch refs before creating or listing them
+    --push-refs - whether to push refs after creating them
+    --remote - specify a custom remote (defaults to "origin")
+    --ref-path - use a different ref directory, other than "tags"
+    --stages - specify all of the stages
+    --offline - don't push or fetch refs (is ignored with delete_on_remote command)
+    --dry-run - don't execute anything, but print the commands
+    --verbose - prints all commands as they run
+    --refs-to-keep - when using any clean commans, specify how many refs to keep
+    --executable - specify the full path to the git executable
+    --opts-file - the location of a custom options file
 
 ## Capistrano Integration
 
 AutoTagger comes with 2 capistrano tasks: 
 
-  * `release_tagger:set_branch` tries to set the branch to the last tag from the previous environment.
-  * `release_tagger:create_ref` runs autotag for the current stage
+  * `auto_tagger:set_branch` tries to set the branch to the last tag from the previous environment.
+  * `auto_tagger:create_ref` runs autotag for the current stage
 
 Example `config/deploy.rb` file:
 
     require 'auto_tagger/recipes'
 
-    # The :autotagger_stages variable is required
-    set :autotagger_stages, [:ci, :staging, :production]
+    # The :auto_tagger_stages variable is required
+    set :auto_tagger_stages, [:ci, :staging, :production]
 
     # The :working_directory variable is optional, and defaults to Dir.pwd
     # :working_directory can be an absolute or relative path
@@ -88,32 +81,47 @@ Example `config/deploy.rb` file:
 
     task :production do
       # In each of your environments that need auto-branch setting, you need to set :stage
-      set :stage, :production
+      set :auto_tagger_stage, :production
     end
 
     task :staging do
       # If you do not set stage, it will not auto-set your branch
-      # set :stage, :staging
+      # set :auto_tagger_stage, :staging
     end
 
     # You need to add the before/ater callbacks yourself
-    before "deploy:update_code", "release_tagger:set_branch"
-    after  "deploy", "release_tagger:create_ref"
-    after  "deploy", "release_tagger:write_tag_to_shared"
-    after  "deploy", "release_tagger:print_latest_refs"
+    before "deploy:update_code", "auto_tagger:set_branch"
+    after  "deploy", "auto_tagger:create_ref"
+    after  "deploy", "auto_tagger:write_tag_to_shared"
+    after  "deploy", "auto_tagger:print_latest_refs"
 
-### Cpistano-ext multistage support
+### Capistano-ext multistage support
 
 If you use capistano-ext multistage, you can use auto_tagger.
 
-    set :autotagger_stages, [:ci, :staging, :production]
+    set :auto_tagger_stages, [:ci, :staging, :production]
     set :stages, [:staging, :production]
     set :default_stage, :staging
     require 'capistrano/ext/multistage'
 
-When you deploy, autotagger will auto-detect your current stage.
+When you deploy, auto_tagger will auto-detect your current stage.
 
-### release_tagger:set_branch
+You can specify the following capistrano variables that correspond to the autotag options:
+
+    :auto_tagger_date_separator
+    :auto_tagger_push_refs
+    :auto_tagger_fetch_refs
+    :auto_tagger_remote
+    :auto_tagger_ref_path
+    :auto_tagger_offline
+    :auto_tagger_dry_run
+    :auto_tagger_verbose
+    :auto_tagger_refs_to_keep
+    :auto_tagger_executable
+    :auto_tagger_opts_file
+    :auto_tagger_working_directory
+
+### auto_tagger:set_branch
 
 This task sets the git branch to the latest tag from the previous stage.  Assume you have the following tags in your git repository:
 
@@ -123,7 +131,7 @@ This task sets the git branch to the latest tag from the previous stage.  Assume
 
 And the following stages in your capistrano file:
 
-    set :autotagger_stages, [:ci, :staging, :production]
+    set :auto_tagger_stages, [:ci, :staging, :production]
 
 The deployments would look like this:
 
@@ -147,7 +155,7 @@ This cap task creates a new tag, based on the latest tag from the previous envir
 
 If there is no tag from the previous stage, it creates a new tag from the latest commit in your _working directory_.
 
-If you don't specify any `autotagger_stages`, autotagger will create a tag that starts with "production".
+If you don't specify any `auto_tagger_stages`, auto_tagger will create a tag that starts with "production".
 
 ### release_tagger:print_latest_refs
 
@@ -171,6 +179,14 @@ This will produce output like:
      ** ci         ci/20090331045345              8031807feb5f4f99dd83257cdc07081fa6080cba some commit message
      ** staging    staging/20090331050908         8031807feb5f4f99dd83257cdc07081fa6080cba some commit message
      ** production production/20090331050917      8031807feb5f4f99dd83257cdc07081fa6080cba some commit message
+
+## Configuration
+
+You can store options in an options file, which is .auto_tagger by default.  You can set options in this file like so:
+
+    --date-separator=-
+    --ref-path=autotags
+    --refs-to-keep=5
 
 ## Running tests:
 

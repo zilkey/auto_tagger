@@ -1,9 +1,26 @@
-2010-07-12
+2010-08-10
 
-- Added ability to specify a tag date format with --date-format option to autotag
-- Added ability to specify a tag separator with --tag-separator option to autotag
-- Added ability to specify whether or not to fetch / push tags with --offline, --fetch-refs and --push-refs options to autotag
-- Added "help" and "version" as arguments
+- Added the following commands
+  - help
+  - version
+  - create STAGE
+  - list STAGE
+  - cleanup STAGE
+  - delete_locally STAGE
+  - delete_on_remote STAGE
+- Added the following options to autotag
+  --date-separator - the character used to separate parts of the timestamp
+  --fetch-refs - whether to fetch refs before creating or listing them
+  --push-refs - whether to push refs after creating them
+  --remote - specify a custom remote (defaults to "origin")
+  --ref-path - use a different ref directory, other than "tags"
+  --stages - specify all of the stages
+  --offline - don't push or fetch refs (is ignored with delete_on_remote command)
+  --dry-run - don't execute anything, but print the commands
+  --verbose - prints all commands as they run
+  --refs-to-keep - when using any clean commans, specify how many refs to keep
+  --executable - specify the full path to the git executable
+  --opts-file - the location of an additional opts file
 
 2010-05-15
 
