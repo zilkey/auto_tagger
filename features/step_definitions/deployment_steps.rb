@@ -9,7 +9,7 @@ end
 Given /^a one\-stage app using single deploy file with the following environments:$/ do |table|
   with_or_without_debugging do
     helpers = StepHelpers.new
-    helpers.create_app_with_single_deploy_file table.raw.map(&:first)
+    helpers.create_app_with_single_deploy_file table.raw.map{|item| item.first}
     @refs = helpers.refs
   end
 end
