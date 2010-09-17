@@ -41,7 +41,7 @@ end
 When /^I deploy to (.*)$/ do |environment|
   with_or_without_debugging do
     helpers = StepHelpers.new
-    helpers.deploy(environment)
+    @output = helpers.deploy(environment)
   end
 end
 

@@ -44,7 +44,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     desc %Q{DEPRECATED: Prints the most current tags from all stages}
     task :print_latest_refs, :roles => :app do
       log_auto_tagger "release tag history is:"
-      auto_tagger.release_tag_entries.each { |entry| logger.info entry }
+      auto_tagger.release_tag_entries.each { |entry| logger.info(entry.to_s) }
     end
 
     desc %Q{DEPRECATED: Reads the text file with the latest tag from the shared directory}
@@ -75,9 +75,9 @@ Capistrano::Configuration.instance(:must_exist).load do
       auto_tagger.create_ref
     end
 
-    desc %Q{DEPRECATED: use auto_tagger:print_latest_tags}
-    task :print_latest_refs, :roles => :app do
-      auto_tagger.print_latest_tags
+    desc %Q{DEPRECATED: use auto_tagger:print_latest_refs}
+    task :print_latest_tags, :roles => :app do
+      auto_tagger.print_latest_refs
     end
 
     desc %Q{DEPRECATED: use auto_tagger:read_ref_from_shared}

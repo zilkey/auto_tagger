@@ -31,3 +31,10 @@ Feature: Deployment
     And a ci tag
     When I deploy to staging
     Then a tag should be added to git
+
+  @0.1.5
+  Scenario: user sees latest tags
+    Given a three-stage app using cap-multistage
+    And a ci tag
+    When I deploy to staging
+    Then I should see "release tag history is:"

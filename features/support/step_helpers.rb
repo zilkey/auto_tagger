@@ -155,7 +155,9 @@ class StepHelpers
   end
 
   def run_commands(commands)
-    puts `#{commands.join(" && ")}`
+    output = `#{commands.join(" && ")} 2>&1`
+    puts output
+    output
   end
 
 end

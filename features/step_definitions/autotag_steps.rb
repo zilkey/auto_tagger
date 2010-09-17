@@ -25,10 +25,6 @@ When /^I run autotag with "([^\"]*)"$/ do |args|
   end
 end
 
-Then /^I should see "([^\"]*)"$/ do |text|
-  @output.should =~ /#{Regexp.escape(text)}/
-end
-
 Then /^the exit code should be "(\d+)"$/ do |code|
   @exit_code.exitstatus.should == code.to_i
 end
