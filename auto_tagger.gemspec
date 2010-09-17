@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{auto_tagger}
-  s.version = "0.2.0"
+  s.version = "0.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jeff Dean", "Brian Takita", "Mike Grafton", "Bruce Krysiak", "Pat Nakajima", "Jay Zeschin", "Mike Barinek", "Sarah Mei"]
-  s.date = %q{2010-09-10}
+  s.date = %q{2010-09-16}
   s.default_executable = %q{autotag}
   s.email = %q{jeff@zilkey.com}
   s.executables = ["autotag"]
@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
      "features/deployment.feature",
      "features/step_definitions/autotag_steps.rb",
      "features/step_definitions/deployment_steps.rb",
+     "features/step_definitions/shared_steps.rb",
      "features/support/env.rb",
      "features/support/step_helpers.rb",
      "features/templates/cap_ext_deploy.erb",

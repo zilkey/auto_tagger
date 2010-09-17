@@ -1,3 +1,9 @@
+2010-09-16
+  - fixed bug where capistrano task set_branch would not set the proper branch
+  - fixed bug where capistratno task print_latest_tags would blow up (thanks to Ian Zabel for help in debugging)
+  - fixed bug where capistrano would not write the text file to the server if an explicit branch was not set
+  - fixed bug where passing -v to autotag would show the help, not the version
+
 2010-08-10
 
 - Added the following commands
