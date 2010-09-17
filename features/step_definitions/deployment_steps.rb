@@ -48,7 +48,7 @@ end
 When /^I deploy$/ do
   with_or_without_debugging do
     helpers = StepHelpers.new
-    helpers.deploy
+    @output = helpers.deploy
   end
 end
 

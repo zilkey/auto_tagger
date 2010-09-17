@@ -7,7 +7,7 @@ describe AutoTagger::Git::RefSet do
     @ref_set = AutoTagger::Git::RefSet.new(@repo)
     @refstring = <<-LIST
       23087241c495773c8eece1c195cc453a8055c4eb refs/tags/200808080808
-      23087241c495773c8eece1c195cc453a8055c4eb refs/tags/200808080809
+      23087241c495773b8eecr1c195cd453a8056c4eb refs/tags/200808080809
     LIST
   end
 
@@ -18,6 +18,19 @@ describe AutoTagger::Git::RefSet do
       refs.length.should == 2
       refs.first.name.should == "refs/tags/200808080808"
       refs.first.sha.should == "23087241c495773c8eece1c195cc453a8055c4eb"
+    end
+  end
+
+  describe "#find_by_sha" do
+    it "returns a ref by the sha" do
+      @repo.should_receive(:read).with("show-ref").and_return(@refstring)
+      ref = @ref_set.find_by_sha("23087241c495773b8eecr1c195cd453a8056c4eb")
+      ref.name.should == "refs/tags/200808080809"
+    end
+
+    it "returns nil if it's not found" do
+      @repo.should_receive(:read).with("show-ref").and_return(@refstring)
+      @ref_set.find_by_sha("abc123").should be_nil
     end
   end
 

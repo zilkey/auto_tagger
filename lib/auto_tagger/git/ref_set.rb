@@ -13,6 +13,12 @@ module AutoTagger
         end
       end
 
+      def find_by_sha(sha)
+        all.detect do |ref|
+          ref.sha == sha
+        end
+      end
+
       # name = refs/autotags/2009857463
       # returns a ref
       # should un-cache the refs in refset, or never memoize

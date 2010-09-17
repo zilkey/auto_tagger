@@ -16,6 +16,7 @@ Feature: Deployment
       |production  |
     When I deploy
     Then a "production" tag should be added to git
+    But I should not see "no branch available"
 
   @0.1.5
   Scenario: user deploys with single file deploy.rb stages with dashes in the name

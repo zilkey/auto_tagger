@@ -55,9 +55,17 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     desc %Q{DEPRECATED: Writes the tag name to a file in the shared directory}
     task :write_ref_to_shared, :roles => :app do
-      if exists?(:branch)
+      ref_name = if exists?(:branch)
+        branch
+      elsif ref = auto_tagger.repo.refs.find_by_sha(real_revision)
+        ref.name
+      else
+        nil
+      end
+
+      if ref_name
         log_auto_tagger "writing tag to shared text file on remote server"
-        run "echo '#{branch}' > #{shared_path}/released_git_tag.txt"
+        run "echo '#{ref_name}' > #{shared_path}/released_git_tag.txt"
       else
         log_auto_tagger "no branch available.  Text file was not written to server"
       end
