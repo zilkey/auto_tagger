@@ -124,6 +124,9 @@ describe AutoTagger::Options do
       options = AutoTagger::Options.from_command_line ["version"]
       options[:command].should == :version
 
+      options = AutoTagger::Options.from_command_line ["-v"]
+      options[:command].should == :version
+
       options = AutoTagger::Options.from_command_line ["help"]
       options[:command].should == :help
 

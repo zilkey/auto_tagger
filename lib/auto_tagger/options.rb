@@ -58,10 +58,18 @@ module AutoTagger
         when "version"
           options[:show_version] = true
           options[:command] = :version
-        when * ["help", ""]
+        when "help"
           options[:show_help] = true
           options[:help_text] = args.options.help
           options[:command] = :help
+        when ""
+          if options[:show_version]
+            options[:command] = :version
+          else
+            options[:show_help] = true
+            options[:help_text] = args.options.help
+            options[:command] = :help
+          end
         when "cleanup"
           options[:command] = :cleanup
           options[:stage] = args[1]
