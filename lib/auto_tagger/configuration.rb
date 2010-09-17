@@ -32,11 +32,12 @@ module AutoTagger
     def stages
       stages = settings[:stages] || []
       stages = stages.to_s.split(",").map { |stage| stage.strip } if stages.is_a?(String)
-      stages.reject { |stage| stage.to_s == "" }
+      stages.reject { |stage| stage.to_s == "" }.map {|stage| stage.to_s }
     end
 
     def stage
-      settings[:stage] || stages.last
+      stage = settings[:stage] || stages.last
+      stage.nil? ? nil : stage.to_s
     end
 
     def date_separator

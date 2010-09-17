@@ -91,6 +91,11 @@ describe AutoTagger::Configuration do
       config = AutoTagger::Configuration.new :stages => ["ci", ""]
       config.stages.should == ["ci"]
     end
+
+    it "turns stages into strings" do
+      config = AutoTagger::Configuration.new :stages => [:ci, :production]
+      config.stages.should == ["ci", "production"]
+    end
   end
 
   describe "#stage" do
@@ -107,6 +112,11 @@ describe AutoTagger::Configuration do
     it "returns nil if stage and stages are not passed in" do
       config = AutoTagger::Configuration.new
       config.stage.should be_nil
+    end
+
+    it "stringifies the passed in stage" do
+      config = AutoTagger::Configuration.new :stage => :demo
+      config.stage.should == "demo"
     end
   end
 
