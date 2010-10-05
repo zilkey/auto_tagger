@@ -26,7 +26,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         set :branch, ref
         log_auto_tagger "setting branch to #{ref}"
       else
-        log_auto_tagger "skipping auto-assignment of branch.  Branch will remain the default.}"
+        log_auto_tagger "skipping auto-assignment of branch.  Branch will remain the default."
       end
     end
 
