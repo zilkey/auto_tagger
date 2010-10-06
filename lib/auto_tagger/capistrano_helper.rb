@@ -38,9 +38,15 @@ module AutoTagger
         options[:path] = variables[:auto_tagger_working_directory]
       end
 
+      if ! variables[:auto_tagger_dry_run].nil?
+        options[:dry_run] = variables[:auto_tagger_dry_run]
+      else
+        options[:dry_run] = variables[:dry_run]
+      end
+
       [
         :date_separator, :push_refs, :fetch_refs, :remote, :ref_path, :offline,
-        :dry_run, :verbose, :refs_to_keep, :executable, :opts_file
+        :verbose, :refs_to_keep, :executable, :opts_file
       ].each do |key|
         options[key] = variables[:"auto_tagger_#{key}"]
       end

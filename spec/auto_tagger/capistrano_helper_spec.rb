@@ -88,6 +88,28 @@ describe AutoTagger::CapistranoHelper do
       end
     end
 
+    it "accepts capistrano's dry_run" do
+      AutoTagger::CapistranoHelper.new(:dry_run => "shazbot").auto_tagger_options[:dry_run].should == "shazbot"
+    end
+
+    [
+      [nil, nil, nil],
+      [true, nil, true],
+      [false, nil, false],
+
+      [nil, false, false],
+      [true, false, false],
+      [false, false, false],
+
+      [nil, true, true],
+      [true, true, true],
+      [false, true, true],
+    ].each do |dry_run, auto_tagger_dry_run, preferred|
+      it "prefers auto_tagger_dry_run=#{auto_tagger_dry_run.inspect} to dry_run=#{dry_run.inspect}" do
+        helper = AutoTagger::CapistranoHelper.new(:dry_run => dry_run, :auto_tagger_dry_run => auto_tagger_dry_run)
+        helper.auto_tagger_options[:dry_run].should == preferred
+      end
+    end
   end
 
   describe "#stages" do
