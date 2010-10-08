@@ -1,3 +1,6 @@
+2010-10-07
+  - accept capistrano's dry_run value, but still prefer auto_tagger_dry_run if it's non-nil (Mike Dalessio, aka flavorjones)
+
 2010-09-16
   - fixed bug where capistrano task set_branch would not set the proper branch
   - fixed bug where capistratno task print_latest_tags would blow up (thanks to Ian Zabel for help in debugging)
