@@ -77,7 +77,7 @@ Example `config/deploy.rb` file:
 
     # The :working_directory variable is optional, and defaults to Dir.pwd
     # :working_directory can be an absolute or relative path
-    set :working_directory, "../../"
+    set :auto_tagger_working_directory, "../../"
 
     task :production do
       # In each of your environments that need auto-branch setting, you need to set :stage
@@ -92,7 +92,6 @@ Example `config/deploy.rb` file:
     # You need to add the before/ater callbacks yourself
     before "deploy:update_code", "auto_tagger:set_branch"
     after  "deploy", "auto_tagger:create_ref"
-    after  "deploy", "auto_tagger:write_tag_to_shared"
     after  "deploy", "auto_tagger:print_latest_refs"
 
 ### Capistano-ext multistage support
@@ -135,21 +134,21 @@ And the following stages in your capistrano file:
 
 The deployments would look like this:
 
-    cap staging release_tagger:set_branch    # => sets branch to ci/01
-    cap production release_tagger:set_branch # => sets branch to staging/01
+    cap staging auto_tagger:set_branch    # => sets branch to ci/01
+    cap production auto_tagger:set_branch # => sets branch to staging/01
 
 You can override with with the -Shead and -Stag options
 
-    cap staging release_tagger:set_branch -Shead=true      # => sets branch to master
-    cap staging release_tagger:set_branch -Stag=staging/01 # => sets branch to staging/01
+    cap staging auto_tagger:set_branch -Shead=true      # => sets branch to master
+    cap staging auto_tagger:set_branch -Stag=staging/01 # => sets branch to staging/01
 
-If you add `before "deploy:update_code", "release_tagger:set_branch"`, you can just deploy with:
+If you add `before "deploy:update_code", "auto_tagger:set_branch"`, you can just deploy with:
 
     cap staging deploy
     
 and the branch will be set for you automatically.
 
-### release_tagger:create_ref
+### auto_tagger:create_ref
 
 This cap task creates a new tag, based on the latest tag from the previous environment.  
 
@@ -157,21 +156,15 @@ If there is no tag from the previous stage, it creates a new tag from the latest
 
 If you don't specify any `auto_tagger_stages`, auto_tagger will create a tag that starts with "production".
 
-### release_tagger:print_latest_refs
-
-This task reads the git version from the text file in shared:
-
-    cap staging release_tagger:read_tag_from_shared
-
-### release_tagger:print_latest_refs
+### auto_tagger:print_latest_refs
 
 This task takes the latest tag from each environment and prints it to the screen.  You can add it to your deploy.rb like so:
 
-    after  "deploy", "release_tagger:print_latest_refs"
+    after  "deploy", "auto_tagger:print_latest_refs"
 
 Or call it directly, like:
 
-    cap production release_tagger:print_latest_refs
+    cap production auto_tagger:print_latest_refs
     
 This will produce output like:
 
