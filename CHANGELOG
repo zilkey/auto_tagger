@@ -1,3 +1,6 @@
+2010-11-16
+ - Setting :auto_tagger_stage or :stage should tag the specified ref (Dave Yeu)
+
 2010-10-07
   - accept capistrano's dry_run value, but still prefer auto_tagger_dry_run if it's non-nil (Mike Dalessio, aka flavorjones)
 
