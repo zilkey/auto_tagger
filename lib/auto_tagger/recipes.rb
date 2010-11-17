@@ -32,7 +32,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     desc %Q{Creates a tag using the stage variable}
     task :create_ref, :roles => :app do
-      if variables[:stage]
+      if auto_tagger_capistrano_helper.auto_tagger_options[:stage]
         ref = auto_tagger.create_ref(real_revision)
         log_auto_tagger "created tag #{ref.name} from #{ref.sha}"
       else

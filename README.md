@@ -80,7 +80,7 @@ Example `config/deploy.rb` file:
     set :auto_tagger_working_directory, "../../"
 
     task :production do
-      # In each of your environments that need auto-branch setting, you need to set :stage
+      # In each of your environments that need auto-branch setting, you need to set :auto_tagger_stage
       set :auto_tagger_stage, :production
     end
 
