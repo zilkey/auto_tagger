@@ -42,6 +42,18 @@ describe AutoTagger::Base do
       ref = AutoTagger::Git::Ref.new(base.repo, "41dee06050450ac", "refs/tags/ci/2003")
       base.last_ref_from_previous_stage.name.should == "refs/tags/ci/2003"
     end
+
+    it "should return the last ref with correct order (git show-ref is not ordered)" do
+      refs = %Q{
+        a80af49962c95a92df59a527a3ce60e22da290fc refs/tags/ci/1002
+        0e892ad1b308dd86c40f5fd60b3cddd58022d93e refs/tags/ci/997
+        b8d7ce86f1c6440080e0c315c7cc1c0fe702127f refs/tags/ci/999
+      }
+      base = AutoTagger::Base.new :stages => ["ci", "demo", "production"], :stage => "demo"
+      base.repo.stub(:read).and_return(refs)
+      ref = AutoTagger::Git::Ref.new(base.repo, "a80af49962c95a92df59a527a3ce60e22da290fc", "refs/tags/ci/1002")
+      base.last_ref_from_previous_stage.name.should == "refs/tags/ci/1002"
+    end
   end
 
   describe "#create_ref" do
