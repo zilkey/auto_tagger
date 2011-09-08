@@ -118,7 +118,9 @@ module AutoTagger
       ref_path = Regexp.escape(configuration.ref_path)
       matcher = /refs\/#{ref_path}\/#{Regexp.escape(stage)}\/(.*)/
       refs_for_stage(stage).sort do |ref1, ref2|
-        ref1.name.match(matcher)[1].to_i <=> ref2.name.match(matcher)[1].to_i
+        name1 = ref1.name.match(matcher)[1].gsub(configuration.date_separator, "")
+        name2 = ref2.name.match(matcher)[1].gsub(configuration.date_separator, "")
+        name1.to_i <=> name2.to_i
       end
     end
 

@@ -54,6 +54,18 @@ describe AutoTagger::Base do
       ref = AutoTagger::Git::Ref.new(base.repo, "a80af49962c95a92df59a527a3ce60e22da290fc", "refs/tags/ci/1002")
       base.last_ref_from_previous_stage.name.should == "refs/tags/ci/1002"
     end
+
+    it "should return the last ref with correct order using other date separator(git show-ref is not ordered)" do
+      refs = %Q{
+        a80af49962c95a92df59a527a3ce60e22da290fc refs/tags/ci/2011-09-09-18-17-43
+        0e892ad1b308dd86c40f5fd60b3cddd58022d93e refs/tags/ci/2011-09-09-19-17-43
+        b8d7ce86f1c6440080e0c315c7cc1c0fe702127f refs/tags/ci/2011-09-08-18-17-43
+      }
+      base = AutoTagger::Base.new :stages => ["ci", "demo", "production"], :stage => "demo", :date_separator => "-"
+      base.repo.stub(:read).and_return(refs)
+      ref = AutoTagger::Git::Ref.new(base.repo, "a80af49962c95a92df59a527a3ce60e22da290fc", "refs/tags/ci/2011-09-09-19-17-43")
+      base.last_ref_from_previous_stage.name.should == "refs/tags/ci/2011-09-09-19-17-43"
+    end
   end
 
   describe "#create_ref" do
@@ -139,9 +151,9 @@ describe AutoTagger::Base do
       base.repo.stub(:exec) { true }
       base.stub(:refs_for_stage) do
         [
-          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2008"),
-          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009"),
-          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2010")
+            AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2008"),
+            AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009"),
+            AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2010")
         ]
       end
       base.repo.should_receive(:exec).with("update-ref -d refs/tags/ci/2008")
@@ -161,7 +173,7 @@ describe AutoTagger::Base do
 
     it "does not push if there are no tags" do
       base = AutoTagger::Base.new :stage => "ci"
-      base.stub(:refs_for_stage).with("ci") {[]}
+      base.stub(:refs_for_stage).with("ci") { [] }
       base.repo.should_not_receive(:exec)
       base.delete_on_remote
     end
@@ -171,9 +183,9 @@ describe AutoTagger::Base do
       base.repo.stub(:exec) { true }
       base.stub(:refs_for_stage).with("ci") do
         [
-          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2008"),
-          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009"),
-          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2010")
+            AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2008"),
+            AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009"),
+            AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2010")
         ]
       end
       base.repo.should_receive(:exec).with("push origin :refs/tags/ci/2008 :refs/tags/ci/2009")
@@ -234,15 +246,15 @@ describe AutoTagger::Base do
       base = AutoTagger::Base.new :stage => "ci"
       base.repo.stub(:exec) { true }
       refs = [
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/auto_tags/ci/2008"),
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009"),
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/2009"),
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags-ci/2009"),
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/heads/master")
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/auto_tags/ci/2008"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/2009"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags-ci/2009"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/heads/master")
       ]
       base.repo.stub(:refs) { mock("RefSet", :all => refs) }
       base.refs_for_stage("ci").should == [
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009")
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009")
       ]
     end
   end
@@ -261,18 +273,18 @@ describe AutoTagger::Base do
       base = AutoTagger::Base.new :stage => "ci", :stages => ["ci", "demo", "production"]
       base.repo.stub(:exec) { true }
       refs = [
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2008"),
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009"),
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/demo/2008"),
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/demo/2009"),
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/production/2008"),
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/production/2009")
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2008"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/demo/2008"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/demo/2009"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/production/2008"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/production/2009")
       ]
       base.repo.stub(:refs) { mock("RefSet", :all => refs) }
       base.release_tag_entries.should == [
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009"),
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/demo/2009"),
-        AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/production/2009")
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/demo/2009"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/production/2009")
       ]
     end
   end
