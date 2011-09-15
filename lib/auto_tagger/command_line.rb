@@ -8,7 +8,7 @@ module AutoTagger
     def execute
       case options[:command]
         when :version
-          [true, "AutoTagger version #{AutoTagger.version}"]
+          [true, "AutoTagger version #{AutoTagger::VERSION}"]
         when :help
           [true, options[:help_text]]
         when :cleanup

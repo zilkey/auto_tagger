@@ -6,7 +6,7 @@ describe AutoTagger::CommandLine do
     it "runs the version command" do
       command_line = AutoTagger::CommandLine.new ["version"]
       command_line.execute.first.should be_true
-      command_line.execute.last.should include(AutoTagger.version)
+      command_line.execute.last.should include(AutoTagger::VERSION)
     end
 
     it "runs the help command" do

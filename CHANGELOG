@@ -1,3 +1,10 @@
+2011-09-15
+  - Fixed broken gemspec that mistakenly included all development dependencies as live dependencies
+  - Removed dependency on jeweler for creating the gemspec
+
+2011-09-14
+  - Order the tags from the previous stage such that you can use auto-incrementing build numbers for refs (thanks Rachel Heaton, Oren Weichselbaum!)
+
 2010-11-16
  - Setting :auto_tagger_stage or :stage should tag the specified ref (Dave Yeu)
 
@@ -6,7 +13,7 @@
 
 2010-09-16
   - fixed bug where capistrano task set_branch would not set the proper branch
-  - fixed bug where capistratno task print_latest_tags would blow up (thanks to Ian Zabel for help in debugging)
+  - fixed bug where capistrano task print_latest_tags would blow up (thanks to Ian Zabel for help in debugging)
   - fixed bug where capistrano would not write the text file to the server if an explicit branch was not set
   - fixed bug where passing -v to autotag would show the help, not the version
 

@@ -1,9 +1,5 @@
 module AutoTagger
 
-  def self.version
-    File.read(File.expand_path(File.join(__FILE__, "/../../../VERSION")))
-  end
-
   class Base
     class StageCannotBeBlankError < StandardError;
     end

@@ -1,5 +1,6 @@
 require 'optparse'
 [
+  'version',
   'deprecator',
   'git/ref',
   'git/ref_set',

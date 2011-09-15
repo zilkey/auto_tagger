@@ -17,15 +17,9 @@ GEM
       json_pure (~> 1.4.3)
       term-ansicolor (~> 1.0.4)
     diff-lcs (1.1.2)
-    gemcutter (0.6.1)
     gherkin (2.1.5)
       trollop (~> 1.16.2)
-    git (1.2.5)
     highline (1.6.1)
-    jeweler (1.4.0)
-      gemcutter (>= 0.1.0)
-      git (>= 1.2.5)
-      rubyforge (>= 2.0.0)
     json_pure (1.4.3)
     net-scp (1.0.2)
       net-ssh (>= 1.99.1)
@@ -43,8 +37,6 @@ GEM
     rspec-expectations (2.0.0.beta.19)
       diff-lcs (>= 1.1.2)
     rspec-mocks (2.0.0.beta.19)
-    rubyforge (2.0.4)
-      json_pure (>= 1.1.7)
     term-ansicolor (1.0.5)
     trollop (1.16.2)
 
@@ -54,7 +46,6 @@ PLATFORMS
 DEPENDENCIES
   capistrano (= 2.5.18)
   capistrano-ext (= 1.2.1)
-  cucumber (= 0.8.5)
-  jeweler (= 1.4.0)
+  cucumber
   rake (= 0.8.7)
-  rspec (= 2.0.0.beta.19)
+  rspec
