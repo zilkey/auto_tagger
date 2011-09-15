@@ -64,6 +64,10 @@ class StepHelpers
     system "cd #{app_dir} && git tag #{stage}/#{Time.now.utc.strftime('%Y%m%d%H%M%S')} && git push origin --tags"
   end
 
+  def team_city_tag(stage, build_number)
+    system "cd #{app_dir} && git tag #{stage}/#{build_number} && git push origin --tags"
+  end
+
   def refs(namespace = "tags")
     system "cd #{app_dir} && git fetch origin refs/#{namespace}/*:refs/#{namespace}/*"
     refs = `cd #{app_dir} && git show-ref | grep #{namespace}`
@@ -84,6 +88,15 @@ class StepHelpers
     ]
   end
 
+  def create_and_push_another_commit
+    run_commands [
+      "cd #{app_dir}",
+      "touch MY_LICENSE",
+      "git add .",
+      %Q{git commit -m "another commit"},
+      "git push origin master"
+    ]
+  end
   private
 
   def capify_app

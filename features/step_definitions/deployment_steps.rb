@@ -38,6 +38,16 @@ Given /^a ci tag$/ do
   end
 end
 
+Given /^ci tags from team city$/ do
+  with_or_without_debugging do
+    helpers = StepHelpers.new
+    helpers.team_city_tag("ci", "999")
+    helpers.create_and_push_another_commit
+    helpers.team_city_tag("ci", "1007")
+    @refs = helpers.refs
+  end
+end
+
 When /^I deploy to (.*)$/ do |environment|
   with_or_without_debugging do
     helpers = StepHelpers.new
@@ -58,4 +68,13 @@ Then /^a tag should be added to git$/ do
     new_tags = helpers.refs
     @refs.length.should < new_tags.length
   end
+end
+
+Then /^the last ci build should have been the staging tag added to git$/ do
+  helpers = StepHelpers.new
+  last_ref = helpers.refs.split("\n").last
+  last_ref.should match(/\/staging\//)
+  last_ci_ref = @refs.split("\n").detect { |ref| ref.match("1007") }
+
+  last_ref.split(" ").first.should == last_ci_ref.split(" ").first
 end

@@ -39,3 +39,11 @@ Feature: Deployment
     And a ci tag
     When I deploy to staging
     Then I should see "release tag history is:"
+
+  @0.2.5
+  Scenario: user deploys with cap-ext multistage using Team City-like ci tags
+    Given a three-stage app using cap-multistage
+    And ci tags from team city
+    When I deploy to staging
+    Then the last ci build should have been the staging tag added to git
+

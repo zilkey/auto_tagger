@@ -257,6 +257,19 @@ describe AutoTagger::Base do
           AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/2009")
       ]
     end
+
+    it "orders refs based on last part of tag" do
+      base = AutoTagger::Base.new :stage => "ci"
+      base.repo.stub(:exec) { true }
+      refs = [
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/1001"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/999"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/tags/ci/1002"),
+          AutoTagger::Git::Ref.new(base.repo, "abc123", "refs/heads/master")
+      ]
+      base.repo.stub(:refs) { mock("RefSet", :all => refs) }
+      base.refs_for_stage("ci").map(&:name).should == [ "refs/tags/ci/999", "refs/tags/ci/1001", "refs/tags/ci/1002" ]
+    end
   end
 
   describe "#list" do

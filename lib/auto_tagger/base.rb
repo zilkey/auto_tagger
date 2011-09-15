@@ -25,7 +25,7 @@ module AutoTagger
 
     def last_ref_from_previous_stage
       return unless previous_stage
-      ordered_refs_for_stage(previous_stage).last
+      refs_for_stage(previous_stage).last
     end
 
     def create_ref(commit = nil)
@@ -104,16 +104,8 @@ module AutoTagger
     def refs_for_stage(stage)
       raise StageCannotBeBlankError if stage.to_s.strip == ""
       ref_path = Regexp.escape(configuration.ref_path)
-      matcher = /refs\/#{ref_path}\/#{Regexp.escape(stage)}\/.*/
-      repo.refs.all.select do |ref|
-        (ref.name =~ matcher) ? ref : nil
-      end
-    end
-
-    def ordered_refs_for_stage(stage)
-      ref_path = Regexp.escape(configuration.ref_path)
       matcher = /refs\/#{ref_path}\/#{Regexp.escape(stage)}\/(.*)/
-      refs_for_stage(stage).sort do |ref1, ref2|
+      select_refs_for_stage(stage).sort do |ref1, ref2|
         name1 = ref1.name.match(matcher)[1].gsub(configuration.date_separator, "")
         name2 = ref2.name.match(matcher)[1].gsub(configuration.date_separator, "")
         name1.to_i <=> name2.to_i
@@ -121,6 +113,13 @@ module AutoTagger
     end
 
     private
+    def select_refs_for_stage(stage)
+      ref_path = Regexp.escape(configuration.ref_path)
+      matcher = /refs\/#{ref_path}\/#{Regexp.escape(stage)}\/.*/
+      repo.refs.all.select do |ref|
+        (ref.name =~ matcher) ? ref : nil
+      end
+    end
 
     def refs_to_remove
       self.class.items_to_remove(refs_for_stage(configuration.stage), configuration.refs_to_keep)
