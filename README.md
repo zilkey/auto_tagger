@@ -193,18 +193,22 @@ To ensure that this has worked, try this:
     
 If it asks you for a password, you've done something wrong.
 
-To run the specs, first make sure you have the required gems:
+To run the specs, do the following:
 
     gem install bundler
     bundle install
-
-Then execute:
-
     rspec spec
-    
-To run the cucumber features, execute:
-
     cucumber features
+
+## Releasing
+
+  * run rspec and cucumber and make sure that things are green
+  * update the changelog to say what you've done
+  * update the version
+  * commit your changes
+  * run `rake build`
+  * run `rake install` and then open the gem and make sure everything looks ok
+  * run `rake release`
 
 ## Acknowledgments
 
