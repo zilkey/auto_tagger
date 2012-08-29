@@ -82,8 +82,12 @@ describe AutoTagger::CapistranoHelper do
       :executable,
       :opts_file
     ].each do |key|
-      it "includes :#{key}" do
-        helper = AutoTagger::CapistranoHelper.new :"auto_tagger_#{key}" => "value"
+      it "includes :#{key} when specified" do
+        helper = AutoTagger::CapistranoHelper.new({})
+        helper.auto_tagger_options.should_not have_key(key)
+
+        helper = AutoTagger::CapistranoHelper.new(:"auto_tagger_#{key}" => "value")
+        helper.auto_tagger_options.should have_key(key)
         helper.auto_tagger_options[key].should == "value"
       end
     end
