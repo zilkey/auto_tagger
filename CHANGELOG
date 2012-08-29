@@ -1,3 +1,6 @@
+2012-08-29
+  - Fix bug where refs wouldn't be pushed in capistrano because of setting nil values instead of allow defaults (elliterate)
+
 2012-04-23
   - Fix problem with cd'ing into directories with characters that need to be escaped (niedfelj)
 
