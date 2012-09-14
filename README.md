@@ -197,6 +197,10 @@ To run the specs, do the following:
 
     gem install bundler
     bundle install
+    rake
+
+To run individual test suites:
+
     rspec spec
     cucumber features
 
