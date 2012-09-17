@@ -4,6 +4,8 @@ This creates and pushes tags to your git repository, please use with caution.
 
 # AutoTagger
 
+[![Build Status](https://secure.travis-ci.org/zilkey/auto_tagger.png)](http://travis-ci.org/zilkey/auto_tagger)
+
 AutoTagger is a gem that helps you automatically create a date-stamped tag for each stage of your deployment, and deploy from the last tag from the previous environment.
 
 Let's say you have the following workflow:
