@@ -181,28 +181,44 @@ You can store options in an options file, which is .auto_tagger by default.  You
     --ref-path=autotags
     --refs-to-keep=5
 
-## Running tests:
+## Testing
 
-You must be able to ssh into your box via localhost (remote login).  To make this easier, add your own key to your own account:
+### Setup
 
-    cat ~/.ssh/id_rsa.pub >>~/.ssh/authorized_keys
-    
-To ensure that this has worked, try this:
+1. Authorize your local SSH keys to access your local machine:
 
-    ssh localhost
-    
-If it asks you for a password, you've done something wrong.
+   ```sh
+   ./script/configure-ssh-localhost.sh
+   ```
 
-To run the specs, do the following:
+   To verify, you should be able to connect to localhost without supplying a password:
 
-    gem install bundler
-    bundle install
+   ```sh
+   ssh localhost
+   ```
+
+2. Install bundler:
+
+   ```sh
+   gem install bundler
+   ```
+
+3. Install the project's bundle:
+
+   ```sh
+   bundle install
+   ```
+
+### Running
+
+To run the entire suite:
+
     rake
 
 To run individual test suites:
 
-    rspec spec
-    cucumber features
+    rake spec
+    rake features
 
 ## Releasing
 

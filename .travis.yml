@@ -1,0 +1,2 @@
+before_install:
+  - ./script/configure-ssh-localhost.sh
