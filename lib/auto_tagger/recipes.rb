@@ -41,6 +41,11 @@ Capistrano::Configuration.instance(:must_exist).load do
       end
     end
 
+    desc %Q{Fetches tags from remote server}
+    task :fetch, :roles => :app do
+      auto_tagger.fetch
+    end
+
     desc %Q{DEPRECATED: Prints the most current tags from all stages}
     task :print_latest_refs, :roles => :app do
       log_auto_tagger "release tag history is:"
