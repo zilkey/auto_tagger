@@ -1,3 +1,6 @@
+2013-04-07
+  - Make #fetch public (thanks James Hart)
+
 2012-08-29
   - Fix bug where refs wouldn't be pushed in capistrano because of setting nil values instead of allow defaults (elliterate)
 
