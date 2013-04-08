@@ -36,17 +36,15 @@ module AutoTagger
       new_tag
     end
 
+    def fetch
+      repo.refs.fetch(pattern, configuration.remote) if configuration.fetch_refs?
+    end
+
     def pattern
       "refs/#{configuration.ref_path}/*"
     end
 
     private :pattern
-
-    def fetch
-      repo.refs.fetch(pattern, configuration.remote) if configuration.fetch_refs?
-    end
-
-    private :fetch
 
     def push
       repo.refs.push(pattern, configuration.remote) if configuration.push_refs?
