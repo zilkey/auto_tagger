@@ -226,7 +226,7 @@ To run individual test suites:
 
 ## Releasing
 
-  * run rspec and cucumber and make sure that things are green
+  * run `rake` and make sure that things are green
   * update the changelog to say what you've done
   * update the version
   * commit your changes

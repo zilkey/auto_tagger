@@ -1,3 +1,6 @@
+2013-06-06
+  - Temporarily drop support for capistrano 2.15.4 because it totally breaks auto_tagger
+
 2013-04-07
   - Make #fetch public (thanks James Hart)
 
